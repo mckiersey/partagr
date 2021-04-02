@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>partagr</title>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id"
+        content="170958026096-1delfs3g8tg4hoeg6bgs5ickhpe7k5pt.apps.googleusercontent.com">
+    <!--JQuery-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js" type="text/javascript"></script>
+    <!-- ADD BOOTSTRAP-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
+        integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <!-- See here: https://getbootstrap.com/docs/4.2/getting-started/introduction/  -->
+</head>
+
+<body>
+
+    <div id="SessionStatus">
+        <h2 id='SessionStatusText'></h2>
+        <input type="button" class="btn btn-light" id='SignOutButton' onClick=signOut(); value="Sign Out">
+    </div>
+
+    <div class="row align-items-center top-row">
+        <div class="col-sm-12 my-auto">
+            <h1>partagr</h1>
+            <p>
+                <b>partager</b> | verb <i>(Fr)</i>
+                /paʀtaʒe/ </br>
+                <b>to share:</b> to have in common
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <p>
+
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <p>
+
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <p id="description">
+                <b>partagr</b> is a space to keep, share & curate your favourite videos, podcasts &
+                articles.</b>
+                </br>
+            </p>
+        </div>
+    </div>
+    <div class="row" align="center">
+        <div class="col">
+
+
+
+
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">Sign in</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Sign in/up with Google</h6>
+                    <p class="card-text">the internet is beautiful, share it.</p>
+                </div>
+            </div>
+            <div class="g-signin2" data-onsuccess="onSignIn" id='SignInButton'></div>
+
+        </div>
+    </div>
+
+
+    <footer>
+        <p>Image: Early morning, Cappadocia, Turkey | Taken by <a href="https://mckiersey.medium.com/"
+                target="_blank">Seán
+                McKiernan</a></p>
+    </footer>
+
+    <!-- ******************************** CSS STYLING ******************************** -->
+    <style>
+        h1,
+        h2,
+        p {
+            color: RGB(229, 229, 229);
+            font-family: helvetica;
+            margin: 20px;
+        }
+
+        #SessionStatus {
+            position: relative;
+        }
+
+        #SessionStatusText {
+            position: absolute;
+            top: 0px;
+            right: 60px;
+            margin: 10px;
+        }
+
+        #SignOutButton {
+            position: absolute;
+            top: 40px;
+            right: 0px;
+            margin-top: 20px;
+            margin-right: 170px;
+
+        }
+
+        .SignIn {
+            position: relative;
+        }
+
+        #SignInButton {
+            position: absolute;
+            top: 200px;
+            right: 600px;
+            margin-top: 20px;
+            margin-right: 170px;
+        }
+
+        #SignInText {
+            position: absolute;
+            top: 250px;
+            right: 360px;
+            margin-top: 20px;
+            margin-right: 170px;
+        }
+
+        .Profile {
+            position: relative;
+        }
+
+        #ProfileButton {
+            position: absolute;
+            top: 300px;
+            right: 605px;
+            margin-top: 20px;
+            margin-right: 170px;
+        }
+
+        #ProfileText {
+            font-size: 20px;
+            position: absolute;
+            top: 350px;
+            right: 640px;
+            margin-top: 20px;
+        }
+
+        body {
+            background-image: url('/SignUp.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+        }
+
+        footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        a {
+            color: white;
+        }
+    </style>
+
+
+    <script>
+        // ******************************** JAVASCRIPT ******************************** //
+        // GET COOKIE FUNCTION
+        function getCookieValue(cname) {
+            var name = cname + "=";
+            var decodedCookie = decodeURIComponent(document.cookie);
+            var ca = decodedCookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+        //Session Status
+        var cookieToken = getCookieValue('USER_SESSION_TOKEN')
+        console.log('Session status: cookie token value:', cookieToken)
+        if (cookieToken == "") {
+            document.getElementById('SessionStatusText').innerHTML = "<span style='color: red;'>Not Signed in</span>";
+        } else {
+            document.getElementById('SessionStatusText').innerHTML =
+                "<span style='color: RGB(170, 204, 0);'>Signed In</span>";
+        }
+
+        //SIGN IN/ SIGN UP: SET COOKIE VALUE IN BROWSER
+        function onSignIn(googleUser) {
+            var id_token = googleUser.getAuthResponse().id_token;
+            console.log("Token value to post to BE for validation: ", id_token)
+            // POST NEW USER TO BACK END;
+            try {
+                $.post('http://localhost:80/SignIn', {
+                    token: id_token
+                }).done(function (data) {
+                    console.log('Server response :', data)
+                });
+            } catch (err) {
+                console.log('failed to post to backend')
+                response.send('Error: ' + err)
+            }
+        }
+
+        // POST PROFILE ROUTE: DESCRIPTION
+        // 1) Take token from cookie in browser
+        // 2) Send token to BE
+        // 3) If BE verifies token is valid, take user ID and redirect Profile Page
+        function ProfileRoute() {
+            // Get token from browser
+            var CookieToken = getCookieValue('USER_SESSION_TOKEN')
+            try {
+                $.post('http://localhost:80/ProfileRoute', {
+                    token: CookieToken
+                }).done(function (data) {
+                    VerificationStatus = data[0]
+                    if (VerificationStatus == '* Token verification SUCCESS: User logged in *') {
+                        alert('Verification success')
+                        user_id = data[1]
+                        // Redirect back to BackEnd to render profile page
+                        var BaseProfiledUrl = 'http://localhost/ProfilePage?user_id='
+                        var ProfileUrl = BaseProfiledUrl + user_id
+                        window.location.href = ProfileUrl
+
+                    } else {
+                        console.log('Server response :', data)
+                        alert('Please sign in')
+                        window.location.href = 'http://localhost:80/Home'
+                    };
+                });
+            } catch (err) {
+                console.log('failed to post to backend')
+                response.send('Error: ' + err)
+                window.location.href = 'http://localhost:80/home'
+            }
+        }
+
+        function signOut() {
+            var getUrl = `http://localhost:80/SignOut`
+            try {
+                $.get(getUrl, {})
+                    .done(function (data) {
+                        if (data = 'CookieDeleted') {
+                            window.location.href = "http://localhost:80/LoggedOutPage"
+                        } else {
+                            alert('Something went wrong, please try to sign out again.')
+                        }
+                    });
+            } catch (err) {
+                console.log('failed to post to backend')
+                response.send('Error: ' + err)
+            }
+        }
+    </script>
+
+</body>
+
+</html>
