@@ -289,12 +289,6 @@ const router = app => {
         console.log('Cookie deleted')
     })
 
-    // UNLOGGED LANDING PAGE
-    app.get('/LoggedOutPage', (req, res) => {
-        res.render('LoggedOutPage');
-
-    })
-
 
 
 };
