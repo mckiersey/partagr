@@ -86,10 +86,10 @@ const router = app => {
                         } catch (error) {
                             console.log('Unable to create new user, error: ', error)
                         }
-                        response.send("New user added");
+                        response.send("True"); //New user added
                         // User exists in user_profile table => This is NOT a New User
                     } else {
-                        response.send("Existing user- signing in");
+                        response.send("True"); //Existing user- signing in
                     }
                 });
             } catch (err) {
@@ -139,12 +139,8 @@ const router = app => {
                     response.send('Error: User does not exist. Please enter an existing user id in the url.')
                 } else {
                     user_data = result[0]
-                    response.render("ProfilePage.ejs", {
-                        data: {
-                            name: user_data.first_name, user_id: user_data.user_id,
-                            profile_picture: user_data.profile_picture
-                        }
-                    }); // END OF RESPONSE.RENDER PROTECTED PROFILE
+                    profile_file = "/profile.html"
+                    response.sendFile(profile_file, { root: __dirname })
                 } // END OF IF/ELSE CLAUSE
             }); // RETRIEVE APP USER DATA: END
         } catch (error) {

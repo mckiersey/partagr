@@ -200,43 +200,47 @@
                     token: id_token
                 }).done(function (data) {
                     console.log('Server response :', data)
-                });
-            } catch (err) {
-                console.log('failed to post to backend')
-                response.send('Error: ' + err)
-            }
-        }
+                    if (data == 'True') {
+                        // Automatic direction to profil
 
-        // POST PROFILE ROUTE: DESCRIPTION
-        // 1) Take token from cookie in browser
-        // 2) Send token to BE
-        // 3) If BE verifies token is valid, take user ID and redirect Profile Page
-        function ProfileRoute() {
-            // Get token from browser
-            var CookieToken = getCookieValue('USER_SESSION_TOKEN')
-            try {
-                $.post('http://localhost:80/ProfileRoute', {
-                    token: CookieToken
-                }).done(function (data) {
-                    VerificationStatus = data[0]
-                    if (VerificationStatus == '* Token verification SUCCESS: User logged in *') {
-                        alert('Verification success')
-                        user_id = data[1]
-                        // Redirect back to BackEnd to render profile page
-                        var BaseProfiledUrl = 'http://localhost/ProfilePage?user_id='
-                        var ProfileUrl = BaseProfiledUrl + user_id
-                        window.location.href = ProfileUrl
+                        // POST PROFILE ROUTE: DESCRIPTION
+                        // 1) Take token from cookie in browser
+                        // 2) Send token to BE
+                        // 3) If BE verifies token is valid, take user ID and redirect Profile Page
+                        // Get token from browser
+                        var CookieToken = getCookieValue('USER_SESSION_TOKEN')
+                        try {
+                            $.post('http://localhost:80/ProfileRoute', {
+                                token: CookieToken
+                            }).done(function (data) {
+                                VerificationStatus = data[0]
+                                if (VerificationStatus ==
+                                    '* Token verification SUCCESS: User logged in *') {
+                                    alert('Verification success')
+                                    user_id = data[1]
+                                    // Redirect back to BackEnd to render profile page
+                                    var BaseProfiledUrl = 'http://localhost/ProfilePage?user_id='
+                                    var ProfileUrl = BaseProfiledUrl + user_id
+                                    window.location.href = ProfileUrl
 
+                                } else {
+                                    console.log('Server response :', data)
+                                    alert('Please sign in')
+                                    window.location.href = 'http://localhost:80/Home'
+                                };
+                            });
+                        } catch (err) {
+                            console.log('failed to post to backend')
+                            response.send('Error: ' + err)
+                            window.location.href = 'http://localhost:80/home'
+                        }
                     } else {
-                        console.log('Server response :', data)
-                        alert('Please sign in')
-                        window.location.href = 'http://localhost:80/Home'
-                    };
-                });
+                        alert('Sign in failed. Please try again.')
+                    }
+                }); // onSignIn Error
             } catch (err) {
                 console.log('failed to post to backend')
                 response.send('Error: ' + err)
-                window.location.href = 'http://localhost:80/home'
             }
         }
 
