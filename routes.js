@@ -7,7 +7,6 @@ const { OAuth2Client } = require('google-auth-library');
 const CLIENT_ID = '170958026096-1delfs3g8tg4hoeg6bgs5ickhpe7k5pt.apps.googleusercontent.com' // Given by Google when you set up your Google OAuth client ID: https://developers.google.com/identity/sign-in/web/sign-in
 
 //VERIFICATION FUNCTION: The ticket inspector
-
 // Check authenticity of user id - basically like ticket inspector
 // take the token and verify it and if it is good then gives back user id (from google)
 // if token is 'wrong' (expired/ doesn't exist etc.) it returns false
@@ -31,13 +30,37 @@ async function verify(CLIENT_ID, token) {
     } catch (error) {
         return false
     }
-
-
 };
-
+//FUNCTION TO TAKE BROWSER SESSION TOKEN & RETURN PARTAGR USER ID
+async function TokenToUserID(user_session_token) {
+    VerifiedTokenPayload = await verify(CLIENT_ID, user_session_token)
+    var google_user_id = VerifiedTokenPayload[0]
+    try {
+        pool.query("SELECT user_id FROM user_profile WHERE google_user_id = ?", google_user_id, function (error, result) {
+            return result[0].user_id
+            if (result.length === 0) {
+                console.log('TokenToUserID: No matching user ID')
+            } else {
+                console.log('The result to be returned from calling this function: ', result[0].user_id)
+                //return result[0].user_id
+            }
+        });
+    } catch (err) {
+        console.log('TokenToUserID ' + err)
+    }
+}
 
 // DEFINE APP
 const router = app => {
+
+    app.post("/MyProfile", async (request, response) => {
+        token = request.body.token
+        corresponding_user_id = await TokenToUserID(token)
+        console.log('the output of calling the async function in the app.post requst , which should be printed last = ', corresponding_user_id)
+        response.send(corresponding_user_id)
+    })
+
+
 
 
     //////////////////////////////////////////////////////////////////
@@ -86,10 +109,10 @@ const router = app => {
                         } catch (error) {
                             console.log('Unable to create new user, error: ', error)
                         }
-                        response.send("True"); //New user added
+                        response.send(true); //New user added
                         // User exists in user_profile table => This is NOT a New User
                     } else {
-                        response.send("True"); //Existing user- signing in
+                        response.send(true); //Existing user- signing in
                     }
                 });
             } catch (err) {
@@ -139,8 +162,12 @@ const router = app => {
                     response.send('Error: User does not exist. Please enter an existing user id in the url.')
                 } else {
                     user_data = result[0]
-                    profile_file = "/profile.html"
-                    response.sendFile(profile_file, { root: __dirname })
+                    response.render("ProfilePage.ejs", {
+                        data: {
+                            name: user_data.first_name, user_id: user_data.user_id,
+                            profile_picture: user_data.profile_picture
+                        }
+                    }); // END OF RESPONSE.RENDER PROTECTED PROFILE
                 } // END OF IF/ELSE CLAUSE
             }); // RETRIEVE APP USER DATA: END
         } catch (error) {
@@ -149,6 +176,19 @@ const router = app => {
     }) // END OF GET: PROTECTED PROFILE
 
 
+    // GET MY PROFILE: DESCRIPTION
+    // FUNCTION: DISPLAY THE PROFILE OF THE LOGGED IN USER
+    // 1) Take user_session_token from browser
+    // 2) Use TokenToUserID to find corresponding partagr ID
+    // 3) response.send this ID back to client
+    /*
+    app.post("/MyProfile", async (request, response) => {
+        token = request.body.token
+        corresponding_user_id = await TokenToUserID(token)
+        console.log('the output of token to user = ', corresponding_user_id)
+        response.send(corresponding_user_id)
+    })
+    */
 
     // GET VIDEO ROUTE: DESCRIPTION
     // FUNCTION: Populate profile with relevant data
@@ -228,26 +268,19 @@ const router = app => {
     // 6) Insert content (VideoLink) into user_content table
 
     app.post("/AddVideo", async (request, response) => {
-
         console.log('Add video route')
         token = request.body.token
         ProfileUserId = request.body.ProfileId
         VideoLink = request.body.VideoLink
-
         VerifiedTokenPayload = await verify(CLIENT_ID, token)
         var FrontEndGoogleUserId = VerifiedTokenPayload[0] //Google user ID
-
         if (!VerifiedTokenPayload) { //if value == false
             response.send('* Token verification FAIL: User not logged in *')
-
         } else { //Token has been verified
-
             // Now we ensure that this token corresponds to the ProfileUserId (the user Id seen in the browser url)
             try { // SELECT GOOGLE ID
                 pool.query("SELECT google_user_id FROM user_profile WHERE user_id = ?", ProfileUserId, (error, result) => { // value of app user id on row of google user id 
-
                     StoredGoogleUserID = result[0].google_user_id
-
                     if (FrontEndGoogleUserId == StoredGoogleUserID) {
                         console.log('Authorised user editing correct profile')
                         InsertData = { user_id: ProfileUserId, content: VideoLink }
@@ -272,6 +305,77 @@ const router = app => {
         }
     })
 
+    // ADD ARTICLE
+    app.post("/AddArticle", async (request, response) => {
+        console.log('Add article route')
+        token = request.body.token
+        ProfileUserId = request.body.ProfileId
+        ArticleLink = request.body.ArticleLink
+        ArticleDescription = request.body.ArticleDescription
+
+        VerifiedTokenPayload = await verify(CLIENT_ID, token)
+        var FrontEndGoogleUserId = VerifiedTokenPayload[0] //Google user ID
+        if (!VerifiedTokenPayload) { //if value == false
+            response.send('* Token verification FAIL: User not logged in *')
+        } else { //Token has been verified
+            // Now we ensure that this token corresponds to the ProfileUserId (the user Id seen in the browser url)
+            try { // SELECT GOOGLE ID
+                pool.query("SELECT google_user_id FROM user_profile WHERE user_id = ?", ProfileUserId, (error, result) => { // value of app user id on row of google user id 
+                    StoredGoogleUserID = result[0].google_user_id
+                    if (FrontEndGoogleUserId == StoredGoogleUserID) {
+                        console.log('Authorised user editing correct profile')
+                        InsertData = { user_id: ProfileUserId, content: ArticleLink, content_desc: ArticleDescription }
+                        // ADD ARTICLE LINK TO DATA BASE
+                        try { // INSET ARTICLE
+                            pool.query('INSERT INTO user_content SET ?', InsertData, (error, result) => {
+                            });
+                            response.send(true)
+                        } catch (error) {
+                            console.log('Something went wrong, article not added: ', error)
+                            response.send('Article not Added')
+                        }
+                    } else {
+                        console.log('FrontEnd token Id does not match BackEnd Google ID')
+                        response.send('Article not Added')
+                    }
+                }); // END OF: SELECT GOOGLE ID
+            } catch (error) {
+                console.log('Error from check that token matches profile')
+                response.send('Article not Added')
+            }
+        }
+    })
+
+
+    //////////////////////////////////////////////////////////////////
+    //// *** POPULATE PROFILE DATA *** ////
+    //////////////////////////////////////////////////////////////////
+
+    // GET VIDEO ROUTE: DESCRIPTION
+    // FUNCTION: Populate profile with relevant data
+    // 1) Take profile page ID from browser
+    // 2) Select data in 'content' corresponding to this profile (user) ID
+    // 3) Rather than taking all data, select only the last row, which has the latest entry - this is an unsophisticated way of dealing with > 1 rows for a user (eg if a user submitted multiple videos)
+    // 4) Send this data back to the FrontEnd
+    app.get("/Articles", (request, response) => {
+        user_id = request.query.user_id
+        // RETRIEVE USER CONTENT DATA
+        pool.query("SELECT content, content_desc FROM user_content WHERE user_id = ? ", user_id, (error, result) => {
+            if (error) console.log('Content retrieval error:', error);
+            try {
+                console.log('article retrieval result = ', result)
+                RetrievedArticleData = result
+                if (result.length === 0) {
+                    console.log('No article data')
+                } else {
+                    console.log('sending back to client: ', RetrievedArticleData)
+                    response.send(RetrievedArticleData)
+                }
+            } catch (error) {
+                console.log("User content error (likely no data for this user)")
+            }
+        }); // RETRIEVE USER CONTENT DATA: END
+    });
 
 
     //////////////////////////////////////////////////////////////////

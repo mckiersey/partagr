@@ -1,0 +1,6 @@
+- SSL CERT
+- New Google Auth system
+- Final version of content database
+- What happens with > 12 articles?
+- Delete content
+- Owner should only see edit mode switch

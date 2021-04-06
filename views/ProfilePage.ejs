@@ -11,7 +11,6 @@
     <!-- ADD BOOTSTRAP-->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
         integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-    <!-- See here: https://getbootstrap.com/docs/4.2/getting-started/introduction/  -->
     <!--ADD CSS STYLING-->
     <link rel="stylesheet" href="profile.css">
     <!--ADD JAVASCRIPT-->
@@ -25,15 +24,28 @@
     <div class="container-fluid">
         <!--BANNER-->
         <div class="row align-items-center justify-content-between banner">
-            <div class="col-4" id="banner-name">
+            <div class="col-4 border border-warning" id="banner-name">
             </div>
-            <div class="col-4">
-                <img id="ProfilePicture" alt="User profile pricture" src>
+            <div class="col-4 border border-warning">
+                <div class="float-right" id="ProfilePictureSection">
+                    <img id="ProfilePicture" src="<%=data.profile_picture%>" />
+                    <div id="MyProfileButton">
+                        <button class="btn btn-light" onclick=MyProfile()>My Profile</button>
+                    </div>
+                </div>
             </div>
         </div>
-
-
-
+        <!--EDIT MODE SWITCH-->
+        <div class="row">
+            <div class="col">
+                <!-- EDIT SWITCH-->
+                <div class="custom-control custom-switch" id="editModeSwitch" align="right">
+                    <input type="checkbox" class="custom-control-input" id="customSwitch1">
+                    <label class="custom-control-label text-success" for="customSwitch1"><b></b>Edit mode: Switch to add
+                        content</b></label>
+                </div>
+            </div>
+        </div>
         <div class="row border border-primary">
             <div class="col border border-warning">
                 <p>content1a</p>
@@ -47,7 +59,8 @@
                     </br>
                     <div>
                         <button class="btn btn-light" id="VideoButtonPosition1" onclick=AddVideo()>Submit</button>
-                        See how: <a href=" https://www.youtube.com/watch?v=kiyi-C7NQrQ" target="_blank"> Using embeded
+                        See how: <a href=" https://www.youtube.com/watch?v=kiyi-C7NQrQ" target="_blank">
+                            Using embeded
                             links</a>
                     </div>
                 </div>
@@ -69,7 +82,8 @@
                 </br>
                 <div>
                     <button class="btn btn-light" id="VideoButtonPosition2" onclick=AddVideo()>Submit</button>
-                    See how: <a href=" https://www.youtube.com/watch?v=kiyi-C7NQrQ" target="_blank"> Using embeded
+                    See how: <a href=" https://www.youtube.com/watch?v=kiyi-C7NQrQ" target="_blank"> Using
+                        embeded
                         links</a>
                 </div>
             </div>
@@ -84,7 +98,8 @@
                 </br>
                 <div>
                     <button class="btn btn-light" id="VideoButtonPosition3" onclick=AddVideo()>Submit</button>
-                    See how: <a href=" https://www.youtube.com/watch?v=kiyi-C7NQrQ" target="_blank"> Using embeded
+                    See how: <a href=" https://www.youtube.com/watch?v=kiyi-C7NQrQ" target="_blank"> Using
+                        embeded
                         links</a>
                 </div>
             </div>
@@ -99,7 +114,8 @@
                 </br>
                 <div>
                     <button class="btn btn-light" id="VideoButtonPosition4" onclick=AddVideo()>Submit</button>
-                    See how: <a href=" https://www.youtube.com/watch?v=kiyi-C7NQrQ" target="_blank"> Using embeded
+                    See how: <a href=" https://www.youtube.com/watch?v=kiyi-C7NQrQ" target="_blank"> Using
+                        embeded
                         links</a>
                 </div>
             </div>
@@ -140,6 +156,82 @@
             <p>content5c</p>
         </div>
     </div>
+    <!--- TEST BUTTON-->
+    <div class="row justify-content-center">
+        <div class="col-4">
+            <button style="background: url(.public/DeleteIcon.png)" id="DeleteArticleButton"></button>
+        </div>
+        <div class="col-4">
+            <button style="background: url(.public/DeleteIcon.png)" id="DeleteArticleButton"></button>
+        </div>
+        <div class="col-4">
+            <input type="image" src="DeleteIcon.png" id="DeleteArticleButton" />
+        </div>
+        <div class="col-4">
+            <button id="DeleteArticleButton"><img id="DeleteArticleButton" src="DeleteIcon.png"></button>
+        </div>
+
+    </div>
+
+    <!--ARTICLES SECTION-->
+    <div class="row  top-buffer" align="left">
+        <div class="col-12">
+            <h1 id="section-title">Podcast</h1>
+        </div>
+    </div>
+    <!--ARTICLES SECTION-->
+    <div class="row  top-buffer" align="left">
+        <div class="col-12">
+            <h1 id="section-title">Reading</h1>
+            <div class="ArticleForm">
+                <label>Description</label>
+                <input type="text" name="ArticleDescription" placeholder="Article description">
+                <label>Article Link</label>
+                <input type="text" name="ArticleLink" placeholder="Article link">
+                <div>
+                    <button class="btn btn-light" id="PostArticleButton" onclick=AddArticle()>Submit</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ARTICLES SECTION: ROW 1-->
+    <div class="row" id="ArticleSection-row1" align="left">
+        <div class="col-4">
+            <ul id="populateArticles-row1-col1">
+                <!--Populate Articles-->
+            </ul>
+        </div>
+        <div class="col-4">
+            <ul id="populateArticles-row1-col2">
+                <!--Populate Articles-->
+            </ul>
+        </div>
+        <div class="col-4">
+            <ul id="populateArticles-row1-col3">
+                <!--Populate Articles-->
+            </ul>
+        </div>
+    </div>
+    <!-- ARTICLES SECTION: ROW 2-->
+    <div class="row" id="ArticleSection-row2" align="left">
+        <div class="col-4">
+            <ul id="populateArticles-row2-col1">
+                <!--Populate Articles-->
+            </ul>
+        </div>
+        <div class="col-4">
+            <ul id="populateArticles-row2-col2">
+                <!--Populate Articles-->
+            </ul>
+        </div>
+        <div class="col-4">
+            <ul id="populateArticles-row2-col3">
+                <!--Populate Articles-->
+            </ul>
+        </div>
+    </div>
+
 
 </body>
 

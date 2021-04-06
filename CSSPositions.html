@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CSS Positions</title>
+</head>
+
+<body>
+    <!--STICKY-->
+    <div class="parent-sticky">
+        parent-sticky
+        <div class="one-sticky">one-sticky</div>
+        <div class="two-sticky">two-sticky</div>
+    </div>
+    <div class="summary">
+        <h2>CSS POSITIONS</h2>
+        <ol>
+            <li><b>Static:</b>Position based solely on code. Cannot take top/bottom etc. positions</li>
+            <li><b>Relative:</b>Position is relative to what the <b>static</b> position would have been</li>
+            <li><b>Fixed:</b>Position relative to viewable window</li>
+            <li><b>Absolute:</b>Position relative to parent. If no parent, defaults to document (simialr to a static
+                version of <b>fixed</b>.</li>
+            <li><b>Sticky:</b>Mix of <b>fixed</b> and <b>relative</b>, depending on the scrolling position.</li>
+            <li>https://www.youtube.com/watch?v=jx5jmI0UlXU</li>
+        </ol>
+    </div>
+    <!--FIXED-->
+    <div class="parent-fixed">
+        parent-fixed
+        <div class="one-fixed">one-fixed</div>
+        <div class="two-fixed">two-fixed</div>
+    </div>
+    <!--STATIC-->
+    <div class="parent">
+        parent
+        <div class="one">one</div>
+        <div class="two">two</div>
+    </div>
+
+    <!--RELATIVE-->
+    <div class="parent-relative">
+        parent-relative
+        <div class="one-relative">one-relative</div>
+        <div class="two-relative">two-relative</div>
+    </div>
+
+
+    <!--ABSOLUTE-->
+    <div class="parent-absolute">
+        parent-absolute
+        <div class="one-absolute">one-absolute</div>
+        <div class="two-absolute">two-absolute</div>
+    </div>
+
+
+
+    <!--COMBO TEST: FIXED X ABSOLUTE-->
+    <div class="parent-combo-fixed">
+        combo-fixed-parent
+        <div class="anchored-combo-absolute">
+            This text has a position of absolute, but should be anchored to the combo-fixed-parent.
+        </div>
+    </div>
+
+
+
+
+</body>
+
+</html>
+<style>
+    /*STATIC*/
+    .parent {
+        background-color: lightskyblue;
+        position: static;
+        top: 50px;
+        left: 50px;
+    }
+
+    .one {
+        background-color: lightgreen;
+        position: static;
+        top: 25px;
+        left: 25px;
+    }
+
+    .two {
+        background-color: lightcoral;
+        position: static;
+        bottom: 25px;
+        left: 25px;
+    }
+
+    /*RELATIVE*/
+    .parent-relative {
+        background-color: lightskyblue;
+        position: relative;
+        top: 5000px;
+        left: 500px;
+    }
+
+    .one-relative {
+        background-color: lightgreen;
+        position: relative;
+        left: 30px;
+        top: 2px;
+    }
+
+    .two-relative {
+        background-color: lightcoral;
+        position: relative;
+        bottom: 40px;
+        left: 10px;
+    }
+
+    /* FIXED */
+    .parent-fixed {
+        background-color: lightskyblue;
+        position: fixed;
+        top: 50px;
+        left: 1024px;
+    }
+
+    .one-fixed {
+        background-color: lightgreen;
+        position: fixed;
+        top: 25px;
+        right: 40px;
+    }
+
+    .two-fixed {
+        background-color: lightcoral;
+        position: fixed;
+        bottom: 25px;
+        left: 25px;
+    }
+
+    /* ABSOLUTE */
+    .parent-absolute {
+        background-color: lightskyblue;
+        position: absolute;
+
+    }
+
+    .one-absolute {
+        background-color: lightgreen;
+        position: absolute;
+        top: 25px;
+        left: 25px;
+    }
+
+    .two-absolute {
+        background-color: lightcoral;
+        position: absolute;
+        bottom: 25px;
+        left: 25px;
+    }
+
+
+    /* STICKY */
+    .parent-sticky {
+        background-color: yellowgreen;
+        position: sticky;
+        top: 0;
+        right: 0;
+
+    }
+
+    .one-sticky {
+        background-color: orangered;
+        position: sticky;
+    }
+
+    .two-sticky {
+        background-color: whitesmoke;
+        position: sticky;
+        bottom: 25px;
+        left: 25px;
+    }
+
+    /* COMBO TEXT */
+    .parent-combo-fixed {
+        background-color: lightskyblue;
+        position: fixed;
+        top: 50%;
+        right: 50%;
+    }
+
+    .anchored-combo-absolute {
+        position: absolute;
+        top: 40px;
+    }
+
+
+
+    /*
+Position values:
+- static
+- relative
+- fixed
+- absolute
+- sticky
+
+STATIC:
+The default position of any new element = static. This means it is positioned according to where it appears in the code
+Static elements are unaffected by position properties (top, left, right etc.)
+
+RELATIVE:
+Relative to it's default static position- to the position it woudld have based on the code. TOP/LEFT etc. are in relation to where it's default static position 
+would have been. For example, left: 10px; is 10px FROM the original left edge (so it's inverse to the name, i.e. left 10px moves the element 10px to the right)
+
+FIXED:
+Fixed places an element relative to the 'viewing area', rather than the content. So this is useful for scroll (??). But position is determined
+by TOP/RIGHT etc.- but this is relative to the viewing area, so top right, will be top right of the viewing are
+
+ABSOLUTE:
+Position is relative to the nearest 'positioned' parent element. A positioned element is anything that has a position other than static.
+If there is no parent element (a parent element contains child elements),the element is placed relative to the whole document (similar to FIXED, 
+but does not adjust)
+
+The child elements are what is interesting here- they are positioned based on their parent element. So for example, placing a button near an image, where the
+image could be the parent element (doens't have to be absolute) and this would 'anchor' the child element.
+
+STICKY:
+A combination of RELATIVE and FIXED. So whereas the reference for FIXED is the viewable page, the reference for STICKY is like RELATIVE - that is it's position
+in the code.
+*/
+</style>
