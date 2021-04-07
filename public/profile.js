@@ -1,5 +1,8 @@
 $(document).ready(function () {
 
+    console.log('Profile JS loading...')
+    console.log('Server production mode = ', server)
+
     //GET PAGE VARIABLES
     var urlParams = new URLSearchParams(window.location.search);
     var user_id = urlParams.get('user_id');
@@ -24,7 +27,8 @@ $(document).ready(function () {
     }
 
     // MY PROFILE FUNCTION
-    function MyProfile() {
+    $(document).on('click', '#MyProfile', function () {
+
         console.log('my profile click')
         console.log(server + '/MyProfile')
         try {
@@ -40,10 +44,9 @@ $(document).ready(function () {
         } catch (err) {
             console.log('failed to post to backend:', err)
         }
-    }
+    });
 
-    console.log('Profile JS loading...')
-    console.log('Server production mode = ', server)
+
 
     document.getElementById('banner-name').innerHTML = "<a id='banner-name-text' href=" + server + ">partagr.com</h1>"
 
@@ -88,7 +91,8 @@ $(document).ready(function () {
     // 3) If token is valid and profile user Id matches stored google id, corresponding to token then;
     // 4) Set the page 'location' = to the page 'location' => refresh the page. This automatic refresh upon success will then load the newly added video via the Video request, above
     // 5) Else, send Alert
-    function AddArticle() {
+    $(document).on('click', '#PostArticleButton', function () {
+
         console.log('Add article function executed')
         ArticleLink = document.querySelector('input[name=ArticleLink]').value
         ArticleDescription = document.querySelector('input[name=ArticleDescription]').value
@@ -113,7 +117,7 @@ $(document).ready(function () {
             console.log('failed to post to backend')
             console.log('Error: ' + err)
         }
-    }
+    });
 
 
 
@@ -124,13 +128,17 @@ $(document).ready(function () {
 
     var GetArticleUrl = server + '/Articles?user_id=' + user_id
     $.get(GetArticleUrl, function (ArticleList, status) {
+        console.log(ArticleList)
         var i;
-        for (i = 1; i < ArticleList.length; i++) {
+        for (i = 0; i < ArticleList.length; i++) {
 
             var caption = ArticleList[i].content_desc
             var articleLink = ArticleList[i].content
-            var contentID = ArticleList[i].row_num
+            var contentID = ArticleList[i].content_id
 
+            console.log(caption)
+            console.log(articleLink)
+            console.log(contentID)
 
             var pathArray = articleLink.split('/');
             var protocol = pathArray[0];
@@ -191,6 +199,8 @@ $(document).ready(function () {
     // ARTICLES
 
     $(document).on('click', '.DeleteArticleButton', function () {
+
+        console.log('DELETE CLICKED')
         ContentToDelete = $(this).attr('name')
         var requestString = server + '/DeleteArticle'
 

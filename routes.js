@@ -324,7 +324,7 @@ const router = app => {
                     StoredGoogleUserID = result[0].google_user_id
                     if (FrontEndGoogleUserId == StoredGoogleUserID) {
                         console.log('Authorised user editing correct profile')
-                        InsertData = { user_id: ProfileUserId, content: ArticleLink, content_desc: ArticleDescription }
+                        InsertData = { user_id: ProfileUserId, content: ArticleLink, content_type: "article", content_desc: ArticleDescription }
                         // ADD ARTICLE LINK TO DATA BASE
                         try { // INSET ARTICLE
                             pool.query('INSERT INTO user_content SET ?', InsertData, (error, result) => {
@@ -351,7 +351,7 @@ const router = app => {
     //// *** POPULATE PROFILE DATA *** ////
     //////////////////////////////////////////////////////////////////
 
-    // GET VIDEO ROUTE: DESCRIPTION
+    // GET ARTICLE ROUTE: DESCRIPTION
     // FUNCTION: Populate profile with relevant data
     // 1) Take profile page ID from browser
     // 2) Select data in 'content' corresponding to this profile (user) ID
@@ -360,7 +360,7 @@ const router = app => {
     app.get("/Articles", (request, response) => {
         user_id = request.query.user_id
         // RETRIEVE USER CONTENT DATA
-        pool.query("SELECT row_num, content, content_desc FROM user_content WHERE user_id = ? ", user_id, (error, result) => {
+        pool.query("SELECT content_id, content, content_desc FROM user_content WHERE user_id = ? ", user_id, (error, result) => {
             if (error) console.log('Content retrieval error:', error);
             try {
                 console.log('article retrieval result = ', result)
@@ -384,7 +384,7 @@ const router = app => {
     app.get("/DiscoverArticle", (request, response) => {
         user_id = request.query.user_id
         // RETRIEVE USER CONTENT DATA
-        pool.query("SELECT content FROM user_content WHERE user_id = ? ", user_id, (error, result) => {
+        pool.query("SELECT content FROM user_content WHERE content_type = 'article' AND user_id = ? ", user_id, (error, result) => {
             if (error) console.log('Content retrieval error:', error);
             try {
                 console.log('article retrieval result = ', result)
@@ -426,7 +426,7 @@ const router = app => {
                     if (FrontEndGoogleUserId == StoredGoogleUserID) { // USER IS LOGGED IN & EDITOR = OWNER 
                         // DELETE ARTICLE LINK 
                         try {
-                            pool.query('DELETE FROM user_content WHERE row_num = ?', ContentToDelete, (error, result) => {
+                            pool.query('DELETE FROM user_content WHERE content_id = ?', ContentToDelete, (error, result) => {
                                 console.log(result)
                                 console.log(error)
 

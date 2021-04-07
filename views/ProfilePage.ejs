@@ -30,7 +30,7 @@
                 <div class="float-right" id="ProfilePictureSection">
                     <img id="ProfilePicture" src="<%=data.profile_picture%>" />
                     <div id="MyProfileButton">
-                        <button class="btn btn-light" onclick=MyProfile()>My Profile</button>
+                        <button class="btn btn-light" id="MyProfile">My Profile</button>
                     </div>
                 </div>
             </div>
@@ -181,7 +181,7 @@
                 <label>Article Link</label>
                 <input type="text" name="ArticleLink" placeholder="Article link">
                 <div>
-                    <button class="btn btn-light" id="PostArticleButton" onclick=AddArticle()>Submit</button>
+                    <button class="btn btn-light" id="PostArticleButton">Submit</button>
 
                 </div>
             </div>
