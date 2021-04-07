@@ -3,6 +3,12 @@ $(document).ready(function () {
     console.log('Profile JS loading...')
     console.log('Server production mode = ', server)
 
+    // DISPLAY OWNER ELEMENTS (FOR EDITING)
+    $('.OwnerSwitch').on("change", function () {
+        $('.OwnerElement').toggle()
+    });
+
+
     //GET PAGE VARIABLES
     var urlParams = new URLSearchParams(window.location.search);
     var user_id = urlParams.get('user_id');
@@ -66,13 +72,13 @@ $(document).ready(function () {
             console.log('Server response :', data)
             if (data == 'User is profile owner') {
                 console.log('Profile owner')
-                /*
-                $('.OwnerElement').show() //show edit switch
-                document.getElementById('SessionStatusText').innerHTML =
-                    "<span style='color: RGB(170, 204, 0);'>Logged in</span>";
-                    */
+
+                $('.OwnerSwitch').show() //show edit switch
+
             } else {
                 console.log('not profile owner')
+                $('.OwnerSwitch').hide() //hide edit switch
+
                 /*
                 document.getElementById('SessionStatusText').innerHTML =
                     "<span style='color: red;'>Unlogged</span>";
@@ -128,7 +134,6 @@ $(document).ready(function () {
 
     var GetArticleUrl = server + '/Articles?user_id=' + user_id
     $.get(GetArticleUrl, function (ArticleList, status) {
-        console.log(ArticleList)
         var i;
         for (i = 0; i < ArticleList.length; i++) {
 
@@ -136,40 +141,36 @@ $(document).ready(function () {
             var articleLink = ArticleList[i].content
             var contentID = ArticleList[i].content_id
 
-            console.log(caption)
-            console.log(articleLink)
-            console.log(contentID)
-
             var pathArray = articleLink.split('/');
             var protocol = pathArray[0];
             var host = pathArray[2];
             var baseUrl = protocol + '//' + host;
-            if (i < 4) {
+            if (i < 5) {
                 document.getElementById('populateArticles-row1-col1').innerHTML +=
                     `<li><img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=ArticleLinkText href =${articleLink} target="_blank">  ${caption}</a></li>` +
-                    `<input type="image" src="DeleteIcon.png" name=${contentID} class="DeleteArticleButton" />`
-            } else if (i >= 4 && i < 9) {
+                    `<input type="image" src="DeleteIcon.png" name=${contentID} class="DeleteArticleButton OwnerElement"/>`
+            } else if (i >= 5 && i < 10) {
                 document.getElementById('populateArticles-row1-col2').innerHTML +=
                     `<li><img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=ArticleLinkText href =${articleLink} target="_blank">  ${caption}</a></li>` +
-                    `<input type="image" src="DeleteIcon.png" name=${contentID} class="DeleteArticleButton" />`
-            } else if (i >= 9 && i < 13) {
+                    `<input type="image" src="DeleteIcon.png" name=${contentID} class="DeleteArticleButton OwnerElement"/>`
+            } else if (i >= 10 && i < 15) {
                 document.getElementById('populateArticles-row1-col3').innerHTML +=
                     `<li class=ArticleLinkText><img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=ArticleLinkText href =${articleLink} target="_blank">  ${caption}</a></li>` +
-                    `<input type="image" src="DeleteIcon.png" name=${contentID} class="DeleteArticleButton" />`
+                    `<input type="image" src="DeleteIcon.png" name=${contentID} class="DeleteArticleButton OwnerElement"/>`
 
 
             } else if (i > 15 && i <= 20) {
                 document.getElementById('populateArticles-row2-col1').innerHTML +=
                     `<li class=ArticleLinkText><img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=ArticleLinkText href =${articleLink} target="_blank">  ${caption}</a></li>` +
-                    `<input type="image" src="DeleteIcon.png" name=${contentID} class="DeleteArticleButton" />`
+                    `<input type="image" src="DeleteIcon.png" name=${contentID} class="DeleteArticleButton OwnerElement"/>`
             } else if (i > 20 && i <= 25) {
                 document.getElementById('populateArticles-row2-col2').innerHTML +=
                     `<li class=ArticleLinkText><img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=ArticleLinkText href =${articleLink} target="_blank">  ${caption}</a></li>` +
-                    `<input type="image" src="DeleteIcon.png" name=${contentID} class="DeleteArticleButton" />`
+                    `<input type="image" src="DeleteIcon.png" name=${contentID} class="DeleteArticleButton OwnerElement"/>`
             } else if (i > 25 && i <= 30) {
                 document.getElementById('populateArticles-row2-col3').innerHTML +=
                     `<li class=ArticleLinkText><img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=ArticleLinkText href =${articleLink} target="_blank">  ${caption}</a></li>` +
-                    `<input type="image" src="DeleteIcon.png" name=${contentID} class="DeleteArticleButton" />`
+                    `<input type="image" src="DeleteIcon.png" name=${contentID} class="DeleteArticleButton OwnerElement"/>`
 
             }
         }
@@ -183,7 +184,6 @@ $(document).ready(function () {
     $(document).on('click', '#ArticleDiscovery', function () {
         DiscoverArticleUrl = server + '/DiscoverArticle?user_id=' + user_id
         $.get(DiscoverArticleUrl, function (UsersArticles, status) {
-            console.log(UsersArticles)
             RandomArticlePosition = Math.floor(Math.random() * UsersArticles.length);
             DisoveryArticle = UsersArticles[RandomArticlePosition].content
             window.open(DisoveryArticle, '_blank' // <- This is what makes it open in a new window.

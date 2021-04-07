@@ -18,7 +18,9 @@ p {
     background-color: #023e8a;
 }
 
-
+.OwnerElement {
+    display: none;
+}
 
 .DeleteArticleButton {
     height: 20px;
