@@ -360,7 +360,7 @@ const router = app => {
     app.get("/Articles", (request, response) => {
         user_id = request.query.user_id
         // RETRIEVE USER CONTENT DATA
-        pool.query("SELECT content, content_desc FROM user_content WHERE user_id = ? ", user_id, (error, result) => {
+        pool.query("SELECT row_num, content, content_desc FROM user_content WHERE user_id = ? ", user_id, (error, result) => {
             if (error) console.log('Content retrieval error:', error);
             try {
                 console.log('article retrieval result = ', result)
@@ -410,7 +410,7 @@ const router = app => {
         console.log('delete article route')
         console.log('delete request: ', request.query)
 
-        var ArticleToDelete = request.query.ArticleToDelete
+        var ContentToDelete = request.query.ContentToDelete
         var token = request.query.token
         var ProfileUserId = request.query.ProfileId
 
@@ -423,14 +423,10 @@ const router = app => {
             try {
                 pool.query("SELECT google_user_id FROM user_profile WHERE user_id = ?", ProfileUserId, (error, result) => { // value of app user id on row of google user id 
                     StoredGoogleUserID = result[0].google_user_id
-                    if (FrontEndGoogleUserId == StoredGoogleUserID) {
-                        // USER IS LOGGED IN & EDITOR = OWNER 
-
-                        DeleteData = { user_id: ProfileUserId, content: ArticleToDelete }
-                        console.log(DeleteData)
+                    if (FrontEndGoogleUserId == StoredGoogleUserID) { // USER IS LOGGED IN & EDITOR = OWNER 
                         // DELETE ARTICLE LINK 
                         try {
-                            pool.query('DELETE FROM user_content WHERE user_id ?', ProfileUserId, (error, result) => {
+                            pool.query('DELETE FROM user_content WHERE row_num = ?', ContentToDelete, (error, result) => {
                                 console.log(result)
                                 console.log(error)
 

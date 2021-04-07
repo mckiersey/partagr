@@ -129,6 +129,7 @@ $(document).ready(function () {
 
             var caption = ArticleList[i].content_desc
             var articleLink = ArticleList[i].content
+            var contentID = ArticleList[i].row_num
 
 
             var pathArray = articleLink.split('/');
@@ -138,29 +139,29 @@ $(document).ready(function () {
             if (i < 4) {
                 document.getElementById('populateArticles-row1-col1').innerHTML +=
                     `<li><img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=ArticleLinkText href =${articleLink} target="_blank">  ${caption}</a></li>` +
-                    `<input type="image" src="DeleteIcon.png" name=${articleLink} class="DeleteArticleButton" />`
+                    `<input type="image" src="DeleteIcon.png" name=${contentID} class="DeleteArticleButton" />`
             } else if (i >= 4 && i < 9) {
                 document.getElementById('populateArticles-row1-col2').innerHTML +=
                     `<li><img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=ArticleLinkText href =${articleLink} target="_blank">  ${caption}</a></li>` +
-                    `<input type="image" src="DeleteIcon.png" name=${articleLink} class="DeleteArticleButton" />`
+                    `<input type="image" src="DeleteIcon.png" name=${contentID} class="DeleteArticleButton" />`
             } else if (i >= 9 && i < 13) {
                 document.getElementById('populateArticles-row1-col3').innerHTML +=
                     `<li class=ArticleLinkText><img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=ArticleLinkText href =${articleLink} target="_blank">  ${caption}</a></li>` +
-                    `<input type="image" src="DeleteIcon.png" name=${articleLink} class="DeleteArticleButton" />`
+                    `<input type="image" src="DeleteIcon.png" name=${contentID} class="DeleteArticleButton" />`
 
 
             } else if (i > 15 && i <= 20) {
                 document.getElementById('populateArticles-row2-col1').innerHTML +=
                     `<li class=ArticleLinkText><img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=ArticleLinkText href =${articleLink} target="_blank">  ${caption}</a></li>` +
-                    `<input type="image" src="DeleteIcon.png" name=${articleLink} class="DeleteArticleButton" />`
+                    `<input type="image" src="DeleteIcon.png" name=${contentID} class="DeleteArticleButton" />`
             } else if (i > 20 && i <= 25) {
                 document.getElementById('populateArticles-row2-col2').innerHTML +=
                     `<li class=ArticleLinkText><img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=ArticleLinkText href =${articleLink} target="_blank">  ${caption}</a></li>` +
-                    `<input type="image" src="DeleteIcon.png" name=${articleLink} class="DeleteArticleButton" />`
+                    `<input type="image" src="DeleteIcon.png" name=${contentID} class="DeleteArticleButton" />`
             } else if (i > 25 && i <= 30) {
                 document.getElementById('populateArticles-row2-col3').innerHTML +=
                     `<li class=ArticleLinkText><img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=ArticleLinkText href =${articleLink} target="_blank">  ${caption}</a></li>` +
-                    `<input type="image" src="DeleteIcon.png" name=${articleLink} class="DeleteArticleButton" />`
+                    `<input type="image" src="DeleteIcon.png" name=${contentID} class="DeleteArticleButton" />`
 
             }
         }
@@ -190,20 +191,25 @@ $(document).ready(function () {
     // ARTICLES
 
     $(document).on('click', '.DeleteArticleButton', function () {
-        DeleteArticleLink = $(this).attr('name')
+        ContentToDelete = $(this).attr('name')
         var requestString = server + '/DeleteArticle'
-        alert(DeleteArticleLink)
 
-        try { // CLOSE THIS CLAUSE
+        try {
             $.ajax({
                 url: requestString + '?' + $.param({
-                    "ArticleToDelete": DeleteArticleLink,
+                    "ContentToDelete": ContentToDelete,
                     "token": CookieToken,
                     "ProfileId": user_id
                 }),
                 type: 'DELETE',
                 success: function (result) {
                     console.log('delete request = ', result)
+                    if (result = true) {
+                        window.location.href = window.location.href
+                    } else {
+                        alert('Item not deleted, please try again (error: ', data, ' )')
+                    }
+
                 }
             });
 
