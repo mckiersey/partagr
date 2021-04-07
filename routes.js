@@ -379,6 +379,81 @@ const router = app => {
 
 
     //////////////////////////////////////////////////////////////////
+    //// *** DISCOVERY *** ////
+    //////////////////////////////////////////////////////////////////
+    app.get("/DiscoverArticle", (request, response) => {
+        user_id = request.query.user_id
+        // RETRIEVE USER CONTENT DATA
+        pool.query("SELECT content FROM user_content WHERE user_id = ? ", user_id, (error, result) => {
+            if (error) console.log('Content retrieval error:', error);
+            try {
+                console.log('article retrieval result = ', result)
+                RetrievedArticleData = result
+                if (result.length === 0) {
+                    console.log('No article data')
+                } else {
+                    console.log('sending back to client: ', RetrievedArticleData)
+                    response.send(RetrievedArticleData)
+                }
+            } catch (error) {
+                console.log("User content error (likely no data for this user)")
+            }
+        }); // RETRIEVE USER CONTENT DATA: END
+    });
+
+
+
+    //////////////////////////////////////////////////////////////////
+    //// *** DELETE PROFILE DATA *** ////
+    //////////////////////////////////////////////////////////////////
+    app.delete('/DeleteArticle', async (request, response) => {
+        console.log('delete article route')
+        console.log('delete request: ', request.query)
+
+        var ArticleToDelete = request.query.ArticleToDelete
+        var token = request.query.token
+        var ProfileUserId = request.query.ProfileId
+
+        // VERIFY EDITOR = OWNER
+        VerifiedTokenPayload = await verify(CLIENT_ID, token)
+        var FrontEndGoogleUserId = VerifiedTokenPayload[0] //Google user ID
+        if (!VerifiedTokenPayload) { //if value == false
+            response.send('* Token verification FAIL: User not logged in *')
+        } else {
+            try {
+                pool.query("SELECT google_user_id FROM user_profile WHERE user_id = ?", ProfileUserId, (error, result) => { // value of app user id on row of google user id 
+                    StoredGoogleUserID = result[0].google_user_id
+                    if (FrontEndGoogleUserId == StoredGoogleUserID) {
+                        // USER IS LOGGED IN & EDITOR = OWNER 
+
+                        DeleteData = { user_id: ProfileUserId, content: ArticleToDelete }
+                        console.log(DeleteData)
+                        // DELETE ARTICLE LINK 
+                        try {
+                            pool.query('DELETE FROM user_content WHERE user_id ?', ProfileUserId, (error, result) => {
+                                console.log(result)
+                                console.log(error)
+
+                            });
+                            response.send(true)
+                        } catch (error) {
+                            console.log('Something went wrong, article not deleted: ', error)
+                            response.send('Article not deleted')
+                        }
+                    } else {
+                        console.log('FrontEnd token Id does not match BackEnd Google ID')
+                        response.send('Article not deleted')
+                    }
+                }); // END OF: SELECT GOOGLE ID
+            } catch (error) {
+                console.log('Error from check that token matches profile')
+                response.send('Article not deleted')
+            }
+        }
+    })
+
+
+    //////////////////////////////////////////////////////////////////
     //// *** SIGN OUT *** ////
     //////////////////////////////////////////////////////////////////
 

@@ -20,7 +20,7 @@ p {
 
 
 
-#DeleteArticleButton {
+.DeleteArticleButton {
     height: 20px;
     width: 20px;
 }
