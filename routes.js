@@ -219,6 +219,7 @@ const router = app => {
     //// *** EDIT PROFILE *** ////
     //////////////////////////////////////////////////////////////////
 
+
     /// THE FOLLOWING ROUTES REQUIRE TWO CONDITIONS:
     // 1) THE USER IS SIGNED IN WITH A VALID TOKEN
     // 2) THE USER IS ON HER OWN PAGE
@@ -345,6 +346,23 @@ const router = app => {
             }
         }
     })
+
+    // PODCAST API
+    app.get('/api/podcasts', (req, res) => {
+        unirest.get(podcastAPIURL).header('X-ListenAPI-Key', podcastAPIKey).end((response) => {
+            //make sure response should be a JSON object
+            var thumbnail = response.body.results[0].thumbnail
+            var title = response.body.results[0].title_original
+            var url = response.body.results[0].listennotes_url
+            var id = response.body.results[0].id
+            var allText = response.body.results[0]
+
+            res.status(200).send([title, thumbnail, url, id, allText])
+
+        });
+    });
+
+
 
 
     //////////////////////////////////////////////////////////////////

@@ -56,6 +56,14 @@ $(document).ready(function () {
 
     document.getElementById('banner-name').innerHTML = "<a id='banner-name-text' href=" + server + ">partagr.com</h1>"
 
+
+
+    //////////////////////////////////////////////////////////////////
+    //// *** EDIT PROFILE *** ////
+    //////////////////////////////////////////////////////////////////
+
+
+
     // GET OWNER REQUEST: DESCRIPTION
     // FUNCTION: Check whether viewer is also owner of profile
     // 1) Send GET requst to BacKEnd route Owner with token & profile user id
@@ -126,6 +134,22 @@ $(document).ready(function () {
     });
 
 
+    $("#podcasts").on("click", function (event) {
+        console.log("podcast button clicked!")
+        var requestString = "http://localhost/api/podcasts"
+        $.get(requestString, function (data, status) {
+            console.log(data)
+            title = data[0]
+            thumbnail = data[1]
+            listenURL = data[2]
+            id = data[3]
+
+            document.getElementById('podThumbmail').innerHTML += `<img src=${thumbnail}></img>`
+            document.getElementById('podTitle').innerHTML += title
+            document.getElementById('podUrl').innerHTML += listenURL
+            document.getElementById('podId').innerHTML += id
+        });
+    });
 
     //////////////////////////////////////////////////////////////////
     //// *** POPULATE PROFILE DATA *** ////
