@@ -106,8 +106,6 @@ $(document).ready(function () {
     // 4) Set the page 'location' = to the page 'location' => refresh the page. This automatic refresh upon success will then load the newly added video via the Video request, above
     // 5) Else, send Alert
     $(document).on('click', '#PostArticleButton', function () {
-
-        console.log('Add article function executed')
         ArticleLink = document.querySelector('input[name=ArticleLink]').value
         ArticleDescription = document.querySelector('input[name=ArticleDescription]').value
 
@@ -119,7 +117,6 @@ $(document).ready(function () {
                 ArticleLink: ArticleLink,
                 ArticleDescription: ArticleDescription
             }).done(function (data) {
-                console.log('Server response :', data)
                 if (data == true) {
                     window.location.href = window.location.href
                     // refresh page after successfully saving a new video
@@ -133,28 +130,78 @@ $(document).ready(function () {
         }
     });
 
+    ///////////////////////////  PODCASTS ///////////////////////////
+    //SearchPodcastEpisodes
+    // PODCAST SEARCH
+    $(document).on("click", "#PodcastSearchButton", function () {
+        console.log('Search podcast function executed- ', $(this))
 
-    $("#podcasts").on("click", function (event) {
-        console.log("podcast button clicked!")
-        var requestString = "http://localhost/api/podcasts"
-        $.get(requestString, function (data, status) {
-            console.log(data)
-            title = data[0]
-            thumbnail = data[1]
-            listenURL = data[2]
-            id = data[3]
+        PodcastSearchTerm = $("#PodcastSearchText").val() //[0].value; // Retrieve submitted data
+        console.log('search term = ', PodcastSearchTerm)
+        PodcastSearchTermQueryFormat = PodcastSearchTerm.replaceAll(" ", "%20")
+        console.log('To search: podcast name = ', PodcastSearchTermQueryFormat)
 
-            document.getElementById('podThumbmail').innerHTML += `<img src=${thumbnail}></img>`
-            document.getElementById('podTitle').innerHTML += title
-            document.getElementById('podUrl').innerHTML += listenURL
-            document.getElementById('podId').innerHTML += id
-        });
+        try {
+            $.post(server + '/SearchPodcasts', {
+                token: CookieToken,
+                ProfileId: user_id,
+                PodcastSearchTerm: PodcastSearchTermQueryFormat
+            }).done(function (data) {
+                console.log('Server response :', data)
+                if (data.lenght === 0) {
+                    alert('Error- no podcast data available')
+                } else {
+                    console.log(data)
+                    title = data[0]
+                    thumbnail = data[1]
+                    listenURL = data[2]
+                    PodcastID = data[3]
+                    console.log('id = ', PodcastID)
+                    document.getElementById('podThumbmail').innerHTML +=
+                        `<img height="200" width="200" src=${thumbnail}></img>` +
+                        `<button class="btn btn-light" id = "AddpodcastButton"> Add Podcast</button>`
+                }
+            });
+        } catch (err) {
+            console.log('failed to post to backend')
+            console.log('Error: ' + err)
+        }
     });
+
+    // ADD PODCAST
+    $(document).on('click', '#AddpodcastButton', function () {
+        alert('Adding podcast!')
+        try {
+            $.post(server + '/AddPodcast', {
+                token: CookieToken,
+                ProfileId: user_id,
+                PodcastId: PodcastID
+            }).done(function (data) {
+                if (data == true) {
+                    window.location.href = window.location.href
+                } else {
+                    console.log(data)
+                    alert('Podcast not added, please try again', data)
+                }
+            });
+        } catch (err) {
+            console.log('failed to post to backend')
+            console.log('Error: ' + err)
+        }
+    });
+
 
     //////////////////////////////////////////////////////////////////
     //// *** POPULATE PROFILE DATA *** ////
     //////////////////////////////////////////////////////////////////
-    // GET ARTICLES REQUEST: DESCRIPTION
+
+    // GET PODCASTS
+    var GetPodcastsUrl = server + '/Podcasts?user_id=' + user_id
+    $.get(GetPodcastsUrl, function (PodcastList, status) {
+        console.log("podcast list: ", PodcastList)
+    });
+
+    // GET ARTICLES 
 
     var GetArticleUrl = server + '/Articles?user_id=' + user_id
     $.get(GetArticleUrl, function (ArticleList, status) {

@@ -11,11 +11,13 @@
     <!-- ADD BOOTSTRAP-->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
         integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-    <!--ADD CSS STYLING-->
-    <link rel="stylesheet" href="profile.css">
+
     <!--ADD JAVASCRIPT-->
     <script src="ProductionMode.js" async defer></script>
     <script src="profile.js" async defer></script>
+
+    <!--ADD CSS STYLING-->
+    <link rel="stylesheet" href="profile.css">
 
 
 </head>
@@ -159,12 +161,44 @@
     </div>
 
 
-    <!--ARTICLES SECTION-->
+    <!--PODCAST SECTION-->
     <div class="row  top-buffer" align="left">
         <div class="col-12">
             <h1 id="section-title">Podcast</h1>
         </div>
     </div>
+    <!---PODCAST SEARCH BAR-->
+    <div class="row" align="center">
+        <!--Podcast search-->
+        <div class="col">
+            <div id="PodcastSearchForm">
+                <label>Podcast Search</label>
+                <input id="PodcastSearchText" type="text" name="PodcastSearch"
+                    placeholder="Search your favourite podcast">
+                </br>
+                <div>
+                    <button class="btn btn-light" id="PodcastSearchButton">Search</button>
+                </div>
+            </div>
+        </div>
+        <!--Episode search-->
+        <div class="col">
+            <div id="PodcastEpisodeSearchForm">
+                <label>Search Episode</label>
+                <input id="PodcastSearchText" type="text" name="PodcastEpisodeSearch" placeholder="Search Episode">
+                </br>
+                <div>
+                    <button class="btn btn-light" id="PodcastEpisodeSearchButton"
+                        onclick=SearchPodcastEpisode()>Search</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--SEARCH RESULT-->
+    <div class="row justify-content-center">
+        <div class="col-6 border border-success d-flex justify-content-center" id="podThumbmail"></div>
+    </div>
+
     <!--ARTICLES SECTION-->
     <div class="row  top-buffer" align="left">
         <div class="col-12">

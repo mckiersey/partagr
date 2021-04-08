@@ -1,6 +1,7 @@
 - SSL CERT
 - New Google Auth system
-- Final version of content database
-- What happens with > 12 articles?
+    - Longer token expirary time
+- Final version of content database => DONE
+- What happens with > 12 articles? => DONE 
 - Delete content
-- Owner should only see edit mode switch
+- Owner should only see edit mode switch => DONE

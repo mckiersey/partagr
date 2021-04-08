@@ -2,6 +2,11 @@
 const pool = require('./config.js')
 var path = require("path");
 
+// PODCAST CREDENTIALS
+const unirest = require('unirest');
+const sourceFile = require('./ConfigPodcasts.js');
+console.log("imported key: ", sourceFile.podcastAPIKey);
+
 // google auth
 const { OAuth2Client } = require('google-auth-library');
 const CLIENT_ID = '170958026096-1delfs3g8tg4hoeg6bgs5ickhpe7k5pt.apps.googleusercontent.com' // Given by Google when you set up your Google OAuth client ID: https://developers.google.com/identity/sign-in/web/sign-in
@@ -347,20 +352,78 @@ const router = app => {
         }
     })
 
-    // PODCAST API
-    app.get('/api/podcasts', (req, res) => {
-        unirest.get(podcastAPIURL).header('X-ListenAPI-Key', podcastAPIKey).end((response) => {
-            //make sure response should be a JSON object
-            var thumbnail = response.body.results[0].thumbnail
-            var title = response.body.results[0].title_original
-            var url = response.body.results[0].listennotes_url
-            var id = response.body.results[0].id
-            var allText = response.body.results[0]
+    ///////////////////////////  PODCASTS ///////////////////////////
 
-            res.status(200).send([title, thumbnail, url, id, allText])
+    // SEARCH PODCASTS //
+    // PODCAST SEARCH
+    app.post('/SearchPodcasts', async (req, res) => {
+        console.log('podcasts route')
+        var PodcastSearchTerm = req.body.PodcastSearchTerm
+        var PodcastSearchTermAPI = 'https://listen-api.listennotes.com/api/v2/search?q=' + PodcastSearchTerm + '&type=podcast'
+        const response = await unirest.get(PodcastSearchTermAPI).header('X-ListenAPI-Key', sourceFile.podcastAPIKey)
 
-        });
+        console.log(response.body.results[0])
+        var thumbnail = response.body.results[0].thumbnail
+        var title = response.body.results[0].title_original
+        var url = response.body.results[0].listennotes_url
+        var id = response.body.results[0].id
+        var allText = response.body.results[0]
+        res.status(200).send([title, thumbnail, url, id, allText])
     });
+
+    // PODCAST EPISODE SEARCH
+    app.post('/SearchPodcastEpisodes', async (req, res) => {
+        console.log('episode api')
+        var PodcastSearchTerm = req.body.PodcastSearchTerm
+        var PodcastSearchTermAPI = 'https://listen-api.listennotes.com/api/v2/search?q=' + PodcastSearchTerm + '&type=episode'
+        const response = await unirest.get(PodcastSearchTermAPI).header('X-ListenAPI-Key', sourceFile.podcastAPIKey)
+
+        var thumbnail = response.body.results[0].thumbnail
+        var title = response.body.results[0].title_original
+        var url = response.body.results[0].listennotes_url
+        var id = response.body.results[0].id
+        var allText = response.body.results[0]
+        res.status(200).send([title, thumbnail, url, id, allText])
+    });
+
+    // ADD PODCAST
+    app.post("/AddPodcast", async (request, response) => {
+        console.log('Add podcast route')
+        token = request.body.token
+        ProfileUserId = request.body.ProfileId
+        PodcastId = request.body.PodcastId
+
+        VerifiedTokenPayload = await verify(CLIENT_ID, token)
+        var FrontEndGoogleUserId = VerifiedTokenPayload[0]
+        if (!VerifiedTokenPayload) {
+            response.send('* Token verification FAIL: User not logged in *')
+        } else {
+            try {
+                pool.query("SELECT google_user_id FROM user_profile WHERE user_id = ?", ProfileUserId, (error, result) => { // value of app user id on row of google user id 
+                    StoredGoogleUserID = result[0].google_user_id
+                    if (FrontEndGoogleUserId == StoredGoogleUserID) {
+                        console.log('Authorised user editing correct profile')
+                        InsertData = { user_id: ProfileUserId, content: PodcastId, content_type: "podcast" }
+                        try {
+                            pool.query('INSERT INTO user_content SET ?', InsertData, (error, result) => {
+                                console.log(error)
+                            });
+                            response.send(true)
+                        } catch (error) {
+                            console.log('Something went wrong, Podcast not added: ', error)
+                            response.send('Podcast not Added')
+                        }
+                    } else {
+                        console.log('FrontEnd token Id does not match BackEnd Google ID')
+                        response.send('Podcast not Added')
+                    }
+                }); // END OF: SELECT GOOGLE ID
+            } catch (error) {
+                console.log('Error from check that token matches profile')
+                response.send('Article not Added')
+            }
+        }
+    })
 
 
 
@@ -368,6 +431,27 @@ const router = app => {
     //////////////////////////////////////////////////////////////////
     //// *** POPULATE PROFILE DATA *** ////
     //////////////////////////////////////////////////////////////////
+
+
+    app.get("/Podcasts", (request, response) => {
+        user_id = request.query.user_id
+        console.log('podcast route')
+        // RETRIEVE USER CONTENT DATA
+        pool.query("SELECT content_id, content FROM user_content WHERE content_type = 'podcast' AND user_id = ? ", user_id, (error, result) => {
+            if (error) console.log('Content retrieval error:', error);
+            try {
+                RetrievedPodcastData = result
+                if (result.length === 0) {
+                    console.log('No podcast data')
+                } else {
+                    console.log('sending back to client: ', RetrievedPodcastData)
+                    response.send(RetrievedPodcastData)
+                }
+            } catch (error) {
+                console.log("User content error (likely no podcast data for this user): ", error)
+            }
+        }); // RETRIEVE USER CONTENT DATA: END
+    });
 
     // GET ARTICLE ROUTE: DESCRIPTION
     // FUNCTION: Populate profile with relevant data
@@ -378,19 +462,17 @@ const router = app => {
     app.get("/Articles", (request, response) => {
         user_id = request.query.user_id
         // RETRIEVE USER CONTENT DATA
-        pool.query("SELECT content_id, content, content_desc FROM user_content WHERE user_id = ? ", user_id, (error, result) => {
+        pool.query("SELECT content_id, content, content_desc FROM user_content WHERE content_type = 'article' AND user_id = ? ", user_id, (error, result) => {
             if (error) console.log('Content retrieval error:', error);
             try {
-                console.log('article retrieval result = ', result)
                 RetrievedArticleData = result
                 if (result.length === 0) {
                     console.log('No article data')
                 } else {
-                    console.log('sending back to client: ', RetrievedArticleData)
                     response.send(RetrievedArticleData)
                 }
             } catch (error) {
-                console.log("User content error (likely no data for this user)")
+                console.log("User content error (likely no articles data for this user)")
             }
         }); // RETRIEVE USER CONTENT DATA: END
     });
