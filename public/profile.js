@@ -170,7 +170,6 @@ $(document).ready(function () {
 
     // ADD PODCAST
     $(document).on('click', '#AddpodcastButton', function () {
-        alert('Adding podcast!')
         try {
             $.post(server + '/AddPodcast', {
                 token: CookieToken,
@@ -197,8 +196,18 @@ $(document).ready(function () {
 
     // GET PODCASTS
     var GetPodcastsUrl = server + '/Podcasts?user_id=' + user_id
+    console.log('waiting for podcasts to load')
+
     $.get(GetPodcastsUrl, function (PodcastList, status) {
-        console.log("podcast list: ", PodcastList)
+        $('.PodcastLoader').hide()
+
+        for (var content_id in PodcastList) {
+            if (PodcastList.hasOwnProperty(content_id)) {
+                document.getElementById('populatePodcasts').innerHTML +=
+                    `<a href=${PodcastList[content_id].website} target="_blank"><img class="SavedPodcastThumbnail" src=${PodcastList[content_id].image} alt=${PodcastList[content_id].title}></a>` +
+                    `<input type="image" src="DeleteIcon.png" name=${content_id} class="DeleteContentButton OwnerElement"/>`
+            }
+        }
     });
 
     // GET ARTICLES 
@@ -219,29 +228,29 @@ $(document).ready(function () {
             if (i < 5) {
                 document.getElementById('populateArticles-row1-col1').innerHTML +=
                     `<li><img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=ArticleLinkText href =${articleLink} target="_blank">  ${caption}</a></li>` +
-                    `<input type="image" src="DeleteIcon.png" name=${contentID} class="DeleteArticleButton OwnerElement"/>`
+                    `<input type="image" src="DeleteIcon.png" name=${contentID} class="DeleteContentButton OwnerElement"/>`
             } else if (i >= 5 && i < 10) {
                 document.getElementById('populateArticles-row1-col2').innerHTML +=
                     `<li><img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=ArticleLinkText href =${articleLink} target="_blank">  ${caption}</a></li>` +
-                    `<input type="image" src="DeleteIcon.png" name=${contentID} class="DeleteArticleButton OwnerElement"/>`
+                    `<input type="image" src="DeleteIcon.png" name=${contentID} class="DeleteContentButton OwnerElement"/>`
             } else if (i >= 10 && i < 15) {
                 document.getElementById('populateArticles-row1-col3').innerHTML +=
                     `<li class=ArticleLinkText><img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=ArticleLinkText href =${articleLink} target="_blank">  ${caption}</a></li>` +
-                    `<input type="image" src="DeleteIcon.png" name=${contentID} class="DeleteArticleButton OwnerElement"/>`
+                    `<input type="image" src="DeleteIcon.png" name=${contentID} class="DeleteContentButton OwnerElement"/>`
 
 
             } else if (i > 15 && i <= 20) {
                 document.getElementById('populateArticles-row2-col1').innerHTML +=
                     `<li class=ArticleLinkText><img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=ArticleLinkText href =${articleLink} target="_blank">  ${caption}</a></li>` +
-                    `<input type="image" src="DeleteIcon.png" name=${contentID} class="DeleteArticleButton OwnerElement"/>`
+                    `<input type="image" src="DeleteIcon.png" name=${contentID} class="DeleteContentButton OwnerElement"/>`
             } else if (i > 20 && i <= 25) {
                 document.getElementById('populateArticles-row2-col2').innerHTML +=
                     `<li class=ArticleLinkText><img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=ArticleLinkText href =${articleLink} target="_blank">  ${caption}</a></li>` +
-                    `<input type="image" src="DeleteIcon.png" name=${contentID} class="DeleteArticleButton OwnerElement"/>`
+                    `<input type="image" src="DeleteIcon.png" name=${contentID} class="DeleteContentButton OwnerElement"/>`
             } else if (i > 25 && i <= 30) {
                 document.getElementById('populateArticles-row2-col3').innerHTML +=
                     `<li class=ArticleLinkText><img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=ArticleLinkText href =${articleLink} target="_blank">  ${caption}</a></li>` +
-                    `<input type="image" src="DeleteIcon.png" name=${contentID} class="DeleteArticleButton OwnerElement"/>`
+                    `<input type="image" src="DeleteIcon.png" name=${contentID} class="DeleteContentButton OwnerElement"/>`
 
             }
         }
@@ -269,7 +278,7 @@ $(document).ready(function () {
 
     // ARTICLES
 
-    $(document).on('click', '.DeleteArticleButton', function () {
+    $(document).on('click', '.DeleteContentButton', function () {
 
         console.log('DELETE CLICKED')
         ContentToDelete = $(this).attr('name')

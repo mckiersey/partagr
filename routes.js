@@ -436,22 +436,58 @@ const router = app => {
     app.get("/Podcasts", (request, response) => {
         user_id = request.query.user_id
         console.log('podcast route')
+
+
         // RETRIEVE USER CONTENT DATA
         pool.query("SELECT content_id, content FROM user_content WHERE content_type = 'podcast' AND user_id = ? ", user_id, (error, result) => {
             if (error) console.log('Content retrieval error:', error);
-            try {
-                RetrievedPodcastData = result
-                if (result.length === 0) {
-                    console.log('No podcast data')
-                } else {
-                    console.log('sending back to client: ', RetrievedPodcastData)
-                    response.send(RetrievedPodcastData)
+
+            console.log('query result = ', result)
+            RetrievedPodcastData = result
+
+            if (result.length === 0) {
+                console.log('No podcast data')
+            } else {
+                var PodcastConcatString = "?"
+                for (i = 0; i < RetrievedPodcastData.length; i++) {
+                    contentId = RetrievedPodcastData[i].content_id
+                    PodcastId = RetrievedPodcastData[i].content
+                    PodcastConcatString = PodcastConcatString.concat(contentId, "=", PodcastId, "&") //https://stackoverflow.com/a/36123716/6065710
+                    PodcastRedirectQuery = "/PodcastAPIQuery" + PodcastConcatString
                 }
-            } catch (error) {
-                console.log("User content error (likely no podcast data for this user): ", error)
+                response.redirect(PodcastRedirectQuery)
+
             }
-        }); // RETRIEVE USER CONTENT DATA: END
+        });
     });
+
+
+    app.get("/PodcastAPIQuery", async (request, response) => {
+        console.log('api route triggered')
+        PodcastAPIQueryId = request.query
+        console.log('redirected api query for id = ', PodcastAPIQueryId)
+
+        var RetrievedPodastData = {}
+        for (var content_id in PodcastAPIQueryId) {
+            if (PodcastAPIQueryId.hasOwnProperty(content_id)) {
+                console.log(content_id + " -> " + PodcastAPIQueryId[content_id]); //https://stackoverflow.com/a/684692/6065710
+                var PodcastSearchIDAPI = "https://listen-api.listennotes.com/api/v2/podcasts/" + PodcastAPIQueryId[content_id]
+                const response = await unirest.get(PodcastSearchIDAPI).header('X-ListenAPI-Key', sourceFile.podcastAPIKey)
+                //console.log('podcast reponse= ', response.toJSON().body)
+                PodcastTitle = response.toJSON().body.title
+                PodcastImage = response.toJSON().body.image
+                PodcastWebsite = response.toJSON().body.website
+
+                RetrievedPodastData[content_id] = { title: PodcastTitle, image: PodcastImage, website: PodcastWebsite }
+            }
+        }
+
+        console.log('To send: ', RetrievedPodastData)
+        response.send(RetrievedPodastData)
+
+    })
+
+
 
     // GET ARTICLE ROUTE: DESCRIPTION
     // FUNCTION: Populate profile with relevant data

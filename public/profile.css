@@ -1,5 +1,6 @@
 h1,
 h2,
+h3,
 p {
     color: RGB(229, 229, 229);
     font-family: helvetica;
@@ -22,9 +23,9 @@ p {
     display: none;
 }
 
-.DeleteArticleButton {
-    height: 20px;
-    width: 20px;
+.DeleteContentButton {
+    height: 30px;
+    width: 30px;
 }
 
 .ArticleLinkText {
@@ -37,6 +38,12 @@ p {
 
 #AddpodcastButton {
     margin: 10px;
+}
+
+.SavedPodcastThumbnail {
+    width: 200px;
+    height: 200px;
+    margin: 5px;
 }
 
 #ArticleSection {

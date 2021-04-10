@@ -5,3 +5,5 @@
 - What happens with > 12 articles? => DONE 
 - Delete content
 - Owner should only see edit mode switch => DONE
+- How to make sharing easy?
+- Add listen notes logo (powered by listennotes)
