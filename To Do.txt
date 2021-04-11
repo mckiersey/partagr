@@ -7,3 +7,4 @@
 - Owner should only see edit mode switch => DONE
 - How to make sharing easy?
 - Add listen notes logo (powered by listennotes)
+- Add no podcasts found text => DONE

@@ -1,5 +1,6 @@
 $(document).ready(function () {
 
+
     console.log('Profile JS loading...')
     console.log('Server production mode = ', server)
 
@@ -131,7 +132,7 @@ $(document).ready(function () {
     });
 
     ///////////////////////////  PODCASTS ///////////////////////////
-    //SearchPodcastEpisodes
+
     // PODCAST SEARCH
     $(document).on("click", "#PodcastSearchButton", function () {
         console.log('Search podcast function executed- ', $(this))
@@ -148,18 +149,22 @@ $(document).ready(function () {
                 PodcastSearchTerm: PodcastSearchTermQueryFormat
             }).done(function (data) {
                 console.log('Server response :', data)
-                if (data.lenght === 0) {
-                    alert('Error- no podcast data available')
+                if (data == false) {
+                    console.log('search fail')
+                    alert('No podcast found- try another search term')
                 } else {
                     console.log(data)
                     title = data[0]
                     thumbnail = data[1]
                     listenURL = data[2]
                     PodcastID = data[3]
-                    console.log('id = ', PodcastID)
-                    document.getElementById('podThumbmail').innerHTML +=
+                    description = data[4]
+                    document.getElementById('PodcastThumbnail').innerHTML +=
+                        `<h3>Add<emph>podcast</emph></h3>` +
                         `<img height="200" width="200" src=${thumbnail}></img>` +
                         `<button class="btn btn-light" id = "AddpodcastButton"> Add Podcast</button>`
+                    document.getElementById('PodcastDescription').innerHTML += `<p>${description}</p>`
+
                 }
             });
         } catch (err) {
@@ -167,6 +172,50 @@ $(document).ready(function () {
             console.log('Error: ' + err)
         }
     });
+
+    // PODCAST EPISODE SEARCH
+    $(document).on("click", "#PodcastEpisodeSearchButton", function () {
+        $('.ManualPodcastInput').show()
+        PodcastEpisodeSearchTerm = $("#PodcastEpisodeSearchText").val() //[0].value; // Retrieve submitted data
+        PodcastEpisodeSearchTermQueryFormat = PodcastEpisodeSearchTerm.replaceAll(" ", "%20")
+        try {
+            $.post(server + '/SearchPodcastEpisodes', {
+                token: CookieToken,
+                ProfileId: user_id,
+                PodcastEpisodeSearchTerm: PodcastEpisodeSearchTermQueryFormat
+            }).done(function (data) {
+                console.log('Server response :', data)
+                if (data == false) {
+                    alert('No episode found- try another search term')
+
+                } else {
+                    console.log(data)
+                    title = data[0]
+                    thumbnail = data[1]
+                    listenURL = data[2]
+                    PodcastEpisodeID = data[3]
+                    description = data[4]
+
+                    console.log('thumbnail = ', thumbnail)
+                    console.log('title = ', title)
+                    console.log('url = ', listenURL)
+                    console.log('id = ', PodcastEpisodeID)
+                    console.log('desc = ', description)
+
+                    document.getElementById('PodcastThumbnail').innerHTML +=
+                        `<h4>${title}</h4>` +
+                        `<img height="80" width="80" src=${thumbnail}></img>` +
+                        `<button class="btn btn-light" id = "AddpodcastEpisodeButton"> Add Podcast Episode</button>`
+                    document.getElementById('PodcastDescription').innerHTML += `<p>${description}</p>`
+                }
+            });
+        } catch (err) {
+            console.log('failed to post to backend')
+            console.log('Error: ' + err)
+        }
+    });
+
+
 
     // ADD PODCAST
     $(document).on('click', '#AddpodcastButton', function () {
@@ -189,6 +238,33 @@ $(document).ready(function () {
         }
     });
 
+    // ADD PODCAST EPISODE (talking politics rawls on justice)
+    // tit for tat
+    // octomom
+    // ADD PODCAST
+    $(document).on('click', '#AddpodcastEpisodeButton', function () {
+        try {
+            $.post(server + '/AddPodcastEpisode', {
+                token: CookieToken,
+                ProfileId: user_id,
+                PodcastEpisodeID: PodcastEpisodeID
+            }).done(function (data) {
+                if (data == true) {
+                    window.location.href = window.location.href
+                } else {
+                    console.log(data)
+                    if (data === 'TOKEN FAIL') {
+                        alert('Verification Expired. Please sign in again')
+                    } else {
+                        alert('Podcast not added, please try again')
+                    }
+                }
+            });
+        } catch (err) {
+            console.log('failed to post to backend')
+            console.log('Error: ' + err)
+        }
+    });
 
     //////////////////////////////////////////////////////////////////
     //// *** POPULATE PROFILE DATA *** ////
@@ -200,15 +276,85 @@ $(document).ready(function () {
 
     $.get(GetPodcastsUrl, function (PodcastList, status) {
         $('.PodcastLoader').hide()
-
+        console.log('podcast list =', PodcastList)
+        if (PodcastList == false) {
+            document.getElementById('PopulatePodcasts').innerHTML += "<h3>No podcasts found- use the search function to add a podcast.</h3>"
+        }
         for (var content_id in PodcastList) {
             if (PodcastList.hasOwnProperty(content_id)) {
-                document.getElementById('populatePodcasts').innerHTML +=
+                document.getElementById('PopulatePodcasts').innerHTML +=
                     `<a href=${PodcastList[content_id].website} target="_blank"><img class="SavedPodcastThumbnail" src=${PodcastList[content_id].image} alt=${PodcastList[content_id].title}></a>` +
                     `<input type="image" src="DeleteIcon.png" name=${content_id} class="DeleteContentButton OwnerElement"/>`
             }
         }
     });
+
+    // GET PODCAST EPISODES
+    var GetPodcastEpisodesUrl = server + '/PodcastEpisodes?user_id=' + user_id
+    console.log('waiting for podcast episodes to load')
+
+    $.get(GetPodcastEpisodesUrl, function (PodcastEpisodeList, status) {
+        $('.PodcastEpisodeLoader').hide()
+        console.log('podcast episode list =', PodcastEpisodeList)
+        if (PodcastEpisodeList == false) {
+            document.getElementById('PopulatePodcastEpisodes').innerHTML += "<h3>No podcast episodes found- use the search function to add an episode.</h3>"
+        }
+        for (var content_id in PodcastEpisodeList) {
+            if (PodcastEpisodeList.hasOwnProperty(content_id)) {
+                document.getElementById('PopulatePodcastEpisodes').innerHTML +=
+                    `<h3 class="ClickToPlay" name=${PodcastEpisodeList[content_id].episodeID} >${PodcastEpisodeList[content_id].title}</h3>` +
+                    `<input type="image" name=${PodcastEpisodeList[content_id].episodeID} class="SavedPodcastEpisodeThumbnail ClickToPlay" src=${PodcastEpisodeList[content_id].image}>` +
+                    `<p>${PodcastEpisodeList[content_id].description}` +
+                    `<input type="image" src="DeleteIcon.png" name=${content_id} class="DeleteContentButton OwnerElement"/>`
+            }
+        }
+    });
+
+
+    // real table
+    var PodcastEpisodeData = [
+        ['Talking Politics', 'John Rawls', 'This is a description'],
+        ['Talking Politics', 'John Rawls2', 'This is a description'],
+        ['Talking Politics', 'John Rawls3', 'This is a description'],
+        ["Radiolab", "Tit for Tat", "Another description"],
+        ["Radiolab", "Tit for Tat", "Another description"],
+
+    ];
+    var table = $('#EpisodeList').DataTable({
+        columns: [
+            {
+                title: 'Podcast',
+            },
+            {
+                name: 'second',
+                title: 'Episode',
+            },
+            {
+                title: 'Description',
+            }
+        ],
+        data: PodcastEpisodeData,
+        rowsGroup: [// Always the array (!) of the column-selectors in specified order to which rows groupping is applied
+            // (column-selector could be any of specified in https://datatables.net/reference/type/column-selector)
+            'second:name',
+            0,
+            2
+        ],
+        pageLength: '20',
+    });
+
+
+
+
+    // CLICK TO PLAY PODCAST EPISODE
+    $(document).on('click', '.ClickToPlay', function () {
+        EpisodeToPlay = $(this).attr('name')
+        console.log('to play = ', EpisodeToPlay)
+
+        document.getElementById('PodcastPlayer').innerHTML +=
+            `<iframe src="https://www.listennotes.com/embedded/e/${EpisodeToPlay}/" height="300px" width="100%" style="width: 1px; min-width: 100%;" frameborder="0" scrolling="no" loading="lazy"></iframe>`
+    });
+
 
     // GET ARTICLES 
 

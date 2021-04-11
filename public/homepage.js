@@ -56,7 +56,6 @@ function onSignIn(googleUser) {
                         VerificationStatus = data[0]
                         if (VerificationStatus ==
                             '* Token verification SUCCESS: User logged in *') {
-                            alert('Verification success')
                             user_id = data[1]
                             // Redirect back to BackEnd to render profile page
                             var BaseProfiledUrl = server + '/ProfilePage?user_id='

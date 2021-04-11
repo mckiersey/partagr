@@ -16,6 +16,11 @@
     <script src="ProductionMode.js" async defer></script>
     <script src="profile.js" async defer></script>
 
+    <!--ADD DATA TABLE PLUG IN-->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
+
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js">
+    </script>
     <!--ADD CSS STYLING-->
     <link rel="stylesheet" href="profile.css">
 
@@ -185,30 +190,87 @@
         <div class="col">
             <div id="PodcastEpisodeSearchForm">
                 <label>Search Episode</label>
-                <input id="PodcastSearchText" type="text" name="PodcastEpisodeSearch" placeholder="Search Episode">
+                <input id="PodcastEpisodeSearchText" type="text" name="PodcastEpisodeSearch"
+                    placeholder="Search Episode">
                 </br>
                 <div>
-                    <button class="btn btn-light" id="PodcastEpisodeSearchButton"
-                        onclick=SearchPodcastEpisode()>Search</button>
+                    <button class="btn btn-light" id="PodcastEpisodeSearchButton">Search</button>
                 </div>
             </div>
         </div>
     </div>
     <!--SEARCH RESULT-->
     <div class="row justify-content-center">
-        <div class="col-6 border border-success d-flex justify-content-center" id="podThumbmail"></div>
+        <div class="col-6 border border-success d-flex justify-content-center" id="PodcastThumbnail"></div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-6 border border-success d-flex justify-content-center" id="PodcastDescription"></div>
+    </div>
+    <!--MANUAL PODCAST INPUT-->
+    <div class="row justify-content-center ManualPodcastInput">
+        <div class="col border border-warning d-flex justify-content-center">
+
+            <div class="row justify-content-around">
+                <div class="col-5 border border-danger d-flex justify-content-center">
+                    <h2>Can't find what you're looking for?</h2>
+                    <p>You can manually search <a href="https://www.listennotes.com" target="_blank">here </a> -or
+                        anywhere else
+                        online (usually the
+                        podacast's own website is a good bet). Just copy the player URL you find and add your own
+                        description!</p>
+                </div>
+
+                <div class="col-5 border border-success d-flex justify-content-center">
+                    <div class="ManualPodcastInput">
+                        <label>Podcast Episode URL</label>
+                        <input type="text" name="ManualPodcastEpisodeURL" id="ManualPodcastEpisodeURL"
+                            placeholder="Hint: Googling the podcast's own website usually works">
+                        <br>
+                        <label>Episode Description</label>
+                        <input type="text" name="MaualPodcastEpisodeDescription" placeholder="Optional">
+                        <div>
+                            <button class="btn btn-light" id="PostManualPodcastEpisode">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <!--POPULATE PODCASTS EPISODES-->
     <div class="row justify-content-center">
-        <div class="col-8  border border-success" id="populatePodcasts">
-            <h2>Podcast Episodes</h2>
+        <div class="col-8  border border-success" id="PopulatePodcasts">
             <h3 class="PodcastLoader">Finding your podcasts...</h3>
             <div class="spinner-border text-success PodcastLoader" id="spinner" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <!--Podcast thumbnails go here-->
+        </div>
+    </div>
+
+    <!--POPULATE PODCASTS EPISODES-->
+    <div class="row justify-content-center">
+        <div class="col-8  border border-success" id="PopulatePodcastEpisodes">
+            <h2>Podcast Episodes</h2>
+            <h3 class="PodcastEpisodeLoader">Finding your podcast episodes...</h3>
+            <div class="spinner-border text-success PodcastEpisodeLoader" id="spinner" role="status">
                 <span class="sr-only">Loading...</span>
             </div>
             <!--Episode thumbnails go here-->
         </div>
     </div>
+
+    <!--PODCAST PLAYER-->
+    <div class="row justify-content-center">
+        <div class="col-8  border border-success" id="PodcastPlayer">
+            <!--iFrame populates here-->
+            <table id="EpisodeList" class="display" width="80%"></table>
+        </div>
+    </div>
+
+    <!--test table-->
+    <table id="example" class="display" width="100%">
+    </table>
+
 
 
     <!--ARTICLES SECTION-->

@@ -361,29 +361,40 @@ const router = app => {
         var PodcastSearchTerm = req.body.PodcastSearchTerm
         var PodcastSearchTermAPI = 'https://listen-api.listennotes.com/api/v2/search?q=' + PodcastSearchTerm + '&type=podcast'
         const response = await unirest.get(PodcastSearchTermAPI).header('X-ListenAPI-Key', sourceFile.podcastAPIKey)
-
-        console.log(response.body.results[0])
-        var thumbnail = response.body.results[0].thumbnail
-        var title = response.body.results[0].title_original
-        var url = response.body.results[0].listennotes_url
-        var id = response.body.results[0].id
-        var allText = response.body.results[0]
-        res.status(200).send([title, thumbnail, url, id, allText])
+        if (response.body.results.length === 0) {
+            console.log('search fail')
+            res.send(false)
+        } else {
+            console.log(response.body.results[0])
+            var thumbnail = response.body.results[0].thumbnail
+            var title = response.body.results[0].title_original
+            var url = response.body.results[0].listennotes_url
+            var id = response.body.results[0].id
+            var description = response.body.results[0].description_original
+            //var allText = response.body.results[0] // alt text?
+            res.status(200).send([title, thumbnail, url, id, description])
+        }
     });
 
     // PODCAST EPISODE SEARCH
     app.post('/SearchPodcastEpisodes', async (req, res) => {
-        console.log('episode api')
-        var PodcastSearchTerm = req.body.PodcastSearchTerm
-        var PodcastSearchTermAPI = 'https://listen-api.listennotes.com/api/v2/search?q=' + PodcastSearchTerm + '&type=episode'
+        var PodcastEpisodeSearchTerm = req.body.PodcastEpisodeSearchTerm
+        console.log('episode api: ', PodcastEpisodeSearchTerm)
+        var PodcastSearchTermAPI = 'https://listen-api.listennotes.com/api/v2/search?q=' + PodcastEpisodeSearchTerm + '&type=episode'
         const response = await unirest.get(PodcastSearchTermAPI).header('X-ListenAPI-Key', sourceFile.podcastAPIKey)
-
-        var thumbnail = response.body.results[0].thumbnail
-        var title = response.body.results[0].title_original
-        var url = response.body.results[0].listennotes_url
-        var id = response.body.results[0].id
-        var allText = response.body.results[0]
-        res.status(200).send([title, thumbnail, url, id, allText])
+        console.log('search results: ', response.body.results[0])
+        if (response.body.results.length === 0) {
+            console.log('search fail')
+            res.send(false)
+        } else {
+            var thumbnail = response.body.results[0].thumbnail
+            var title = response.body.results[0].title_original
+            var url = response.body.results[0].listennotes_url
+            var id = response.body.results[0].id
+            var description = response.body.results[0].description_original
+            //var allText = response.body.results[0] alt text?
+            res.status(200).send([title, thumbnail, url, id, description])
+        }
     });
 
     // ADD PODCAST
@@ -402,7 +413,6 @@ const router = app => {
                 pool.query("SELECT google_user_id FROM user_profile WHERE user_id = ?", ProfileUserId, (error, result) => { // value of app user id on row of google user id 
                     StoredGoogleUserID = result[0].google_user_id
                     if (FrontEndGoogleUserId == StoredGoogleUserID) {
-                        console.log('Authorised user editing correct profile')
                         InsertData = { user_id: ProfileUserId, content: PodcastId, content_type: "podcast" }
                         try {
                             pool.query('INSERT INTO user_content SET ?', InsertData, (error, result) => {
@@ -420,10 +430,49 @@ const router = app => {
                 }); // END OF: SELECT GOOGLE ID
             } catch (error) {
                 console.log('Error from check that token matches profile')
-                response.send('Article not Added')
+                response.send('Podcast not Added')
             }
         }
     })
+
+    // ADD PODCAST EPISODE
+    app.post("/AddPodcastEpisode", async (request, response) => {
+        console.log('Add podcast episode route')
+        token = request.body.token
+        ProfileUserId = request.body.ProfileId
+        PodcastEpisodeID = request.body.PodcastEpisodeID
+
+        VerifiedTokenPayload = await verify(CLIENT_ID, token)
+        var FrontEndGoogleUserId = VerifiedTokenPayload[0]
+        if (!VerifiedTokenPayload) {
+            response.send('TOKEN FAIL')
+        } else {
+            try {
+                pool.query("SELECT google_user_id FROM user_profile WHERE user_id = ?", ProfileUserId, (error, result) => { // value of app user id on row of google user id 
+                    StoredGoogleUserID = result[0].google_user_id
+                    if (FrontEndGoogleUserId == StoredGoogleUserID) {
+                        InsertData = { user_id: ProfileUserId, content: PodcastEpisodeID, content_type: "podcast_episode" }
+                        try {
+                            pool.query('INSERT INTO user_content SET ?', InsertData, (error, result) => {
+                                console.log(error)
+                            });
+                            response.send(true)
+                        } catch (error) {
+                            console.log('Something went wrong, Podcast episode not added: ', error)
+                            response.send('Podcast episode not Added')
+                        }
+                    } else {
+                        console.log('FrontEnd token Id does not match BackEnd Google ID')
+                        response.send('Podcast episode not Added')
+                    }
+                }); // END OF: SELECT GOOGLE ID
+            } catch (error) {
+                console.log('Error from check that token matches profile')
+                response.send('Podcast episode not Added')
+            }
+        }
+    })
+
 
 
 
@@ -432,21 +481,22 @@ const router = app => {
     //// *** POPULATE PROFILE DATA *** ////
     //////////////////////////////////////////////////////////////////
 
+    // PODCASTS //
+    //////////////////////////////////////////////////////
 
+    // POPULATE PODCASTS (i)
     app.get("/Podcasts", (request, response) => {
         user_id = request.query.user_id
         console.log('podcast route')
 
-
-        // RETRIEVE USER CONTENT DATA
+        // RETRIEVE USER CONTENT DATA (ii)
         pool.query("SELECT content_id, content FROM user_content WHERE content_type = 'podcast' AND user_id = ? ", user_id, (error, result) => {
             if (error) console.log('Content retrieval error:', error);
-
-            console.log('query result = ', result)
             RetrievedPodcastData = result
 
             if (result.length === 0) {
                 console.log('No podcast data')
+                response.send(false)
             } else {
                 var PodcastConcatString = "?"
                 for (i = 0; i < RetrievedPodcastData.length; i++) {
@@ -460,12 +510,10 @@ const router = app => {
             }
         });
     });
-
-
+    // POPULATE PODCASTS (iii): SEND STORED IDs TO LISTEN NOTES API TO RETRIEVE DATA
     app.get("/PodcastAPIQuery", async (request, response) => {
         console.log('api route triggered')
         PodcastAPIQueryId = request.query
-        console.log('redirected api query for id = ', PodcastAPIQueryId)
 
         var RetrievedPodastData = {}
         for (var content_id in PodcastAPIQueryId) {
@@ -481,13 +529,62 @@ const router = app => {
                 RetrievedPodastData[content_id] = { title: PodcastTitle, image: PodcastImage, website: PodcastWebsite }
             }
         }
-
-        console.log('To send: ', RetrievedPodastData)
         response.send(RetrievedPodastData)
-
     })
 
+    // POPULATE PODCAST EPISODES (i)
+    app.get("/PodcastEpisodes", (request, response) => {
+        user_id = request.query.user_id
+        console.log('podcast episode route')
 
+        // POPULATE PODCAST EPISODES (ii): RETRIEVE USER CONTENT DATA
+        pool.query("SELECT content_id, content, content_desc FROM user_content WHERE content_type = 'podcast_episode' OR 'podcast_episode_manual' AND user_id = ? ", user_id, (error, result) => {
+            if (error) console.log('Content retrieval error:', error);
+            RetrievedPodcastData = result
+
+            if (result.length === 0) {
+                console.log('No podcast data')
+                response.send(false)
+            } else if (result.content_desc === 'podcast_episod_manual') { // Manually inserted podcasts
+                console.log('To Do: write logic for user inserted podcast episodes.')
+            } else { // Searched for podcasts
+                var PodcastEpisodeConcatString = "?"
+                for (i = 0; i < RetrievedPodcastData.length; i++) {
+                    contentId = RetrievedPodcastData[i].content_id
+                    PodcastEpisodeId = RetrievedPodcastData[i].content
+                    PodcastEpisodeConcatString = PodcastEpisodeConcatString.concat(contentId, "=", PodcastEpisodeId, "&") //https://stackoverflow.com/a/36123716/6065710
+                    PodcastEpisodeRedirectQuery = "/PodcastEpisodeAPIQuery" + PodcastEpisodeConcatString
+                }
+                response.redirect(PodcastEpisodeRedirectQuery)
+
+            }
+        });
+    });
+
+    //POPULATE PODCAST EPISODES (iii): SEND STORED IDs TO LISTEN NOTES API TO RETRIEVE DATA
+    app.get("/PodcastEpisodeAPIQuery", async (request, response) => {
+        console.log('Episode api route triggered')
+        PodcastEpisodeAPIQueryId = request.query
+
+        var RetrievedPodastEpisodeData = {}
+        for (var content_id in PodcastEpisodeAPIQueryId) {
+            if (PodcastEpisodeAPIQueryId.hasOwnProperty(content_id)) {
+                console.log(content_id + " -> " + PodcastEpisodeAPIQueryId[content_id]); //https://stackoverflow.com/a/684692/6065710
+                var PodcastEpisodeSearchIdAPI = "https://listen-api.listennotes.com/api/v2/episodes/" + PodcastEpisodeAPIQueryId[content_id]
+                const response = await unirest.get(PodcastEpisodeSearchIdAPI).header('X-ListenAPI-Key', sourceFile.podcastAPIKey)
+                console.log('podcast reponse= ', response.toJSON().body)
+                PodcastEpisodeTitle = response.toJSON().body.title
+                PodcastEpisodeImage = response.toJSON().body.image
+                PodcastEpisodeID = response.toJSON().body.id
+                PodcastEpisodeDescription = response.toJSON().body.description
+                RetrievedPodastEpisodeData[content_id] = { title: PodcastEpisodeTitle, image: PodcastEpisodeImage, episodeID: PodcastEpisodeID, description: PodcastEpisodeDescription }
+            }
+        }
+        response.send(RetrievedPodastEpisodeData)
+    })
+
+    // ARTICLES //
+    //////////////////////////////////////////////////////
 
     // GET ARTICLE ROUTE: DESCRIPTION
     // FUNCTION: Populate profile with relevant data
