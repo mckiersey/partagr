@@ -62,6 +62,14 @@ p {
     margin: 5px;
 }
 
+.PodcastEpisodeTitle {
+    color: RGB(229, 229, 229);
+    font-family: helvetica;
+    font-size: 20pt;
+
+}
+
+
 #ArticleSection {
     padding-bottom: 100px;
 }

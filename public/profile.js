@@ -301,49 +301,18 @@ $(document).ready(function () {
         }
         for (var content_id in PodcastEpisodeList) {
             if (PodcastEpisodeList.hasOwnProperty(content_id)) {
-                document.getElementById('PopulatePodcastEpisodes').innerHTML +=
-                    `<h3 class="ClickToPlay" name=${PodcastEpisodeList[content_id].episodeID} >${PodcastEpisodeList[content_id].title}</h3>` +
-                    `<input type="image" name=${PodcastEpisodeList[content_id].episodeID} class="SavedPodcastEpisodeThumbnail ClickToPlay" src=${PodcastEpisodeList[content_id].image}>` +
-                    `<p>${PodcastEpisodeList[content_id].description}` +
-                    `<input type="image" src="DeleteIcon.png" name=${content_id} class="DeleteContentButton OwnerElement"/>`
+                document.getElementById('podcast-episode-table').innerHTML += `<tr>`
+                    + `<td rowspan="2"><input type="image" name=${PodcastEpisodeList[content_id].episodeID} class="SavedPodcastEpisodeThumbnail ClickToPlay" src=${PodcastEpisodeList[content_id].image}></td>`
+                    + `<td class="PodcastEpisodeTitle">${PodcastEpisodeList[content_id].title}</td>`
+                    + `</tr>`
+                    + `<tr>`
+                    + `<td>${PodcastEpisodeList[content_id].description}</td>`
+                    + `<td><input type="image" src="DeleteIcon.png" name=${content_id} class="DeleteContentButton OwnerElement"/></td>`
+                    + `</tr>`
+
             }
         }
     });
-
-
-    // real table
-    var PodcastEpisodeData = [
-        ['Talking Politics', 'John Rawls', 'This is a description'],
-        ['Talking Politics', 'John Rawls2', 'This is a description'],
-        ['Talking Politics', 'John Rawls3', 'This is a description'],
-        ["Radiolab", "Tit for Tat", "Another description"],
-        ["Radiolab", "Tit for Tat", "Another description"],
-
-    ];
-    var table = $('#EpisodeList').DataTable({
-        columns: [
-            {
-                title: 'Podcast',
-            },
-            {
-                name: 'second',
-                title: 'Episode',
-            },
-            {
-                title: 'Description',
-            }
-        ],
-        data: PodcastEpisodeData,
-        rowsGroup: [// Always the array (!) of the column-selectors in specified order to which rows groupping is applied
-            // (column-selector could be any of specified in https://datatables.net/reference/type/column-selector)
-            'second:name',
-            0,
-            2
-        ],
-        pageLength: '20',
-    });
-
-
 
 
     // CLICK TO PLAY PODCAST EPISODE
