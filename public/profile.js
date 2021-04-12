@@ -189,24 +189,24 @@ $(document).ready(function () {
                     alert('No episode found- try another search term')
 
                 } else {
-                    console.log(data)
-                    title = data[0]
-                    thumbnail = data[1]
-                    listenURL = data[2]
-                    PodcastEpisodeID = data[3]
-                    description = data[4]
 
-                    console.log('thumbnail = ', thumbnail)
-                    console.log('title = ', title)
-                    console.log('url = ', listenURL)
-                    console.log('id = ', PodcastEpisodeID)
-                    console.log('desc = ', description)
+                    for (var result_number in data) {
+                        console.log(data[result_number].title)
 
-                    document.getElementById('PodcastThumbnail').innerHTML +=
-                        `<h4>${title}</h4>` +
-                        `<img height="80" width="80" src=${thumbnail}></img>` +
-                        `<button class="btn btn-light" id = "AddpodcastEpisodeButton"> Add Podcast Episode</button>`
-                    document.getElementById('PodcastDescription').innerHTML += `<p>${description}</p>`
+
+                        title = data[result_number].title
+                        thumbnail = data[result_number].thumbnail
+                        PodcastEpisodeID = data[result_number].title
+
+                        console.log('thumbnail = ', thumbnail)
+                        console.log('title = ', title)
+                        console.log('id = ', PodcastEpisodeID)
+
+                        document.getElementById('PodcastSearchResultThumbnail').innerHTML +=
+                            `<li><img height="60" width="60" src=src=${thumbnail}/> ${title}</a></li>` +
+                            `<button class="btn btn-light" id = "AddpodcastEpisodeButton"> Add Podcast Episode</button>`
+
+                    }
                 }
             });
         } catch (err) {
@@ -238,9 +238,8 @@ $(document).ready(function () {
         }
     });
 
-    // ADD PODCAST EPISODE (talking politics rawls on justice)
-    // tit for tat
-    // octomom
+    // ADD PODCAST EPISODE 
+
     // ADD PODCAST
     $(document).on('click', '#AddpodcastEpisodeButton', function () {
         try {

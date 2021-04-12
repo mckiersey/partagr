@@ -381,20 +381,33 @@ const router = app => {
         var PodcastEpisodeSearchTerm = req.body.PodcastEpisodeSearchTerm
         console.log('episode api: ', PodcastEpisodeSearchTerm)
         var PodcastSearchTermAPI = 'https://listen-api.listennotes.com/api/v2/search?q=' + PodcastEpisodeSearchTerm + '&type=episode'
-        const response = await unirest.get(PodcastSearchTermAPI).header('X-ListenAPI-Key', sourceFile.podcastAPIKey)
-        console.log('search results: ', response.body.results[0])
+        const QueryResponse = await unirest.get(PodcastSearchTermAPI).header('X-ListenAPI-Key', sourceFile.podcastAPIKey)
+        response = QueryResponse.toJSON()
+        //console.log('search results count: ', response)
+        console.log('search results count: ', response.body.count)
+
+
         if (response.body.results.length === 0) {
             console.log('search fail')
             res.send(false)
         } else {
-            var thumbnail = response.body.results[0].thumbnail
-            var title = response.body.results[0].title_original
-            var url = response.body.results[0].listennotes_url
-            var id = response.body.results[0].id
-            var description = response.body.results[0].description_original
-            //var allText = response.body.results[0] alt text?
-            res.status(200).send([title, thumbnail, url, id, description])
+
+            console.log('Number of espiodes found: ', response.body.count)
+            var EmptyArrayOutside = {}
+
+            for (i = 0; i < response.body.count; i++) {
+                //var EmptyArrayInside = {}
+                console.log('array is empty: ', EmptyArrayOutside)
+                var thumbnail = response.body.results[i].thumbnail
+                var title = response.body.results[i].title_original
+                var id = response.body.results[i].id
+                EmptyArrayOutside[i] = { 'thumbnail': thumbnail, 'title': title, 'id': id }
+            }
+            res.status(200).send(EmptyArrayOutside)
+
+
         }
+
     });
 
     // ADD PODCAST
@@ -410,7 +423,7 @@ const router = app => {
             response.send('* Token verification FAIL: User not logged in *')
         } else {
             try {
-                pool.query("SELECT google_user_id FROM user_profile WHERE user_id = ?", ProfileUserId, (error, result) => { // value of app user id on row of google user id 
+                pool.query("SELECT google_user_id FROM user_profile WHERE user_id = ?", ProfileUserId, (error, result) => { // value of app user id on row of google user id
                     StoredGoogleUserID = result[0].google_user_id
                     if (FrontEndGoogleUserId == StoredGoogleUserID) {
                         InsertData = { user_id: ProfileUserId, content: PodcastId, content_type: "podcast" }
@@ -448,7 +461,7 @@ const router = app => {
             response.send('TOKEN FAIL')
         } else {
             try {
-                pool.query("SELECT google_user_id FROM user_profile WHERE user_id = ?", ProfileUserId, (error, result) => { // value of app user id on row of google user id 
+                pool.query("SELECT google_user_id FROM user_profile WHERE user_id = ?", ProfileUserId, (error, result) => { // value of app user id on row of google user id
                     StoredGoogleUserID = result[0].google_user_id
                     if (FrontEndGoogleUserId == StoredGoogleUserID) {
                         InsertData = { user_id: ProfileUserId, content: PodcastEpisodeID, content_type: "podcast_episode" }
@@ -517,18 +530,21 @@ const router = app => {
 
         var RetrievedPodastData = {}
         for (var content_id in PodcastAPIQueryId) {
+            console.log('search id = ', content_id)
             if (PodcastAPIQueryId.hasOwnProperty(content_id)) {
-                console.log(content_id + " -> " + PodcastAPIQueryId[content_id]); //https://stackoverflow.com/a/684692/6065710
+                //console.log(content_id + " -> " + PodcastAPIQueryId[content_id]); //https://stackoverflow.com/a/684692/6065710
                 var PodcastSearchIDAPI = "https://listen-api.listennotes.com/api/v2/podcasts/" + PodcastAPIQueryId[content_id]
                 const response = await unirest.get(PodcastSearchIDAPI).header('X-ListenAPI-Key', sourceFile.podcastAPIKey)
-                //console.log('podcast reponse= ', response.toJSON().body)
+                console.log('podcast reponse= ', response.toJSON().body.title)
                 PodcastTitle = response.toJSON().body.title
                 PodcastImage = response.toJSON().body.image
                 PodcastWebsite = response.toJSON().body.website
 
                 RetrievedPodastData[content_id] = { title: PodcastTitle, image: PodcastImage, website: PodcastWebsite }
+                console.log(RetrievedPodastData)
             }
         }
+        console.log("*****", RetrievedPodastData)
         response.send(RetrievedPodastData)
     })
 
@@ -564,15 +580,16 @@ const router = app => {
     //POPULATE PODCAST EPISODES (iii): SEND STORED IDs TO LISTEN NOTES API TO RETRIEVE DATA
     app.get("/PodcastEpisodeAPIQuery", async (request, response) => {
         console.log('Episode api route triggered')
+
         PodcastEpisodeAPIQueryId = request.query
 
         var RetrievedPodastEpisodeData = {}
         for (var content_id in PodcastEpisodeAPIQueryId) {
             if (PodcastEpisodeAPIQueryId.hasOwnProperty(content_id)) {
-                console.log(content_id + " -> " + PodcastEpisodeAPIQueryId[content_id]); //https://stackoverflow.com/a/684692/6065710
+                //console.log(content_id + " -> " + PodcastEpisodeAPIQueryId[content_id]); //https://stackoverflow.com/a/684692/6065710
                 var PodcastEpisodeSearchIdAPI = "https://listen-api.listennotes.com/api/v2/episodes/" + PodcastEpisodeAPIQueryId[content_id]
                 const response = await unirest.get(PodcastEpisodeSearchIdAPI).header('X-ListenAPI-Key', sourceFile.podcastAPIKey)
-                console.log('podcast reponse= ', response.toJSON().body)
+                //console.log('podcast reponse= ', response.toJSON().body)
                 PodcastEpisodeTitle = response.toJSON().body.title
                 PodcastEpisodeImage = response.toJSON().body.image
                 PodcastEpisodeID = response.toJSON().body.id
@@ -580,6 +597,7 @@ const router = app => {
                 RetrievedPodastEpisodeData[content_id] = { title: PodcastEpisodeTitle, image: PodcastEpisodeImage, episodeID: PodcastEpisodeID, description: PodcastEpisodeDescription }
             }
         }
+        //console.log(RetrievedPodastEpisodeData)
         response.send(RetrievedPodastEpisodeData)
     })
 
@@ -654,10 +672,10 @@ const router = app => {
             response.send('* Token verification FAIL: User not logged in *')
         } else {
             try {
-                pool.query("SELECT google_user_id FROM user_profile WHERE user_id = ?", ProfileUserId, (error, result) => { // value of app user id on row of google user id 
+                pool.query("SELECT google_user_id FROM user_profile WHERE user_id = ?", ProfileUserId, (error, result) => { // value of app user id on row of google user id
                     StoredGoogleUserID = result[0].google_user_id
-                    if (FrontEndGoogleUserId == StoredGoogleUserID) { // USER IS LOGGED IN & EDITOR = OWNER 
-                        // DELETE ARTICLE LINK 
+                    if (FrontEndGoogleUserId == StoredGoogleUserID) { // USER IS LOGGED IN & EDITOR = OWNER
+                        // DELETE ARTICLE LINK
                         try {
                             pool.query('DELETE FROM user_content WHERE content_id = ?', ContentToDelete, (error, result) => {
                                 console.log(result)
