@@ -68,9 +68,9 @@ const router = app => {
 
 
 
-    //////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //// *** VIEW A PROFILE & SIGN IN *** ////
-    //////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // HOME: DESCRIPTION
     // 1) Display landing page
@@ -195,34 +195,10 @@ const router = app => {
     })
     */
 
-    // GET VIDEO ROUTE: DESCRIPTION
-    // FUNCTION: Populate profile with relevant data
-    // 1) Take profile page ID from browser
-    // 2) Select data in 'content' corresponding to this profile (user) ID
-    // 3) Rather than taking all data, select only the last row, which has the latest entry - this is an unsophisticated way of dealing with > 1 rows for a user (eg if a user submitted multiple videos)
-    // 4) Send this data back to the FrontEnd
-    app.get("/Video", (request, response) => {
-        user_id = request.query.user_id
-        // RETRIEVE USER CONTENT DATA
-        pool.query("SELECT content FROM user_content WHERE user_id = ? ORDER BY row_num DESC LIMIT 1 ", user_id, (error, result) => { // ORDER BY/DESC => Last input value
-            if (error) console.log('Content retrieval error:');
-            try {
-                user_content = result[0]
-                if (result.length === 0) {
-                    console.log('No video data')
-                } else {
-                    response.send(user_content.content)
-                }
-            } catch (error) {
-                console.log("User content error (likely no data for this user)")
-            }
-        }); // RETRIEVE USER CONTENT DATA: END
-    });
 
-
-    //////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //// *** EDIT PROFILE *** ////
-    //////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
     /// THE FOLLOWING ROUTES REQUIRE TWO CONDITIONS:
@@ -273,11 +249,12 @@ const router = app => {
     // 5) If both match, the logged in user (from token) has the same google ID as that which is associated with the profile user id
     // 6) Insert content (VideoLink) into user_content table
 
-    app.post("/AddVideo", async (request, response) => {
+    app.post("/AddYouTubeVideo", async (request, response) => {
         console.log('Add video route')
         token = request.body.token
         ProfileUserId = request.body.ProfileId
-        VideoLink = request.body.VideoLink
+        VideoID = request.body.VideoID
+        VideoPosition = request.body.VideoPositionInteger
         VerifiedTokenPayload = await verify(CLIENT_ID, token)
         var FrontEndGoogleUserId = VerifiedTokenPayload[0] //Google user ID
         if (!VerifiedTokenPayload) { //if value == false
@@ -289,12 +266,13 @@ const router = app => {
                     StoredGoogleUserID = result[0].google_user_id
                     if (FrontEndGoogleUserId == StoredGoogleUserID) {
                         console.log('Authorised user editing correct profile')
-                        InsertData = { user_id: ProfileUserId, content: VideoLink }
+                        InsertData = { user_id: ProfileUserId, content: VideoID, content_type: "video", description: VideoPosition }
+
                         // ADD VIDEO LINK TO DATA BASE
                         try { // INSET VIDEO
                             pool.query('INSERT INTO user_content SET ?', InsertData, (error, result) => {
                             });
-                            response.send('New Video Added')
+                            response.send(true)
                         } catch (error) {
                             console.log('Something went wrong, video not added: ', error)
                             response.send('Video not Added')
@@ -490,9 +468,37 @@ const router = app => {
 
 
 
-    //////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //// *** POPULATE PROFILE DATA *** ////
-    //////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Videos //
+    //////////////////////////////////////////////////////
+
+    // GET VIDEO ROUTE: DESCRIPTION
+    // FUNCTION: Populate profile with relevant data
+    // 1) Take profile page ID from browser
+    // 2) Select data in 'content' corresponding to this profile (user) ID
+    // 3) Rather than taking all data, select only the last row, which has the latest entry - this is an unsophisticated way of dealing with > 1 rows for a user (eg if a user submitted multiple videos)
+    // 4) Send this data back to the FrontEnd
+    app.get("/Videos", (request, response) => {
+        user_id = request.query.user_id
+        // RETRIEVE USER CONTENT DATA
+        pool.query("SELECT content_id, content, content_desc FROM user_content WHERE content_type = 'video' AND user_id = ? ", user_id, (error, result) => {
+            if (error) console.log('Content retrieval error:');
+            try {
+                console.log('video query result = ', result)
+                user_content = result[0]
+                if (result.length === 0) {
+                    console.log('No video data')
+                } else {
+                    response.send(user_content.content)
+                }
+            } catch (error) {
+                console.log("User content error (likely no data for this user)")
+            }
+        }); // RETRIEVE USER CONTENT DATA: END
+    });
 
     // PODCASTS //
     //////////////////////////////////////////////////////
@@ -654,9 +660,9 @@ const router = app => {
 
 
 
-    //////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //// *** DELETE PROFILE DATA *** ////
-    //////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     app.delete('/DeleteArticle', async (request, response) => {
         console.log('delete article route')
         console.log('delete request: ', request.query)
@@ -700,9 +706,9 @@ const router = app => {
     })
 
 
-    //////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //// *** SIGN OUT *** ////
-    //////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // SIGN OUT ROUTE
     app.get('/SignOut', (req, res) => {

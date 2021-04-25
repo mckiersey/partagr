@@ -59,9 +59,9 @@ $(document).ready(function () {
 
 
 
-    //////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //// *** EDIT PROFILE *** ////
-    //////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -101,23 +101,45 @@ $(document).ready(function () {
     ///////////////////////////  YOUTUBE ///////////////////////////
     $(document).on('click', '.AddYouTubeVideo', function (event) {
         VideoPosition = event.target.id
-        VideoPositionInteger = VideoPosition.match(/\d+/)[0]
+        VideoPositionInteger = VideoPosition.match(/\d+/)[0] //get integer from string
         console.log('video position Integer = ', VideoPositionInteger)
-
-        VideoInput = document.querySelector('input[name=YouTubeLink1]').value
+        InputName = "YouTubeLink" + VideoPositionInteger
+        console.log("Input name = ", InputName)
+        VideoInput = document.querySelector(`input[name=${InputName}]`).value
         console.log(VideoInput)
 
         var regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
         var match = VideoInput.match(regExp);
         if (match && match[2].length == 11) {
+            console.log(match)
             VideoID = match[2];
             console.log('Video ID = ', VideoID)
-            document.getElementById("VideoPosition" + VideoPositionInteger).innerHTML +=
-                `<iframe width="560" height="315" src="https://www.youtube.com/embed/${VideoID}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` +
-                `<input type="image" src="DeleteIcon.png" name=${} class="DeleteContentButton OwnerElement"/>`
-                    `                
+            try {
+                $.post(server + '/AddYouTubeVideo', {
+                    token: CookieToken,
+                    ProfileId: user_id,
+                    VideoID: VideoID,
+                    Position: VideoPositionInteger
+                }).done(function (data) {
+                    console.log('response data: ', data)
+                    if (data == true) {
+                        window.location.href = window.location.href
+                    } else {
+                        console.log(data)
+                        if (data === 'TOKEN FAIL') {
+                            alert('Verification Expired. Please sign in again')
+                        } else {
+                            alert('Video not added, please try again')
+                        }
+                    }
+                })
+            } catch (err) {
+                console.log('failed to post to backend')
+                console.log('Error: ' + err)
+            }
         } else {
-            alert('Error: Please ensure the link is from YouTube')
+            console.log(match)
+            alert('Error: Something went wrong - please ensure the link is from YouTube')
         }
     });
 
@@ -183,9 +205,9 @@ $(document).ready(function () {
                     description = data[4]
                     document.getElementById('PodcastThumbnail').innerHTML +=
                         `< h3 > Add < emph > podcast</emph ></h3 > ` +
-                        `< img height = "200" width = "200" src = ${ thumbnail }></img > ` +
+                        `< img height = "200" width = "200" src = ${thumbnail}></img > ` +
                         `< button class="btn btn-light" id = "AddpodcastButton" > Add Podcast</button > `
-                    document.getElementById('PodcastDescription').innerHTML += `< p > ${ description }</p > `
+                    document.getElementById('PodcastDescription').innerHTML += `< p > ${description}</p > `
 
                 }
             });
@@ -225,7 +247,7 @@ $(document).ready(function () {
                         console.log('id = ', PodcastEpisodeID)
 
                         document.getElementById('PodcastSearchResultThumbnail').innerHTML +=
-                            `< li > <img height="60" width="60" src=src=${thumbnail} /> ${ title }</a ></li > ` +
+                            `< li > <img height="60" width="60" src=src=${thumbnail} /> ${title}</a ></li > ` +
                             `< button class="btn btn-light" id = "AddpodcastEpisodeButton" > Add Podcast Episode</button > `
 
                     }
@@ -287,9 +309,26 @@ $(document).ready(function () {
         }
     });
 
-    //////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //// *** POPULATE PROFILE DATA *** ////
-    //////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // GET VIDEOS
+    var GetVideoUrl = server + '/Videos?user_id=' + user_id
+    $.get(GetVideoUrl, function (VideoList, status) {
+        var i;
+        for (i = 0; i < VideoList.length; i++) {
+            var VideoPositionInteger = VideoList[i].content_desc
+            var VideoID = VideoList[i].content
+            var ContentID = VideoList[i].content_id
+            VideoElementID = "VideoPosition" + VideoPositionInteger
+            console.log("Populating video: ", VideoID)
+            document.getElementById(VideoElementID).innerHTML +=
+                `<iframe width="560" height="315" src="https://www.youtube.com/embed/${VideoID}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` +
+                `< input type = "image" src = "DeleteIcon.png" name = ${ContentID} class="DeleteContentButton OwnerElement" /> `
+        }
+    });
+
 
     // GET PODCASTS
     var GetPodcastsUrl = server + '/Podcasts?user_id=' + user_id
@@ -304,8 +343,8 @@ $(document).ready(function () {
         for (var content_id in PodcastList) {
             if (PodcastList.hasOwnProperty(content_id)) {
                 document.getElementById('PopulatePodcasts').innerHTML +=
-                    `< a href = ${ PodcastList[content_id].website } target = "_blank" > <img class="SavedPodcastThumbnail" src=${PodcastList[content_id].image} alt=${PodcastList[content_id].title}></a>` +
-                    `< input type = "image" src = "DeleteIcon.png" name = ${ content_id } class="DeleteContentButton OwnerElement" /> `
+                    `< a href = ${PodcastList[content_id].website} target = "_blank" > <img class="SavedPodcastThumbnail" src=${PodcastList[content_id].image} alt=${PodcastList[content_id].title}></a>` +
+                    `< input type = "image" src = "DeleteIcon.png" name = ${content_id} class="DeleteContentButton OwnerElement" /> `
             }
         }
     });
@@ -324,10 +363,10 @@ $(document).ready(function () {
             if (PodcastEpisodeList.hasOwnProperty(content_id)) {
                 document.getElementById('podcast-episode-table').innerHTML += `<tr>`
                     + `< td rowspan = "2" > <input type="image" name=${PodcastEpisodeList[content_id].episodeID} class="SavedPodcastEpisodeThumbnail ClickToPlay" src=${PodcastEpisodeList[content_id].image}></td>`
-                    + `< td class="PodcastEpisodeTitle" > ${ PodcastEpisodeList[content_id].title }</td > `
+                    + `< td class="PodcastEpisodeTitle" > ${PodcastEpisodeList[content_id].title}</td > `
                     + `</tr > `
                     + `<tr>`
-                    + `< td > ${ PodcastEpisodeList[content_id].description }</td > `
+                    + `< td > ${PodcastEpisodeList[content_id].description}</td > `
                     + `< td > <input type="image" src="DeleteIcon.png" name=${content_id} class="DeleteContentButton OwnerElement" /></td > `
                     + `</tr > `
 
@@ -347,7 +386,6 @@ $(document).ready(function () {
 
 
     // GET ARTICLES 
-
     var GetArticleUrl = server + '/Articles?user_id=' + user_id
     $.get(GetArticleUrl, function (ArticleList, status) {
         var i;
@@ -364,37 +402,37 @@ $(document).ready(function () {
             if (i < 5) {
                 document.getElementById('populateArticles-row1-col1').innerHTML +=
                     `< li > <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}" /><a class=ArticleLinkText href=${articleLink} target="_blank">  ${caption}</a></li > ` +
-                    `< input type = "image" src = "DeleteIcon.png" name = ${ contentID } class="DeleteContentButton OwnerElement" /> `
+                    `< input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement" /> `
             } else if (i >= 5 && i < 10) {
                 document.getElementById('populateArticles-row1-col2').innerHTML +=
                     `< li > <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}" /><a class=ArticleLinkText href=${articleLink} target="_blank">  ${caption}</a></li > ` +
-                    `< input type = "image" src = "DeleteIcon.png" name = ${ contentID } class="DeleteContentButton OwnerElement" /> `
+                    `< input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement" /> `
             } else if (i >= 10 && i < 15) {
                 document.getElementById('populateArticles-row1-col3').innerHTML +=
                     `< li class=ArticleLinkText > <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}" /><a class=ArticleLinkText href=${articleLink} target="_blank">  ${caption}</a></li > ` +
-                    `< input type = "image" src = "DeleteIcon.png" name = ${ contentID } class="DeleteContentButton OwnerElement" /> `
+                    `< input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement" /> `
 
 
             } else if (i > 15 && i <= 20) {
                 document.getElementById('populateArticles-row2-col1').innerHTML +=
                     `< li class=ArticleLinkText > <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}" /><a class=ArticleLinkText href=${articleLink} target="_blank">  ${caption}</a></li > ` +
-                    `< input type = "image" src = "DeleteIcon.png" name = ${ contentID } class="DeleteContentButton OwnerElement" /> `
+                    `< input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement" /> `
             } else if (i > 20 && i <= 25) {
                 document.getElementById('populateArticles-row2-col2').innerHTML +=
                     `< li class=ArticleLinkText > <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}" /><a class=ArticleLinkText href=${articleLink} target="_blank">  ${caption}</a></li > ` +
-                    `< input type = "image" src = "DeleteIcon.png" name = ${ contentID } class="DeleteContentButton OwnerElement" /> `
+                    `< input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement" /> `
             } else if (i > 25 && i <= 30) {
                 document.getElementById('populateArticles-row2-col3').innerHTML +=
                     `< li class=ArticleLinkText > <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}" /><a class=ArticleLinkText href=${articleLink} target="_blank">  ${caption}</a></li > ` +
-                    `< input type = "image" src = "DeleteIcon.png" name = ${ contentID } class="DeleteContentButton OwnerElement" /> `
+                    `< input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement" /> `
 
             }
         }
     });
 
-    //////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //// *** DISCOVERY *** ////
-    //////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // DISCOVER ARTICLE
     $(document).on('click', '#ArticleDiscovery', function () {
@@ -408,9 +446,10 @@ $(document).ready(function () {
 
     });
 
-    //////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //// *** DELETE DATA *** ////
-    //////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
     // ARTICLES
 
