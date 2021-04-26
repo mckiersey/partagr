@@ -28,6 +28,16 @@ p {
     width: 30px;
 }
 
+#ShowMore {
+    color: RGB(229, 229, 229);
+    font-family: helvetica;
+    padding: 200px;
+}
+
+.ShowMore {
+    display: none;
+}
+
 .ArticleLinkText {
     color: #8e9aaf;
 }
@@ -58,8 +68,19 @@ p {
 .SavedPodcastEpisodeThumbnail {
     width: 80px;
     height: 80px;
-    ;
     margin: 5px;
+}
+
+.PodcastPlayButton {
+    width: 80px;
+    height: 80px;
+    margin: 5px;
+}
+
+.ListenNotes {
+    width: 300px;
+    height: 30px;
+    margin: 15px;
 }
 
 .PodcastEpisodeTitle {
@@ -67,6 +88,10 @@ p {
     font-family: helvetica;
     font-size: 20pt;
 
+}
+
+#PodcastPlayerFrame {
+    margin-top: 20px;
 }
 
 

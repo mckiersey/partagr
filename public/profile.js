@@ -1,9 +1,5 @@
 $(document).ready(function () {
 
-
-    console.log('Profile JS loading...')
-    console.log('Server production mode = ', server)
-
     // DISPLAY OWNER ELEMENTS (FOR EDITING)
     $('.OwnerSwitch').on("change", function () {
         $('.OwnerElement').toggle()
@@ -58,6 +54,13 @@ $(document).ready(function () {
     document.getElementById('banner-name').innerHTML = "<a id='banner-name-text' href=" + server + ">partagr.com</h1>"
 
 
+    // SHOW MORE VIDEOS
+    $('#ShowMore').click(function () {
+        $('.ShowMore').toggle();
+        if ($(this).text() == 'More Videos') $(this).text('Hide Videos');
+        else $(this).text('More Videos');
+    });
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //// *** EDIT PROFILE *** ////
@@ -80,10 +83,7 @@ $(document).ready(function () {
         }).done(function (data) {
             console.log('Server response :', data)
             if (data == 'User is profile owner') {
-                console.log('Profile owner')
-
                 $('.OwnerSwitch').show() //show edit switch
-
             } else {
                 console.log('not profile owner')
                 $('.OwnerSwitch').hide() //hide edit switch
@@ -102,46 +102,44 @@ $(document).ready(function () {
     $(document).on('click', '.AddYouTubeVideo', function (event) {
         VideoPosition = event.target.id
         VideoPositionInteger = VideoPosition.match(/\d+/)[0] //get integer from string
-        console.log('video position Integer = ', VideoPositionInteger)
         InputName = "YouTubeLink" + VideoPositionInteger
-        console.log("Input name = ", InputName)
         VideoInput = document.querySelector(`input[name=${InputName}]`).value
-        console.log(VideoInput)
-
-        var regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-        var match = VideoInput.match(regExp);
-        if (match && match[2].length == 11) {
-            console.log(match)
-            VideoID = match[2];
-            console.log('Video ID = ', VideoID)
-            try {
-                $.post(server + '/AddYouTubeVideo', {
-                    token: CookieToken,
-                    ProfileId: user_id,
-                    VideoID: VideoID,
-                    Position: VideoPositionInteger
-                }).done(function (data) {
-                    console.log('response data: ', data)
-                    if (data == true) {
-                        alert('pause')
-                        window.location.href = window.location.href
-                    } else {
-                        console.log(data)
-                        if (data === 'TOKEN FAIL') {
-                            alert('Verification Expired. Please sign in again')
+        if (VideoInput.includes("youtube")) {
+            var regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            var match = VideoInput.match(regExp);
+            if (match && match[2].length == 11) {
+                VideoID = match[2];
+                console.log('Video ID = ', VideoID)
+                try {
+                    $.post(server + '/AddYouTubeVideo', {
+                        token: CookieToken,
+                        ProfileId: user_id,
+                        VideoID: VideoID,
+                        Position: VideoPositionInteger
+                    }).done(function (data) {
+                        console.log('response data: ', data)
+                        if (data == true) {
+                            window.location.href = window.location.href
                         } else {
                             console.log(data)
-                            alert('Video not added, please try again')
+                            if (data === 'TOKEN FAIL') {
+                                alert('Verification Expired. Please sign in again')
+                            } else {
+                                console.log(data)
+                                alert('Video not added, please try again')
+                            }
                         }
-                    }
-                })
-            } catch (err) {
-                console.log('failed to post to backend')
-                console.log('Error: ' + err)
+                    })
+                } catch (err) {
+                    console.log('failed to post to backend')
+                    console.log('Error: ' + err)
+                }
+            } else {
+                console.log(match)
+                alert('Error: Something went wrong - please ensure the link is from YouTube')
             }
         } else {
-            console.log(match)
-            alert('Error: Something went wrong - please ensure the link is from YouTube')
+            alert('Please enter a link from YouTube')
         }
     });
 
@@ -326,29 +324,25 @@ $(document).ready(function () {
     // GET VIDEOS
     var GetVideoUrl = server + '/Videos?user_id=' + user_id
     $.get(GetVideoUrl, function (VideoList, status) {
-        console.log('video status = ', status)
-        console.log("GETing VIDEOS- ", VideoList)
         var i;
         for (i = 0; i < VideoList.length; i++) {
             var VideoPositionInteger = VideoList[i].content_desc
             var VideoID = VideoList[i].content
             var ContentID = VideoList[i].content_id
             VideoElementID = "VideoPosition" + VideoPositionInteger
-            console.log("Populating video: ", VideoID)
             document.getElementById(VideoElementID).innerHTML +=
                 `<iframe width="560" height="315" src="https://www.youtube.com/embed/${VideoID}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` +
-                `< input type = "image" src = "DeleteIcon.png" name = ${ContentID} class="DeleteContentButton OwnerElement" /> `
+                `<input type = "image" src = "DeleteIcon.png" name = ${ContentID} class="DeleteContentButton OwnerElement"/>`
         }
     });
 
 
     // GET PODCASTS
     var GetPodcastsUrl = server + '/Podcasts?user_id=' + user_id
-    console.log('waiting for podcasts to load')
+    console.log('Loading podcasts...')
 
     $.get(GetPodcastsUrl, function (PodcastList, status) {
         $('.PodcastLoader').hide()
-        console.log('podcast list =', PodcastList)
         if (PodcastList == false) {
             document.getElementById('PopulatePodcasts').innerHTML += "<h3>No podcasts found- use the search function to add a podcast.</h3>"
         }
@@ -356,32 +350,33 @@ $(document).ready(function () {
             if (PodcastList.hasOwnProperty(content_id)) {
                 document.getElementById('PopulatePodcasts').innerHTML +=
                     `<a href = ${PodcastList[content_id].website} target = "_blank" > <img class="SavedPodcastThumbnail" src=${PodcastList[content_id].image} alt=${PodcastList[content_id].title}></a>` +
-                    `<input type = "image" src = "DeleteIcon.png" name = ${content_id} class="DeleteContentButton OwnerElement" /> `
+                    `<input type = "image" src = "DeleteIcon.png" name = ${content_id} class="DeleteContentButton OwnerElement"/>`
             }
         }
     });
 
     // GET PODCAST EPISODES
     var GetPodcastEpisodesUrl = server + '/PodcastEpisodes?user_id=' + user_id
-    console.log('waiting for podcast episodes to load')
+    console.log('Loading podcast episodes...')
 
     $.get(GetPodcastEpisodesUrl, function (PodcastEpisodeList, status) {
         $('.PodcastEpisodeLoader').hide()
-        console.log('podcast episode list =', PodcastEpisodeList)
         if (PodcastEpisodeList == false) {
             document.getElementById('PopulatePodcastEpisodes').innerHTML += "<h3>No podcast episodes found- use the search function to add an episode.</h3>"
         }
         for (var content_id in PodcastEpisodeList) {
+            desc = PodcastEpisodeList[content_id].description
+            firstParagraph = desc.substr(0, desc.indexOf('</p>'));
             if (PodcastEpisodeList.hasOwnProperty(content_id)) {
                 document.getElementById('podcast-episode-table').innerHTML += `<tr>`
-                    + `<td rowspan = "2" > <input type="image" name=${PodcastEpisodeList[content_id].episodeID} class="SavedPodcastEpisodeThumbnail ClickToPlay" src=${PodcastEpisodeList[content_id].image}></td>`
-                    + `<td class="PodcastEpisodeTitle"> ${PodcastEpisodeList[content_id].title}</td>`
+                    + `<td rowspan ="2"> <input type="image" name=${PodcastEpisodeList[content_id].episodeID} class="SavedPodcastEpisodeThumbnail ClickToPlay" src=${PodcastEpisodeList[content_id].image}></td>`
+                    + `<td class="PodcastEpisodeTitle ClickToPlay"> ${PodcastEpisodeList[content_id].title}</td>`
+                    + `<td> <input class="PodcastPlayButton ClickToPlay" type="image" name=${PodcastEpisodeList[content_id].episodeID} src="PlayButton.png"></td>`
                     + `</tr>`
                     + `<tr>`
-                    + `<td> ${PodcastEpisodeList[content_id].description}</td>`
+                    + `<td> ${firstParagraph}</td>`
                     + `<td> <input type="image" src="DeleteIcon.png" name=${content_id} class="DeleteContentButton OwnerElement"/></td>`
                     + `</tr>`
-
             }
         }
     });
@@ -391,9 +386,15 @@ $(document).ready(function () {
     $(document).on('click', '.ClickToPlay', function () {
         EpisodeToPlay = $(this).attr('name')
         console.log('to play = ', EpisodeToPlay)
-
-        document.getElementById('PodcastPlayer').innerHTML +=
-            `< iframe src = "https://www.listennotes.com/embedded/e/${EpisodeToPlay}/" height = "300px" width = "100%" style = "width: 1px; min-width: 100%;" frameborder = "0" scrolling = "no" loading = "lazy" ></iframe > `
+        if ($('#PodcastPlayerFrame').length)  //Replace an existant player with a new one
+        {
+            $('#PodcastPlayerFrame').remove();
+            document.getElementById('PodcastPlayer').innerHTML +=
+                `<iframe id=PodcastPlayerFrame src = "https://www.listennotes.com/embedded/e/${EpisodeToPlay}/" height = "300px" width = "100%" style = "width: 1px; min-width: 100%;" frameborder = "0" scrolling = "no" loading = "lazy"></iframe>`
+        } else {
+            document.getElementById('PodcastPlayer').innerHTML +=
+                `<iframe id=PodcastPlayerFrame src = "https://www.listennotes.com/embedded/e/${EpisodeToPlay}/" height = "300px" width = "100%" style = "width: 1px; min-width: 100%;" frameborder = "0" scrolling = "no" loading = "lazy"></iframe>`
+        }
     });
 
 
