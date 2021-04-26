@@ -343,8 +343,8 @@ $(document).ready(function () {
         for (var content_id in PodcastList) {
             if (PodcastList.hasOwnProperty(content_id)) {
                 document.getElementById('PopulatePodcasts').innerHTML +=
-                    `< a href = ${PodcastList[content_id].website} target = "_blank" > <img class="SavedPodcastThumbnail" src=${PodcastList[content_id].image} alt=${PodcastList[content_id].title}></a>` +
-                    `< input type = "image" src = "DeleteIcon.png" name = ${content_id} class="DeleteContentButton OwnerElement" /> `
+                    `<a href = ${PodcastList[content_id].website} target = "_blank" > <img class="SavedPodcastThumbnail" src=${PodcastList[content_id].image} alt=${PodcastList[content_id].title}></a>` +
+                    `<input type = "image" src = "DeleteIcon.png" name = ${content_id} class="DeleteContentButton OwnerElement" /> `
             }
         }
     });
@@ -362,13 +362,13 @@ $(document).ready(function () {
         for (var content_id in PodcastEpisodeList) {
             if (PodcastEpisodeList.hasOwnProperty(content_id)) {
                 document.getElementById('podcast-episode-table').innerHTML += `<tr>`
-                    + `< td rowspan = "2" > <input type="image" name=${PodcastEpisodeList[content_id].episodeID} class="SavedPodcastEpisodeThumbnail ClickToPlay" src=${PodcastEpisodeList[content_id].image}></td>`
-                    + `< td class="PodcastEpisodeTitle" > ${PodcastEpisodeList[content_id].title}</td > `
-                    + `</tr > `
+                    + `<td rowspan = "2" > <input type="image" name=${PodcastEpisodeList[content_id].episodeID} class="SavedPodcastEpisodeThumbnail ClickToPlay" src=${PodcastEpisodeList[content_id].image}></td>`
+                    + `<td class="PodcastEpisodeTitle"> ${PodcastEpisodeList[content_id].title}</td>`
+                    + `</tr>`
                     + `<tr>`
-                    + `< td > ${PodcastEpisodeList[content_id].description}</td > `
-                    + `< td > <input type="image" src="DeleteIcon.png" name=${content_id} class="DeleteContentButton OwnerElement" /></td > `
-                    + `</tr > `
+                    + `<td> ${PodcastEpisodeList[content_id].description}</td>`
+                    + `<td> <input type="image" src="DeleteIcon.png" name=${content_id} class="DeleteContentButton OwnerElement"/></td>`
+                    + `</tr>`
 
             }
         }
