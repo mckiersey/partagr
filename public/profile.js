@@ -208,10 +208,10 @@ $(document).ready(function () {
                     PodcastID = data[3]
                     description = data[4]
                     document.getElementById('PodcastThumbnail').innerHTML +=
-                        `< h3 > Add < emph > podcast</emph ></h3 > ` +
-                        `< img height = "200" width = "200" src = ${thumbnail}></img > ` +
-                        `< button class="btn btn-light" id = "AddpodcastButton" > Add Podcast</button > `
-                    document.getElementById('PodcastDescription').innerHTML += `< p > ${description}</p > `
+                        `<h3> Add <emph> podcast</emph></h3>` +
+                        `<img height = "200" width = "200" src = ${thumbnail}></img>` +
+                        `<button class="btn btn-light" id = "AddpodcastButton"> Add Podcast</button>`
+                    document.getElementById('PodcastDescription').innerHTML += `<p> ${description}</p>`
 
                 }
             });
@@ -251,8 +251,9 @@ $(document).ready(function () {
                         console.log('id = ', PodcastEpisodeID)
 
                         document.getElementById('PodcastSearchResultThumbnail').innerHTML +=
-                            `< li > <img height="60" width="60" src=src=${thumbnail} /> ${title}</a ></li > ` +
-                            `< button class="btn btn-light" id = "AddpodcastEpisodeButton" > Add Podcast Episode</button > `
+                            `<li><h3> ${title}</h3>` +
+                            `<img height="60" width="60" src=${thumbnail}/>` +
+                            `<button class="btn btn-light" id = "AddpodcastEpisodeButton"> Add Podcast Episode</button>`
 
                     }
                 }
@@ -483,6 +484,7 @@ $(document).ready(function () {
                 success: function (result) {
                     console.log('delete request = ', result)
                     if (result = true) {
+                        console.log('item deleted')
                         window.location.href = window.location.href
                     } else {
                         alert('Item not deleted, please try again (error: ', data, ' )')
@@ -491,21 +493,6 @@ $(document).ready(function () {
                 }
             });
 
-            /*
-                        $.delete(server + '/DeleteArticle', {
-                            token: CookieToken,
-                            ProfileId: user_id,
-                            DeleteArticleLink: DeleteArticleLink,
-                        }).done(function (data) {
-                            console.log('Server response :', data)
-                            if (data == true) {
-                                window.location.href = window.location.href
-                                // refresh page after successfully saving a new video
-                            } else {
-                                alert('Article not deleted, please try again', data)
-                            }
-                        });
-                        */
         } catch (err) {
             console.log('failed to post to backend')
             console.log('Error: ' + err)

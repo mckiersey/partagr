@@ -4,9 +4,11 @@
 - Final version of content database => DONE
 - What happens with > 12 articles? => DONE 
 - Delete content
+    - Video delete
 - Owner should only see edit mode switch => DONE
 - How to make sharing easy?
-- Add listen notes logo (powered by listennotes)
+- Add listen notes logo (powered by listennotes)=>DONE
 - Add no podcasts found text => DONE
 - Add podcast quota expired
+    - Fix podcast search
 - Write logic for user inserted podcasts (or delete feature)
