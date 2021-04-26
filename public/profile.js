@@ -123,12 +123,14 @@ $(document).ready(function () {
                 }).done(function (data) {
                     console.log('response data: ', data)
                     if (data == true) {
+                        alert('pause')
                         window.location.href = window.location.href
                     } else {
                         console.log(data)
                         if (data === 'TOKEN FAIL') {
                             alert('Verification Expired. Please sign in again')
                         } else {
+                            console.log(data)
                             alert('Video not added, please try again')
                         }
                     }
@@ -166,7 +168,11 @@ $(document).ready(function () {
                     window.location.href = window.location.href
                     // refresh page after successfully saving a new video
                 } else {
-                    alert('Article not added, please try again', data)
+                    if (data === 'TOKEN FAIL') {
+                        alert('Verification Expired. Please sign in again')
+                    } else {
+                        alert('Article not added, please try again', data)
+                    }
                 }
             });
         } catch (err) {
@@ -272,8 +278,12 @@ $(document).ready(function () {
                 if (data == true) {
                     window.location.href = window.location.href
                 } else {
-                    console.log(data)
-                    alert('Podcast not added, please try again', data)
+                    if (data === 'TOKEN FAIL') {
+                        alert('Verification Expired. Please sign in again')
+                    } else {
+                        console.log(data)
+                        alert('Podcast not added, please try again', data)
+                    }
                 }
             });
         } catch (err) {
@@ -316,6 +326,8 @@ $(document).ready(function () {
     // GET VIDEOS
     var GetVideoUrl = server + '/Videos?user_id=' + user_id
     $.get(GetVideoUrl, function (VideoList, status) {
+        console.log('video status = ', status)
+        console.log("GETing VIDEOS- ", VideoList)
         var i;
         for (i = 0; i < VideoList.length; i++) {
             var VideoPositionInteger = VideoList[i].content_desc
@@ -401,30 +413,30 @@ $(document).ready(function () {
             var baseUrl = protocol + '//' + host;
             if (i < 5) {
                 document.getElementById('populateArticles-row1-col1').innerHTML +=
-                    `< li > <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}" /><a class=ArticleLinkText href=${articleLink} target="_blank">  ${caption}</a></li > ` +
-                    `< input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement" /> `
+                    `<li> <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=ArticleLinkText href=${articleLink} target="_blank">  ${caption}</a></li>` +
+                    `<input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement"/>`
             } else if (i >= 5 && i < 10) {
                 document.getElementById('populateArticles-row1-col2').innerHTML +=
-                    `< li > <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}" /><a class=ArticleLinkText href=${articleLink} target="_blank">  ${caption}</a></li > ` +
-                    `< input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement" /> `
+                    `<li> <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=ArticleLinkText href=${articleLink} target="_blank">  ${caption}</a></li > ` +
+                    `<input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement"/>`
             } else if (i >= 10 && i < 15) {
                 document.getElementById('populateArticles-row1-col3').innerHTML +=
-                    `< li class=ArticleLinkText > <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}" /><a class=ArticleLinkText href=${articleLink} target="_blank">  ${caption}</a></li > ` +
-                    `< input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement" /> `
+                    `<li class=ArticleLinkText > <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=ArticleLinkText href=${articleLink} target="_blank">  ${caption}</a></li>` +
+                    `<input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement"/>`
 
 
             } else if (i > 15 && i <= 20) {
                 document.getElementById('populateArticles-row2-col1').innerHTML +=
-                    `< li class=ArticleLinkText > <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}" /><a class=ArticleLinkText href=${articleLink} target="_blank">  ${caption}</a></li > ` +
-                    `< input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement" /> `
+                    `<li class=ArticleLinkText > <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=ArticleLinkText href=${articleLink} target="_blank">  ${caption}</a></li>` +
+                    `<input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement"/>`
             } else if (i > 20 && i <= 25) {
                 document.getElementById('populateArticles-row2-col2').innerHTML +=
-                    `< li class=ArticleLinkText > <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}" /><a class=ArticleLinkText href=${articleLink} target="_blank">  ${caption}</a></li > ` +
-                    `< input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement" /> `
+                    `<li class=ArticleLinkText > <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=ArticleLinkText href=${articleLink} target="_blank">  ${caption}</a></li>` +
+                    `<input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement"/> `
             } else if (i > 25 && i <= 30) {
                 document.getElementById('populateArticles-row2-col3').innerHTML +=
-                    `< li class=ArticleLinkText > <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}" /><a class=ArticleLinkText href=${articleLink} target="_blank">  ${caption}</a></li > ` +
-                    `< input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement" /> `
+                    `<li class=ArticleLinkText > <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=ArticleLinkText href=${articleLink} target="_blank">  ${caption}</a></li>` +
+                    `<input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement"/> `
 
             }
         }

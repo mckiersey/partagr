@@ -221,7 +221,7 @@ const router = app => {
         VerifiedTokenPayload = await verify(CLIENT_ID, token)
         var FrontEndGoogleUserId = VerifiedTokenPayload[0] //Google user ID
         if (!VerifiedTokenPayload) { //if value == false
-            response.send('* Token verification FAIL: User not logged in *')
+            response.send('TOKEN FAIL')
         } else {
             // Now we ensure that this token corresponds to the ProfileUserId (the user Id seen in the browser url)
             try {
@@ -254,25 +254,30 @@ const router = app => {
         token = request.body.token
         ProfileUserId = request.body.ProfileId
         VideoID = request.body.VideoID
-        VideoPosition = request.body.VideoPositionInteger
+        VideoPosition = request.body.Position
         VerifiedTokenPayload = await verify(CLIENT_ID, token)
         var FrontEndGoogleUserId = VerifiedTokenPayload[0] //Google user ID
         if (!VerifiedTokenPayload) { //if value == false
-            response.send('* Token verification FAIL: User not logged in *')
+            response.send('TOKEN FAIL')
         } else { //Token has been verified
             // Now we ensure that this token corresponds to the ProfileUserId (the user Id seen in the browser url)
             try { // SELECT GOOGLE ID
                 pool.query("SELECT google_user_id FROM user_profile WHERE user_id = ?", ProfileUserId, (error, result) => { // value of app user id on row of google user id 
                     StoredGoogleUserID = result[0].google_user_id
                     if (FrontEndGoogleUserId == StoredGoogleUserID) {
-                        console.log('Authorised user editing correct profile')
-                        InsertData = { user_id: ProfileUserId, content: VideoID, content_type: "video", description: VideoPosition }
+                        console.log('Authorised user editing correct profile: VIDEO')
+                        InsertData = { user_id: ProfileUserId, content: VideoID, content_type: "video", content_desc: VideoPosition }
 
                         // ADD VIDEO LINK TO DATA BASE
                         try { // INSET VIDEO
                             pool.query('INSERT INTO user_content SET ?', InsertData, (error, result) => {
+                                if (result !== null) {
+                                    response.send(true)
+                                } else {
+                                    console.log('Insertion error: ', error)
+                                    response.send('Video not Added')
+                                }
                             });
-                            response.send(true)
                         } catch (error) {
                             console.log('Something went wrong, video not added: ', error)
                             response.send('Video not Added')
@@ -300,7 +305,7 @@ const router = app => {
         VerifiedTokenPayload = await verify(CLIENT_ID, token)
         var FrontEndGoogleUserId = VerifiedTokenPayload[0] //Google user ID
         if (!VerifiedTokenPayload) { //if value == false
-            response.send('* Token verification FAIL: User not logged in *')
+            response.send('TOKEN FAIL')
         } else { //Token has been verified
             // Now we ensure that this token corresponds to the ProfileUserId (the user Id seen in the browser url)
             try { // SELECT GOOGLE ID
@@ -312,8 +317,13 @@ const router = app => {
                         // ADD ARTICLE LINK TO DATA BASE
                         try { // INSET ARTICLE
                             pool.query('INSERT INTO user_content SET ?', InsertData, (error, result) => {
+                                if (result !== null) {
+                                    response.send(true)
+                                } else {
+                                    console.log('Insertion error: ', error)
+                                    response.send('Article not Added')
+                                }
                             });
-                            response.send(true)
                         } catch (error) {
                             console.log('Something went wrong, article not added: ', error)
                             response.send('Article not Added')
@@ -343,7 +353,7 @@ const router = app => {
             console.log('search fail')
             res.send(false)
         } else {
-            console.log(response.body.results[0])
+            // console.log(response.body.results[0])
             var thumbnail = response.body.results[0].thumbnail
             var title = response.body.results[0].title_original
             var url = response.body.results[0].listennotes_url
@@ -398,7 +408,7 @@ const router = app => {
         VerifiedTokenPayload = await verify(CLIENT_ID, token)
         var FrontEndGoogleUserId = VerifiedTokenPayload[0]
         if (!VerifiedTokenPayload) {
-            response.send('* Token verification FAIL: User not logged in *')
+            response.send('TOKEN FAIL')
         } else {
             try {
                 pool.query("SELECT google_user_id FROM user_profile WHERE user_id = ?", ProfileUserId, (error, result) => { // value of app user id on row of google user id
@@ -407,9 +417,13 @@ const router = app => {
                         InsertData = { user_id: ProfileUserId, content: PodcastId, content_type: "podcast" }
                         try {
                             pool.query('INSERT INTO user_content SET ?', InsertData, (error, result) => {
-                                console.log(error)
+                                if (result !== null) {
+                                    response.send(true)
+                                } else {
+                                    console.log('Insertion error: ', error)
+                                    response.send('Article not Added')
+                                }
                             });
-                            response.send(true)
                         } catch (error) {
                             console.log('Something went wrong, Podcast not added: ', error)
                             response.send('Podcast not Added')
@@ -445,9 +459,13 @@ const router = app => {
                         InsertData = { user_id: ProfileUserId, content: PodcastEpisodeID, content_type: "podcast_episode" }
                         try {
                             pool.query('INSERT INTO user_content SET ?', InsertData, (error, result) => {
-                                console.log(error)
+                                if (result !== null) {
+                                    response.send(true)
+                                } else {
+                                    console.log('Insertion error: ', error)
+                                    response.send('Article not Added')
+                                }
                             });
-                            response.send(true)
                         } catch (error) {
                             console.log('Something went wrong, Podcast episode not added: ', error)
                             response.send('Podcast episode not Added')
@@ -482,20 +500,22 @@ const router = app => {
     // 3) Rather than taking all data, select only the last row, which has the latest entry - this is an unsophisticated way of dealing with > 1 rows for a user (eg if a user submitted multiple videos)
     // 4) Send this data back to the FrontEnd
     app.get("/Videos", (request, response) => {
+        console.log('Video route triggered')
         user_id = request.query.user_id
         // RETRIEVE USER CONTENT DATA
         pool.query("SELECT content_id, content, content_desc FROM user_content WHERE content_type = 'video' AND user_id = ? ", user_id, (error, result) => {
             if (error) console.log('Content retrieval error:');
             try {
-                console.log('video query result = ', result)
-                user_content = result[0]
+                video_content = result
+                console.log('video query result = ', video_content)
                 if (result.length === 0) {
                     console.log('No video data')
                 } else {
-                    response.send(user_content.content)
+                    response.send(video_content)
                 }
             } catch (error) {
-                console.log("User content error (likely no data for this user)")
+                console.log("User content error (likely no data for this user)- VIDEOS")
+                response.send(false)
             }
         }); // RETRIEVE USER CONTENT DATA: END
     });
@@ -536,21 +556,21 @@ const router = app => {
 
         var RetrievedPodastData = {}
         for (var content_id in PodcastAPIQueryId) {
-            console.log('search id = ', content_id)
+            // console.log('search id = ', content_id)
             if (PodcastAPIQueryId.hasOwnProperty(content_id)) {
                 //console.log(content_id + " -> " + PodcastAPIQueryId[content_id]); //https://stackoverflow.com/a/684692/6065710
                 var PodcastSearchIDAPI = "https://listen-api.listennotes.com/api/v2/podcasts/" + PodcastAPIQueryId[content_id]
                 const response = await unirest.get(PodcastSearchIDAPI).header('X-ListenAPI-Key', sourceFile.podcastAPIKey)
-                console.log('podcast reponse= ', response.toJSON().body.title)
+                //console.log('podcast reponse= ', response.toJSON().body.title)
                 PodcastTitle = response.toJSON().body.title
                 PodcastImage = response.toJSON().body.image
                 PodcastWebsite = response.toJSON().body.website
 
                 RetrievedPodastData[content_id] = { title: PodcastTitle, image: PodcastImage, website: PodcastWebsite }
-                console.log(RetrievedPodastData)
+                //console.log(RetrievedPodastData)
             }
         }
-        console.log("*****", RetrievedPodastData)
+        // console.log("*****", RetrievedPodastData)
         response.send(RetrievedPodastData)
     })
 
@@ -644,7 +664,7 @@ const router = app => {
         pool.query("SELECT content FROM user_content WHERE content_type = 'article' AND user_id = ? ", user_id, (error, result) => {
             if (error) console.log('Content retrieval error:', error);
             try {
-                console.log('article retrieval result = ', result)
+                //console.log('article retrieval result = ', result)
                 RetrievedArticleData = result
                 if (result.length === 0) {
                     console.log('No article data')

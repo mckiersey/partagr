@@ -9,3 +9,4 @@
 - Add listen notes logo (powered by listennotes)
 - Add no podcasts found text => DONE
 - Add podcast quota expired
+- Write logic for user inserted podcasts (or delete feature)
