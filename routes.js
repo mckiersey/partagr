@@ -384,6 +384,7 @@ const router = app => {
             var EmptyArrayOutside = {}
 
             for (i = 0; i < response.body.count; i++) {
+                console.log('thumbnails: ', response.body.results[i].thumbnail)
                 //var EmptyArrayInside = {}
                 console.log('array is empty: ', EmptyArrayOutside)
                 var thumbnail = response.body.results[i].thumbnail

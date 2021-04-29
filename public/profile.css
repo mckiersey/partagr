@@ -46,7 +46,7 @@ p {
     position: relative;
 }
 
-#AddpodcastButton {
+.AddpodcastButton {
     margin: 10px;
 }
 

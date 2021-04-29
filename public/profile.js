@@ -207,10 +207,11 @@ $(document).ready(function () {
                     listenURL = data[2]
                     PodcastID = data[3]
                     description = data[4]
-                    document.getElementById('PodcastThumbnail').innerHTML +=
+                    console.log('description = ', description)
+                    document.getElementById('PodcastSearchResultThumbnail').innerHTML +=
                         `<h3> Add <emph> podcast</emph></h3>` +
                         `<img height = "200" width = "200" src = ${thumbnail}></img>` +
-                        `<button class="btn btn-light" id = "AddpodcastButton"> Add Podcast</button>`
+                        `<button class="btn btn-light AddpodcastButton" id= ${PodcastID}> Add Podcast</button>`
                     document.getElementById('PodcastDescription').innerHTML += `<p> ${description}</p>`
 
                 }
@@ -251,9 +252,9 @@ $(document).ready(function () {
                         console.log('id = ', PodcastEpisodeID)
 
                         document.getElementById('PodcastSearchResultThumbnail').innerHTML +=
-                            `<li><h3> ${title}</h3>` +
-                            `<img height="60" width="60" src=${thumbnail}/>` +
-                            `<button class="btn btn-light" id = "AddpodcastEpisodeButton"> Add Podcast Episode</button>`
+                            `<li><h3>${title}</h3>` +
+                            `<img height="60" width="60" src=${thumbnail} />` +
+                            `<button class="btn btn-light AddpodcastEpisodeButton" id= ${PodcastEpisodeID}> Add Podcast Episode</button>`
 
                     }
                 }
@@ -267,12 +268,14 @@ $(document).ready(function () {
 
 
     // ADD PODCAST
-    $(document).on('click', '#AddpodcastButton', function () {
+    $(document).on('click', '.AddpodcastButton', function () {
+        PodcastToAdd = this.id
+
         try {
             $.post(server + '/AddPodcast', {
                 token: CookieToken,
                 ProfileId: user_id,
-                PodcastId: PodcastID
+                PodcastId: PodcastToAdd
             }).done(function (data) {
                 if (data == true) {
                     window.location.href = window.location.href
@@ -294,12 +297,14 @@ $(document).ready(function () {
     // ADD PODCAST EPISODE 
 
     // ADD PODCAST
-    $(document).on('click', '#AddpodcastEpisodeButton', function () {
+    $(document).on('click', '.AddpodcastEpisodeButton', function () {
+        alert('adding episode')
+        PodcastEpisodeToAdd = this.id
         try {
             $.post(server + '/AddPodcastEpisode', {
                 token: CookieToken,
                 ProfileId: user_id,
-                PodcastEpisodeID: PodcastEpisodeID
+                PodcastEpisodeID: PodcastEpisodeToAdd
             }).done(function (data) {
                 if (data == true) {
                     window.location.href = window.location.href
