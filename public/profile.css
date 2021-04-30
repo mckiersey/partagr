@@ -46,7 +46,20 @@ p {
     position: relative;
 }
 
+.PodcastEpisodeSearchThumbnail {
+    margin: 15px;
+}
+
+.EpisodeSearchTitle {
+    font-family: helvetica;
+    color: black;
+}
+
 .AddpodcastButton {
+    margin: 10px;
+}
+
+.AddpodcastEpisodeButton {
     margin: 10px;
 }
 

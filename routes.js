@@ -447,6 +447,7 @@ const router = app => {
         token = request.body.token
         ProfileUserId = request.body.ProfileId
         PodcastEpisodeID = request.body.PodcastEpisodeID
+        console.log('podcast ep to add', PodcastEpisodeID)
 
         VerifiedTokenPayload = await verify(CLIENT_ID, token)
         var FrontEndGoogleUserId = VerifiedTokenPayload[0]
@@ -508,7 +509,7 @@ const router = app => {
             if (error) console.log('Content retrieval error:');
             try {
                 video_content = result
-                console.log('video query result = ', video_content)
+                //console.log('video query result = ', video_content)
                 if (result.length === 0) {
                     console.log('No video data')
                 } else {
@@ -579,22 +580,24 @@ const router = app => {
     app.get("/PodcastEpisodes", (request, response) => {
         user_id = request.query.user_id
         console.log('podcast episode route')
+        console.log('podast user id = ', user_id)
 
         // POPULATE PODCAST EPISODES (ii): RETRIEVE USER CONTENT DATA
         pool.query("SELECT content_id, content, content_desc FROM user_content WHERE content_type = 'podcast_episode' OR 'podcast_episode_manual' AND user_id = ? ", user_id, (error, result) => {
             if (error) console.log('Content retrieval error:', error);
-            RetrievedPodcastData = result
+            RetrievedPodcastEpisodeData = result
+            console.log('episode query result = ', RetrievedPodcastEpisodeData)
 
             if (result.length === 0) {
                 console.log('No podcast data')
                 response.send(false)
-            } else if (result.content_desc === 'podcast_episod_manual') { // Manually inserted podcasts
+            } else if (result.content_desc === 'podcast_episode_manual') { // Manually inserted podcasts
                 console.log('To Do: write logic for user inserted podcast episodes.')
             } else { // Searched for podcasts
                 var PodcastEpisodeConcatString = "?"
-                for (i = 0; i < RetrievedPodcastData.length; i++) {
-                    contentId = RetrievedPodcastData[i].content_id
-                    PodcastEpisodeId = RetrievedPodcastData[i].content
+                for (i = 0; i < RetrievedPodcastEpisodeData.length; i++) {
+                    contentId = RetrievedPodcastEpisodeData[i].content_id
+                    PodcastEpisodeId = RetrievedPodcastEpisodeData[i].content
                     PodcastEpisodeConcatString = PodcastEpisodeConcatString.concat(contentId, "=", PodcastEpisodeId, "&") //https://stackoverflow.com/a/36123716/6065710
                     PodcastEpisodeRedirectQuery = "/PodcastEpisodeAPIQuery" + PodcastEpisodeConcatString
                 }
@@ -613,10 +616,10 @@ const router = app => {
         var RetrievedPodastEpisodeData = {}
         for (var content_id in PodcastEpisodeAPIQueryId) {
             if (PodcastEpisodeAPIQueryId.hasOwnProperty(content_id)) {
-                //console.log(content_id + " -> " + PodcastEpisodeAPIQueryId[content_id]); //https://stackoverflow.com/a/684692/6065710
+                console.log(content_id + " -> " + PodcastEpisodeAPIQueryId[content_id]); //https://stackoverflow.com/a/684692/6065710
                 var PodcastEpisodeSearchIdAPI = "https://listen-api.listennotes.com/api/v2/episodes/" + PodcastEpisodeAPIQueryId[content_id]
                 const response = await unirest.get(PodcastEpisodeSearchIdAPI).header('X-ListenAPI-Key', sourceFile.podcastAPIKey)
-                //console.log('podcast reponse= ', response.toJSON().body)
+
                 PodcastEpisodeTitle = response.toJSON().body.title
                 PodcastEpisodeImage = response.toJSON().body.image
                 PodcastEpisodeID = response.toJSON().body.id

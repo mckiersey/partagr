@@ -208,7 +208,7 @@ $(document).ready(function () {
                     PodcastID = data[3]
                     description = data[4]
                     console.log('description = ', description)
-                    document.getElementById('PodcastSearchResultThumbnail').innerHTML +=
+                    document.getElementById('PodcastSearchResultThumbnail_1').innerHTML +=
                         `<h3> Add <emph> podcast</emph></h3>` +
                         `<img height = "200" width = "200" src = ${thumbnail}></img>` +
                         `<button class="btn btn-light AddpodcastButton" id= ${PodcastID}> Add Podcast</button>`
@@ -224,7 +224,6 @@ $(document).ready(function () {
 
     // PODCAST EPISODE SEARCH
     $(document).on("click", "#PodcastEpisodeSearchButton", function () {
-        $('.ManualPodcastInput').show()
         PodcastEpisodeSearchTerm = $("#PodcastEpisodeSearchText").val() //[0].value; // Retrieve submitted data
         PodcastEpisodeSearchTermQueryFormat = PodcastEpisodeSearchTerm.replaceAll(" ", "%20")
         try {
@@ -236,26 +235,26 @@ $(document).ready(function () {
                 console.log('Server response :', data)
                 if (data == false) {
                     alert('No episode found- try another search term')
+                    $('.ManualPodcastInput').show()
 
                 } else {
 
                     for (var result_number in data) {
-                        console.log(data[result_number].title)
-
-
                         title = data[result_number].title
                         thumbnail = data[result_number].thumbnail
-                        PodcastEpisodeID = data[result_number].title
-
-                        console.log('thumbnail = ', thumbnail)
-                        console.log('title = ', title)
-                        console.log('id = ', PodcastEpisodeID)
-
-                        document.getElementById('PodcastSearchResultThumbnail').innerHTML +=
-                            `<li><h3>${title}</h3>` +
-                            `<img height="60" width="60" src=${thumbnail} />` +
-                            `<button class="btn btn-light AddpodcastEpisodeButton" id= ${PodcastEpisodeID}> Add Podcast Episode</button>`
-
+                        PodcastEpisodeID = data[result_number].id
+                        if (result_number < 5) {
+                            document.getElementById('PodcastSearchResultThumbnail_1').innerHTML +=
+                                `<img height="60" width="60" class="PodcastEpisodeSearchThumbnail" src=${thumbnail} />` +
+                                `<p class="EpisodeSearchTitle">${title}</p>` +
+                                `<button class="btn btn-light AddpodcastEpisodeButton" id= ${PodcastEpisodeID}> Add Episode</button>`
+                        } else {
+                            document.getElementById('PodcastSearchResultThumbnail_2').innerHTML +=
+                                `<img height="60" width="60" class="PodcastEpisodeSearchThumbnail" src=${thumbnail} />` +
+                                `<p class="EpisodeSearchTitle">${title}</p>` +
+                                `<button class="btn btn-light AddpodcastEpisodeButton" id= ${PodcastEpisodeID}> Add Episode</button>`
+                        }
+                        $('.ManualPodcastInput').show()
                     }
                 }
             });
@@ -263,6 +262,8 @@ $(document).ready(function () {
             console.log('failed to post to backend')
             console.log('Error: ' + err)
         }
+
+
     });
 
 
@@ -366,6 +367,7 @@ $(document).ready(function () {
     console.log('Loading podcast episodes...')
 
     $.get(GetPodcastEpisodesUrl, function (PodcastEpisodeList, status) {
+
         $('.PodcastEpisodeLoader').hide()
         if (PodcastEpisodeList == false) {
             document.getElementById('PopulatePodcastEpisodes').innerHTML += "<h3>No podcast episodes found- use the search function to add an episode.</h3>"
