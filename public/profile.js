@@ -243,17 +243,65 @@ $(document).ready(function () {
                         title = data[result_number].title
                         thumbnail = data[result_number].thumbnail
                         PodcastEpisodeID = data[result_number].id
-                        if (result_number < 5) {
+                        if (result_number <= 1) {
                             document.getElementById('PodcastSearchResultThumbnail_1').innerHTML +=
+                                `<div class="row">` +
+                                `<div class = "col">` +
                                 `<img height="60" width="60" class="PodcastEpisodeSearchThumbnail" src=${thumbnail} />` +
                                 `<p class="EpisodeSearchTitle">${title}</p>` +
-                                `<button class="btn btn-light AddpodcastEpisodeButton" id= ${PodcastEpisodeID}> Add Episode</button>`
-                        } else {
+                                `<button class="btn btn-light AddpodcastEpisodeButton" id= ${PodcastEpisodeID}> Add Episode</button>` +
+                                `</div></div>`
+
+                        } else if (result_number > 1 && result_number <= 3) {
                             document.getElementById('PodcastSearchResultThumbnail_2').innerHTML +=
+                                `<div class="row">` +
+                                `<div class = "col-12">` +
                                 `<img height="60" width="60" class="PodcastEpisodeSearchThumbnail" src=${thumbnail} />` +
                                 `<p class="EpisodeSearchTitle">${title}</p>` +
-                                `<button class="btn btn-light AddpodcastEpisodeButton" id= ${PodcastEpisodeID}> Add Episode</button>`
+                                `</div></div>` +
+                                `<div class="row">` +
+                                `<div class = "col-12">` +
+                                `<button class="btn btn-light AddpodcastEpisodeButton" id= ${PodcastEpisodeID}> Add Episode</button>` +
+                                `</div></div>`
+                        } else if (result_number > 3 && result_number <= 5) {
+                            document.getElementById('PodcastSearchResultThumbnail_3').innerHTML +=
+                                `<div class="row">` +
+                                `<div class = "col-12">` +
+                                `<img height="60" width="60" class="PodcastEpisodeSearchThumbnail" src=${thumbnail} />` +
+                                `<p class="EpisodeSearchTitle">${title}</p>` +
+                                `</div></div>` +
+                                `<div class="row">` +
+                                `<div class = "col-12">` +
+                                `<button class="btn btn-light AddpodcastEpisodeButton" id= ${PodcastEpisodeID}> Add Episode</button>` +
+                                `</div></div>`
+
+                        } else if (result_number > 5 && result_number <= 7) {
+                            document.getElementById('PodcastSearchResultThumbnail_4').innerHTML +=
+                                `<div class="row">` +
+                                `<div class = "col-12">` +
+                                `<img height="60" width="60" class="PodcastEpisodeSearchThumbnail" src=${thumbnail} />` +
+                                `<p class="EpisodeSearchTitle">${title}</p>` +
+                                `</div></div>` +
+                                `<div class="row">` +
+                                `<div class = "col-12">` +
+                                `<button class="btn btn-light AddpodcastEpisodeButton" id= ${PodcastEpisodeID}> Add Episode</button>` +
+                                `</div></div>`
+
+                        } else if (result_number > 7 && result_number <= 9) {
+                            document.getElementById('PodcastSearchResultThumbnail_5').innerHTML +=
+                                `<div class="row">` +
+                                `<div class = "col-12">` +
+                                `<img height="60" width="60" class="PodcastEpisodeSearchThumbnail" src=${thumbnail} />` +
+                                `<p class="EpisodeSearchTitle">${title}</p>` +
+                                `</div></div>` +
+                                `<div class="row">` +
+                                `<div class = "col-12">` +
+                                `<button class="btn btn-light AddpodcastEpisodeButton" id= ${PodcastEpisodeID}> Add Episode</button>` +
+                                `</div></div>`
                         }
+
+
+
                         $('.ManualPodcastInput').show()
                     }
                 }
