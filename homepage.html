@@ -47,28 +47,44 @@
                 </div>
             </div>
         </div>
-        <!--SIGN IN WITH GOOGLE-->
-        <div class="row" align="center">
-            <div class="col">
-                <div class="card" style="width: 18rem;">
-                    <div class="card-body">
-                        <h6 class="card-subtitle mb-2 text-muted">Sign in/up with Google</h6>
-                        <p class="card-text">the internet is beautiful, share it.</p>
+        <!--SPLIT INTO TWO COLUMNS-->
+        <div class="row">
+            <div class="col-10">
+                <div class="row ">
+                    <!--SIGN IN WITH GOOGLE-->
+                    <div class="col">
+                        <div class="row justify-content-center">
+                            <div class="col-5 text-center">
+                                <H2>Sign up with google</h2>
+                            </div>
+                        </div>
+                        <div class="row" align="center">
+                            <div class="col">
+                                <div class="g-signin2" data-width="200" data-height="60" data-onsuccess="onSignIn"
+                                    id='SignInButton'>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="row" align="center">
-            <div class="col">
-                <div class="g-signin2" data-width="200" data-height="60" data-onsuccess="onSignIn" id='SignInButton'>
-                </div>
+            <!--RECENTLY ADDED-->
+            <div class="col-2 RecentlyAdded">
+                <h3 class="RecentActivityTitleText">Recent Activity</h3>
+                <table class="table table-dark">
+                    <tbody id="RecentActivityList">
+                        <!--Podcast Episodes populate here-->
+                    </tbody>
+                </table>
             </div>
         </div>
-        <footer>
-            <p>Image: Early morning, Cappadocia, Turkey | Taken by <a href="https://mckiersey.medium.com/"
-                    target="_blank">Seán
-                    McKiernan</a></p>
-        </footer>
+    </div>
+
+    <footer>
+        <p>Image: Early morning, Cappadocia, Turkey | Taken by <a href="https://mckiersey.medium.com/"
+                target="_blank">Seán
+                McKiernan</a></p>
+    </footer>
     </div>
     <!-- ******************************** CSS STYLING ******************************** -->
     <style>
@@ -160,6 +176,17 @@
 
         a {
             color: white;
+        }
+
+
+        .RecentActivityTitleText {
+            color: grey;
+        }
+
+        #RecentActivityList {
+            overflow-y: scroll;
+            height: 800px;
+            display: block;
         }
     </style>
 

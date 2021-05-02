@@ -117,7 +117,7 @@ $(document).ready(function () {
                         VideoID: VideoID,
                         Position: VideoPositionInteger
                     }).done(function (data) {
-                        console.log('response data: ', data)
+                        console.log(' add video response data: ', data)
                         if (data == true) {
                             window.location.href = window.location.href
                         } else {
@@ -184,7 +184,7 @@ $(document).ready(function () {
     // PODCAST SEARCH
     $(document).on("click", "#PodcastSearchButton", function () {
         console.log('Search podcast function executed- ', $(this))
-
+        $('.PodcastSearchResultsSection').show()
         PodcastSearchTerm = $("#PodcastSearchText").val() //[0].value; // Retrieve submitted data
         console.log('search term = ', PodcastSearchTerm)
         PodcastSearchTermQueryFormat = PodcastSearchTerm.replaceAll(" ", "%20")
@@ -224,6 +224,7 @@ $(document).ready(function () {
 
     // PODCAST EPISODE SEARCH
     $(document).on("click", "#PodcastEpisodeSearchButton", function () {
+        $('.PodcastSearchResultsSection').show()
         PodcastEpisodeSearchTerm = $("#PodcastEpisodeSearchText").val() //[0].value; // Retrieve submitted data
         PodcastEpisodeSearchTermQueryFormat = PodcastEpisodeSearchTerm.replaceAll(" ", "%20")
         try {
@@ -379,15 +380,23 @@ $(document).ready(function () {
     // GET VIDEOS
     var GetVideoUrl = server + '/Videos?user_id=' + user_id
     $.get(GetVideoUrl, function (VideoList, status) {
-        var i;
-        for (i = 0; i < VideoList.length; i++) {
-            var VideoPositionInteger = VideoList[i].content_desc
-            var VideoID = VideoList[i].content
-            var ContentID = VideoList[i].content_id
+        var VideoCounter;
+        for (VideoCounter = 0; VideoCounter < VideoList.length; VideoCounter++) {
+            var VideoPositionInteger = VideoList[VideoCounter].content_desc
+            var VideoID = VideoList[VideoCounter].content
+            var ContentID = VideoList[VideoCounter].content_id
             VideoElementID = "VideoPosition" + VideoPositionInteger
-            document.getElementById(VideoElementID).innerHTML +=
-                `<iframe width="560" height="315" src="https://www.youtube.com/embed/${VideoID}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` +
-                `<input type = "image" src = "DeleteIcon.png" name = ${ContentID} class="DeleteContentButton OwnerElement"/>`
+            console.log('value of VideoCounter = ', VideoCounter)
+            console.log('video id', VideoID)
+            if (VideoCounter == 0) {
+                document.getElementById(VideoElementID).innerHTML +=
+                    `<iframe width="900" height="450" src="https://www.youtube.com/embed/${VideoID}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` +
+                    `<input type = "image" src = "DeleteIcon.png" name = ${ContentID} class="DeleteContentButton OwnerElement"/>`
+            } else {
+                document.getElementById(VideoElementID).innerHTML +=
+                    `<iframe width="560" height="315" src="https://www.youtube.com/embed/${VideoID}" title="YouTube video player" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` +
+                    `<input type = "image" src = "DeleteIcon.png" name = ${ContentID} class="DeleteContentButton OwnerElement"/>`
+            }
         }
     });
 
@@ -470,34 +479,54 @@ $(document).ready(function () {
             var baseUrl = protocol + '//' + host;
             if (i < 5) {
                 document.getElementById('populateArticles-row1-col1').innerHTML +=
-                    `<li> <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=ArticleLinkText href=${articleLink} target="_blank">  ${caption}</a></li>` +
+                    `<li> <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=LinkText href=${articleLink} target="_blank">  ${caption}</a></li>` +
                     `<input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement"/>`
             } else if (i >= 5 && i < 10) {
                 document.getElementById('populateArticles-row1-col2').innerHTML +=
-                    `<li> <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=ArticleLinkText href=${articleLink} target="_blank">  ${caption}</a></li > ` +
+                    `<li> <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=LinkText href=${articleLink} target="_blank">  ${caption}</a></li > ` +
                     `<input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement"/>`
             } else if (i >= 10 && i < 15) {
                 document.getElementById('populateArticles-row1-col3').innerHTML +=
-                    `<li class=ArticleLinkText > <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=ArticleLinkText href=${articleLink} target="_blank">  ${caption}</a></li>` +
+                    `<li class=LinkText > <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=LinkText href=${articleLink} target="_blank">  ${caption}</a></li>` +
                     `<input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement"/>`
 
 
             } else if (i > 15 && i <= 20) {
                 document.getElementById('populateArticles-row2-col1').innerHTML +=
-                    `<li class=ArticleLinkText > <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=ArticleLinkText href=${articleLink} target="_blank">  ${caption}</a></li>` +
+                    `<li class=LinkText > <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=LinkText href=${articleLink} target="_blank">  ${caption}</a></li>` +
                     `<input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement"/>`
             } else if (i > 20 && i <= 25) {
                 document.getElementById('populateArticles-row2-col2').innerHTML +=
-                    `<li class=ArticleLinkText > <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=ArticleLinkText href=${articleLink} target="_blank">  ${caption}</a></li>` +
+                    `<li class=LinkText > <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=LinkText href=${articleLink} target="_blank">  ${caption}</a></li>` +
                     `<input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement"/> `
             } else if (i > 25 && i <= 30) {
                 document.getElementById('populateArticles-row2-col3').innerHTML +=
-                    `<li class=ArticleLinkText > <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=ArticleLinkText href=${articleLink} target="_blank">  ${caption}</a></li>` +
+                    `<li class=LinkText > <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=LinkText href=${articleLink} target="_blank">  ${caption}</a></li>` +
                     `<input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement"/> `
 
             }
         }
     });
+
+    // RECENT ACTIVITY
+    var GetActivity = server + '/RecentActivity'
+    $.get(GetActivity, function (ActivityList, status) {
+        console.log('recent activity response = ', ActivityList)
+        var i;
+        for (i = 0; i < ActivityList.length; i++) {
+
+            var content_type = ActivityList[i].content_type
+            var user_name = ActivityList[i].full_name
+            var user_id = ActivityList[i].user_id
+            var content_id = ActivityList[i].content_id
+            var user_photo = ActivityList[i].profile_picture
+
+            document.getElementById('RecentActivityList').innerHTML += `<tr>`
+                + `<td><a href=${server}/ProfilePage?user_id=${user_id}><img class="ActivityProfileImage" height="50" width="50" src="${user_photo}"></a></td>`
+                + `<td><a class="LinkText" href=${server}/ProfilePage?user_id=${user_id}#${content_type}><p LinkText id= ${content_id}>${user_name} just added a new ${content_type}</p></a></td>`
+                + `</tr>`
+        }
+    })
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //// *** DISCOVERY *** ////

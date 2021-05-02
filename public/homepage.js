@@ -99,3 +99,22 @@ function signOut() {
         response.send('Error: ' + err)
     }
 }
+// RECENT ACTIVITY
+var GetActivity = server + '/RecentActivity'
+$.get(GetActivity, function (ActivityList, status) {
+    console.log('recent activity response = ', ActivityList)
+    var i;
+    for (i = 0; i < ActivityList.length; i++) {
+
+        var content_type = ActivityList[i].content_type
+        var user_name = ActivityList[i].full_name
+        var user_id = ActivityList[i].user_id
+        var content_id = ActivityList[i].content_id
+        var user_photo = ActivityList[i].profile_picture
+
+        document.getElementById('RecentActivityList').innerHTML += `<tr>`
+            + `<td><img class="ActivityProfileImage" height="50" width="50" src="${user_photo}"/></td>`
+            + `<td><p id= ${content_id}>${user_name} just added a new ${content_type}</p></td>`
+            + `</tr>`
+    }
+})

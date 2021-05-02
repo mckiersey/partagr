@@ -658,6 +658,28 @@ const router = app => {
         }); // RETRIEVE USER CONTENT DATA: END
     });
 
+    // RECENT ACTIVITY //
+    app.get("/RecentActivity", (request, response) => {
+        // RETRIEVE USER CONTENT DATA
+        console.log('recent activity route')
+
+        pool.query("SELECT full_name, profile_picture, UC.user_id, content_id, content_type, content_desc FROM user_content UC LEFT JOIN user_profile UP ON UC.user_id = UP.user_id ORDER BY content_id DESC LIMIT 20 ", (error, result) => {
+            if (error) console.log('Content retrieval error:', error);
+            try {
+                AllRecentActivity = result
+                if (result.length === 0) {
+                    console.log('No recent activity')
+                } else {
+                    console.log('recent activity')
+                    console.log(AllRecentActivity)
+                    response.send(AllRecentActivity)
+                }
+            } catch (error) {
+                console.log("User content error: ", error)
+            }
+        }); // RETRIEVE USER CONTENT DATA: END
+    });
+
 
     //////////////////////////////////////////////////////////////////
     //// *** DISCOVERY *** ////
