@@ -529,7 +529,7 @@ $(document).ready(function () {
 
             document.getElementById('RecentActivityList').innerHTML += `<tr>`
                 + `<td><a href=${server}/ProfilePage?user_id=${user_id}><img class="ActivityProfileImage" height="50" width="50" src="${user_photo}"></a></td>`
-                + `<td><a class="LinkText" href=${server}/ProfilePage?user_id=${user_id}#${content_type}><p LinkText id= ${content_id}>${user_name} just added a new ${content_type}</p></a></td>`
+                + `<td><a class="RecentActivityText" href=${server}/ProfilePage?user_id=${user_id}#${content_type}><p LinkText id= ${content_id}>${user_name} just added a new ${content_type}</p></a></td>`
                 + `</tr>`
         }
     })
