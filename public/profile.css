@@ -9,8 +9,9 @@ p {
 #banner-name-text {
     color: RGB(229, 229, 229);
     font-family: helvetica;
-    font-size: 30px;
+    font-size: 60px;
     text-decoration: none;
+    margin-left: 20px;
 
 }
 
@@ -36,7 +37,8 @@ p {
     width: 30px;
 }
 
-#ShowMore {
+#ShowMore,
+#ShowLess {
     color: RGB(229, 229, 229);
     font-family: helvetica;
     padding: 200px;

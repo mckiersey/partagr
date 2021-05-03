@@ -56,9 +56,15 @@ $(document).ready(function () {
 
     // SHOW MORE VIDEOS
     $('#ShowMore').click(function () {
-        $('.ShowMore').toggle();
-        if ($(this).text() == 'More Videos') $(this).text('Hide Videos');
-        else $(this).text('More Videos');
+        $('.ShowMore').slideDown("slow");
+        $('#ShowMore').hide()
+        $('#ShowLess').show()
+
+    });
+    $("#ShowLess").click(function () {
+        $('.ShowMore').slideUp("fast");
+        $('#ShowLess').hide()
+        $('#ShowMore').show()
     });
 
 
