@@ -113,8 +113,8 @@ $.get(GetActivity, function (ActivityList, status) {
         var user_photo = ActivityList[i].profile_picture
 
         document.getElementById('RecentActivityList').innerHTML += `<tr>`
-            + `<td><img class="ActivityProfileImage" height="50" width="50" src="${user_photo}"/></td>`
-            + `<td><p id= ${content_id}>${user_name} just added a new ${content_type}</p></td>`
+            + `<td><a href=${server}/ProfilePage?user_id=${user_id}><img class="ActivityProfileImage" height="50" width="50" src="${user_photo}"></a></td>`
+            + `<td><a class="RecentActivityText" href=${server}/ProfilePage?user_id=${user_id}#${content_type}><p LinkText id= ${content_id}>${user_name} just added a new ${content_type}</p></a></td>`
             + `</tr>`
     }
 })

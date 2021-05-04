@@ -125,7 +125,7 @@ $(document).ready(function () {
                     }).done(function (data) {
                         console.log(' add video response data: ', data)
                         if (data == true) {
-                            window.location.href = window.location.href
+                            window.location.href = server + "/ProfilePage?user_id=" + user_id
                         } else {
                             console.log(data)
                             if (data === 'TOKEN FAIL') {
@@ -306,9 +306,6 @@ $(document).ready(function () {
                                 `<button class="btn btn-light AddpodcastEpisodeButton" id= ${PodcastEpisodeID}> Add Episode</button>` +
                                 `</div></div>`
                         }
-
-
-
                         $('.ManualPodcastInput').show()
                     }
                 }
@@ -363,7 +360,7 @@ $(document).ready(function () {
                 PodcastEpisodeID: PodcastEpisodeToAdd
             }).done(function (data) {
                 if (data == true) {
-                    window.location.href = window.location.href
+                    window.location.href = server + "/ProfilePage?user_id=" + user_id
                 } else {
                     console.log(data)
                     if (data === 'TOKEN FAIL') {
@@ -386,6 +383,7 @@ $(document).ready(function () {
     // GET VIDEOS
     var GetVideoUrl = server + '/Videos?user_id=' + user_id
     $.get(GetVideoUrl, function (VideoList, status) {
+        $('.VideoLoader').hide()
         var VideoCounter;
         for (VideoCounter = 0; VideoCounter < VideoList.length; VideoCounter++) {
             var VideoPositionInteger = VideoList[VideoCounter].content_desc
@@ -398,12 +396,14 @@ $(document).ready(function () {
                 document.getElementById(VideoElementID).innerHTML +=
                     `<iframe width="900" height="450" src="https://www.youtube.com/embed/${VideoID}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` +
                     `<input type = "image" src = "DeleteIcon.png" name = ${ContentID} class="DeleteContentButton OwnerElement"/>`
+
             } else {
                 document.getElementById(VideoElementID).innerHTML +=
                     `<iframe width="560" height="315" src="https://www.youtube.com/embed/${VideoID}" title="YouTube video player" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` +
                     `<input type = "image" src = "DeleteIcon.png" name = ${ContentID} class="DeleteContentButton OwnerElement"/>`
             }
         }
+
     });
 
 
@@ -575,7 +575,7 @@ $(document).ready(function () {
                     console.log('delete request = ', result)
                     if (result = true) {
                         console.log('item deleted')
-                        window.location.href = window.location.href
+                        window.location.href = server + "/ProfilePage?user_id=" + user_id
                     } else {
                         alert('Item not deleted, please try again (error: ', data, ' )')
                     }

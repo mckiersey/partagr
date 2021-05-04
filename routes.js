@@ -269,6 +269,23 @@ const router = app => {
                         InsertData = { user_id: ProfileUserId, content: VideoID, content_type: "video", content_desc: VideoPosition }
 
                         // ADD VIDEO LINK TO DATA BASE
+                        // ENSURE POSITION IS EMPTY FIRST
+                        try {
+                            let DeleteIfAlreadyFullQuery = "SELECT content_desc FROM user_content WHERE user_id = ? AND content_type = 'video' AND content_desc =?"
+                            pool.query(DeleteIfAlreadyFullQuery, [ProfileUserId, VideoPosition], (error, result) => {
+                                console.log('check if already populated error: ', error)
+                                console.log('check if already populated error: ', result)
+                                if (result !== null) {
+                                    pool.query([ProfileUserId, VideoPosition], (error, result) => {
+                                        console.log('delete existing video in position error: ', error)
+                                        console.log('delete existing video in position result: ', result)
+                                    })
+                                    else {
+
+                                })
+                        } catch (error) {
+                            console.log('check if already popualted error (ii): ', error)
+                        }
                         try { // INSET VIDEO
                             pool.query('INSERT INTO user_content SET ?', InsertData, (error, result) => {
                                 if (result !== null) {
@@ -670,8 +687,6 @@ const router = app => {
                 if (result.length === 0) {
                     console.log('No recent activity')
                 } else {
-                    console.log('recent activity')
-                    console.log(AllRecentActivity)
                     response.send(AllRecentActivity)
                 }
             } catch (error) {
