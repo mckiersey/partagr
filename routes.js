@@ -254,6 +254,7 @@ const router = app => {
         token = request.body.token
         ProfileUserId = request.body.ProfileId
         VideoID = request.body.VideoID
+        console.log('** NEW video id ', VideoID)
         VideoPosition = request.body.Position
         VerifiedTokenPayload = await verify(CLIENT_ID, token)
         var FrontEndGoogleUserId = VerifiedTokenPayload[0] //Google user ID
@@ -270,21 +271,19 @@ const router = app => {
 
                         // ADD VIDEO LINK TO DATA BASE
                         // ENSURE POSITION IS EMPTY FIRST
-                        try {
-                            let DeleteIfAlreadyFullQuery = "SELECT content_desc FROM user_content WHERE user_id = ? AND content_type = 'video' AND content_desc =?"
+                        let CheckIfAlreadyFullQuery = "SELECT content_desc FROM user_content WHERE user_id = ? AND content_type = 'video' AND content_desc =?"
+                        pool.query(CheckIfAlreadyFullQuery, [ProfileUserId, VideoPosition], (error, result) => {
+                            console.log('check if already populated error: ', error)
+                            console.log('check if already populated result: ', result)
+                        });
+                        if (result !== null) {
+                            let DeleteIfAlreadyFullQuery = "DELETE FROM user_content WHERE user_id = ? AND content_type = 'video' AND content_desc =?"
                             pool.query(DeleteIfAlreadyFullQuery, [ProfileUserId, VideoPosition], (error, result) => {
-                                console.log('check if already populated error: ', error)
-                                console.log('check if already populated error: ', result)
-                                if (result !== null) {
-                                    pool.query([ProfileUserId, VideoPosition], (error, result) => {
-                                        console.log('delete existing video in position error: ', error)
-                                        console.log('delete existing video in position result: ', result)
-                                    })
-                                    else {
-
-                                })
-                        } catch (error) {
-                            console.log('check if already popualted error (ii): ', error)
+                                console.log('delete existing video in position error: ', error)
+                                console.log('delete existing video in position result: ', result)
+                            });
+                        } else {
+                            console.log('no previous video in position- adding new video')
                         }
                         try { // INSET VIDEO
                             pool.query('INSERT INTO user_content SET ?', InsertData, (error, result) => {
@@ -299,6 +298,7 @@ const router = app => {
                             console.log('Something went wrong, video not added: ', error)
                             response.send('Video not Added')
                         }
+
                     } else {
                         console.log('FrontEnd token Id does not match BackEnd Google ID')
                         response.send('Video not Added')
