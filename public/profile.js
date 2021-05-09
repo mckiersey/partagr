@@ -54,18 +54,7 @@ $(document).ready(function () {
     document.getElementById('banner-name').innerHTML = "<a id='banner-name-text' href=" + server + ">partagr.com</h1>"
 
 
-    // SHOW MORE VIDEOS
-    $('#ShowMore').click(function () {
-        $('.ShowMore').slideDown("slow");
-        $('#ShowMore').hide()
-        $('#ShowLess').show()
 
-    });
-    $("#ShowLess").click(function () {
-        $('.ShowMore').slideUp("fast");
-        $('#ShowLess').hide()
-        $('#ShowMore').show()
-    });
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -385,22 +374,70 @@ $(document).ready(function () {
             var VideoID = VideoList[VideoCounter].content
             var ContentID = VideoList[VideoCounter].content_id
             VideoElementID = "VideoPosition" + VideoPositionInteger
-            console.log('value of VideoCounter = ', VideoCounter)
-            console.log('video id', VideoID)
+            //console.log('value of VideoCounter = ', VideoCounter)
+            //console.log('video id', VideoID)
             if (VideoPositionInteger == 1) {
                 document.getElementById(VideoElementID).innerHTML +=
-                    `<iframe width="900" height="450" src="https://www.youtube.com/embed/${VideoID}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` +
+                    `<iframe id="iFrame${VideoPositionInteger}" width="900" height="450" src="https://www.youtube.com/embed/${VideoID}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` +
                     `<input type = "image" src = "DeleteIcon.png" name = ${ContentID} class="DeleteContentButton OwnerElement"/>`
 
             } else {
                 document.getElementById(VideoElementID).innerHTML +=
-                    `<iframe width="560" height="315" src="https://www.youtube.com/embed/${VideoID}" title="YouTube video player" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` +
+                    `<iframe  id="iFrame${VideoPositionInteger}" width="560" height="315" src="https://www.youtube.com/embed/${VideoID}" title="YouTube video player" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` +
                     `<input type = "image" src = "DeleteIcon.png" name = ${ContentID} class="DeleteContentButton OwnerElement"/>`
             }
         }
+        document.getElementById("iFrame" + VideoPositionInteger).onload = function () {
+            $(".VideosLoader").slideUp("fast")
+        };
 
     });
 
+    // GET MORE VIDEOS
+    var MoreVideoClickCounter = 0
+    $(document).on('click', '.GetMoreVideos', function () {
+        console.log('more video click counter:', MoreVideoClickCounter)
+        if (MoreVideoClickCounter == 0) {
+            console.log('/!\ getting more videos!')
+            var GetMoreVideosUrl = server + '/GetMoreVideos?user_id=' + user_id
+            $.get(GetMoreVideosUrl, function (MoreVideosList, status) {
+                var MoreVideosCounter;
+                var NumberVideosToLoad = MoreVideosList.length
+                for (MoreVideosCounter = 0; MoreVideosCounter < NumberVideosToLoad; MoreVideosCounter++) {
+                    var VideoPositionInteger = MoreVideosList[MoreVideosCounter].content_desc
+                    var VideoID = MoreVideosList[MoreVideosCounter].content
+                    var ContentID = MoreVideosList[MoreVideosCounter].content_id
+                    VideoElementID = "VideoPosition" + VideoPositionInteger
+                    console.log('value of MoreVideoCounter = ', MoreVideosCounter)
+                    console.log('video id', VideoID)
+                    document.getElementById(VideoElementID).innerHTML +=
+                        `<iframe id="iFrame${VideoPositionInteger}" width="560" height="315" src="https://www.youtube.com/embed/${VideoID}" title="YouTube video player" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` +
+                        `<input type = "image" src = "DeleteIcon.png" name = ${ContentID} class="DeleteContentButton OwnerElement"/>`
+                }
+                document.getElementById("iFrame" + VideoPositionInteger).onload = function () {
+                    $(".MoreVideosLoader").slideUp("fast")
+                };
+            });
+            $('.ShowMore').slideDown("slow");
+            $('#ShowMore').slideUp()
+            $('#ShowLess').show()
+        } else {
+
+            $('.ShowMore').slideDown("slow");
+            $('#ShowMore').slideUp()
+            $('#ShowLess').show()
+        }
+        MoreVideoClickCounter++
+
+    });
+
+    // SHOW MORE VIDEOS
+
+    $("#ShowLess").click(function () {
+        $('.ShowMore').slideUp("fast");
+        $('#ShowLess').hide()
+        $('#ShowMore').show()
+    });
 
     // GET PODCASTS
     var GetPodcastsUrl = server + '/Podcasts?user_id=' + user_id
@@ -512,7 +549,7 @@ $(document).ready(function () {
     // RECENT ACTIVITY
     var GetActivity = server + '/RecentActivity'
     $.get(GetActivity, function (ActivityList, status) {
-        console.log('recent activity response = ', ActivityList)
+        //console.log('recent activity response = ', ActivityList)
         var i;
         for (i = 0; i < ActivityList.length; i++) {
 
