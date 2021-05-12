@@ -32,13 +32,6 @@
             </div>
             <!--SESSION STATUS-->
             <div class="col">
-                <div class="row" align='right'>
-                    <div class="col">
-                        <div id="SessionStatus">
-                            <h2 id='SessionStatusText'></h2>
-                        </div>
-                    </div>
-                </div>
                 <div class="row" id='SignOutButton' align='right'>
                     <div class="col">
                         <button type="button" class="btn btn-light" id='SignOutButton' onClick=signOut()>Sign
@@ -69,9 +62,11 @@
                 </div>
             </div>
             <!--RECENTLY ADDED-->
-            <div class="col-2 RecentlyAdded">
-                <h3 class="RecentActivityTitleText">Recent Activity</h3>
-                <table class="table table-dark">
+            <div class="col-xl-2 col-lg-12 col-md-12 col-sm-12 RecentlyAdded">
+                <table class="table table-dark" id="HomepageRecentActivityTable">
+                    <tr>
+                        <th colspan="2">Recent Activity</th>
+                    </tr>
                     <tbody id="RecentActivityList">
                         <!--Podcast Episodes populate here-->
                     </tbody>
@@ -79,12 +74,6 @@
             </div>
         </div>
     </div>
-
-    <footer>
-        <p>Image: Early morning, Cappadocia, Turkey | Taken by <a href="https://mckiersey.medium.com/"
-                target="_blank">Seán
-                McKiernan</a></p>
-    </footer>
     </div>
     <!-- ******************************** CSS STYLING ******************************** -->
     <style>
@@ -165,14 +154,6 @@
             background-position: center center;
         }
 
-        footer {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            height: 2.5rem;
-            margin-bottom: 10px;
-            padding-left: 20px;
-        }
 
         a {
             color: white;
@@ -181,6 +162,10 @@
 
         .RecentActivityTitleText {
             color: grey;
+        }
+
+        #HomepageRecentActivityTable {
+            margin-top: 40px;
         }
 
         #RecentActivityList {

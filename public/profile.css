@@ -19,16 +19,25 @@ p {
     margin-top: 15px;
 }
 
+#SignInButton {
+    margin-top: 10px;
+
+}
+
 .PodcastSearchSectionTitle {
     color: white;
 }
 
 .banner {
-    height: 200px;
+    height: 220px;
     background-color: #023e8a;
 }
 
 .OwnerElement {
+    display: none;
+}
+
+.SignInButton {
     display: none;
 }
 
@@ -140,7 +149,7 @@ p {
 }
 
 .RecentActivityTitleText {
-    color: grey;
+    color: white;
 }
 
 #RecentActivityList {

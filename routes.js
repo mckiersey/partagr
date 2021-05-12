@@ -250,12 +250,14 @@ const router = app => {
     // 6) Insert content (VideoLink) into user_content table
 
     app.post("/AddYouTubeVideo", async (request, response) => {
-        console.log('Add video route')
+        console.log('**********************************')
         token = request.body.token
         ProfileUserId = request.body.ProfileId
         VideoID = request.body.VideoID
-        console.log('** NEW video id ', VideoID)
         VideoPosition = request.body.Position
+        console.log('** NEW video id ', VideoID)
+        console.log('** NEW video position ', VideoPosition)
+
         VerifiedTokenPayload = await verify(CLIENT_ID, token)
         var FrontEndGoogleUserId = VerifiedTokenPayload[0] //Google user ID
         if (!VerifiedTokenPayload) { //if value == false
@@ -271,26 +273,32 @@ const router = app => {
 
                         // ADD VIDEO LINK TO DATA BASE
                         // ENSURE POSITION IS EMPTY FIRST
+                        console.log("CHECK VIDEO POSITION STATUS")
                         let CheckIfAlreadyFullQuery = "SELECT content_desc FROM user_content WHERE user_id = ? AND content_type = 'video' AND content_desc =?"
-                        pool.query(CheckIfAlreadyFullQuery, [ProfileUserId, VideoPosition], (error, result) => {
+                        pool.query(CheckIfAlreadyFullQuery, [ProfileUserId, VideoPosition], (error, PreviouslyPopulatedResult) => {
                             console.log('check if already populated error: ', error)
-                            console.log('check if already populated result: ', result)
+                            console.log('check if already populated result: ', PreviouslyPopulatedResult)
+
+                            if (PreviouslyPopulatedResult.length > 0) {
+                                console.log('VIDEO ALREADY IN PLACE: DELETING')
+                                let DeleteIfAlreadyFullQuery = "DELETE FROM user_content WHERE user_id = ? AND content_type = 'video' AND content_desc =?"
+                                pool.query(DeleteIfAlreadyFullQuery, [ProfileUserId, VideoPosition], (error, result) => {
+                                    console.log('delete existing video in position error: ', error)
+                                    console.log('delete existing video in position result: ', result)
+                                });
+                            } else {
+                                console.log('NO PREVIOUS VIDEO')
+                            }
                         });
-                        if (result !== null) {
-                            let DeleteIfAlreadyFullQuery = "DELETE FROM user_content WHERE user_id = ? AND content_type = 'video' AND content_desc =?"
-                            pool.query(DeleteIfAlreadyFullQuery, [ProfileUserId, VideoPosition], (error, result) => {
-                                console.log('delete existing video in position error: ', error)
-                                console.log('delete existing video in position result: ', result)
-                            });
-                        } else {
-                            console.log('no previous video in position- adding new video')
-                        }
                         try { // INSET VIDEO
-                            pool.query('INSERT INTO user_content SET ?', InsertData, (error, result) => {
-                                if (result !== null) {
+                            console.log("INSERTING NEW VIDEO")
+                            pool.query('INSERT INTO user_content SET ?', InsertData, (InsertVideoError, InsertVideoResult) => {
+                                console.log('insert new video in position error: ', InsertVideoError)
+                                console.log('insert new video in position result: ', InsertVideoResult)
+                                if (InsertVideoResult !== null) {
                                     response.send(true)
                                 } else {
-                                    console.log('Insertion error: ', error)
+                                    console.log('Insertion error: ', InsertVideoError)
                                     response.send('Video not Added')
                                 }
                             });
@@ -519,7 +527,7 @@ const router = app => {
     // 3) Rather than taking all data, select only the last row, which has the latest entry - this is an unsophisticated way of dealing with > 1 rows for a user (eg if a user submitted multiple videos)
     // 4) Send this data back to the FrontEnd
     app.get("/Videos", (request, response) => {
-        console.log('Video route triggered')
+        //console.log('Video route triggered')
         user_id = request.query.user_id
         // RETRIEVE USER CONTENT DATA
         pool.query("SELECT content_id, content, content_desc FROM user_content WHERE content_type = 'video' AND user_id = ? AND content_desc <= 4;", user_id, (error, result) => {
@@ -529,6 +537,7 @@ const router = app => {
                 //console.log('video query result = ', video_content)
                 if (result.length === 0) {
                     console.log('No video data')
+                    response.send(false)
                 } else {
                     response.send(video_content)
                 }
@@ -541,7 +550,7 @@ const router = app => {
 
     // GET MORE VIDEOS
     app.get("/GetMoreVideos", (request, response) => {
-        console.log('More Video route triggered')
+        //console.log('More Video route triggered')
         user_id = request.query.user_id
         // RETRIEVE USER CONTENT DATA
         pool.query("SELECT content_id, content, content_desc FROM user_content WHERE content_type = 'video' AND user_id = ? AND content_desc > 4;", user_id, (error, result) => {
@@ -551,6 +560,7 @@ const router = app => {
                 //console.log('video query result = ', video_content)
                 if (result.length === 0) {
                     console.log('No video data')
+                    response.send(false)
                 } else {
                     response.send(more_video_content)
                 }
@@ -567,7 +577,7 @@ const router = app => {
     // POPULATE PODCASTS (i)
     app.get("/Podcasts", (request, response) => {
         user_id = request.query.user_id
-        console.log('podcast route')
+        //console.log('podcast route')
 
         // RETRIEVE USER CONTENT DATA (ii)
         pool.query("SELECT content_id, content FROM user_content WHERE content_type = 'podcast' AND user_id = ? ", user_id, (error, result) => {
@@ -575,7 +585,7 @@ const router = app => {
             RetrievedPodcastData = result
 
             if (result.length === 0) {
-                console.log('No podcast data')
+                //console.log('No podcast data')
                 response.send(false)
             } else {
                 var PodcastConcatString = "?"
@@ -592,7 +602,7 @@ const router = app => {
     });
     // POPULATE PODCASTS (iii): SEND STORED IDs TO LISTEN NOTES API TO RETRIEVE DATA
     app.get("/PodcastAPIQuery", async (request, response) => {
-        console.log('api route triggered')
+        //console.log('api route triggered')
         PodcastAPIQueryId = request.query
 
         var RetrievedPodastData = {}
@@ -618,17 +628,17 @@ const router = app => {
     // POPULATE PODCAST EPISODES (i)
     app.get("/PodcastEpisodes", (request, response) => {
         user_id = request.query.user_id
-        console.log('podcast episode route')
-        console.log('podast user id = ', user_id)
+        //console.log('podcast episode route')
+        //console.log('podast user id = ', user_id)
 
         // POPULATE PODCAST EPISODES (ii): RETRIEVE USER CONTENT DATA
         pool.query("SELECT content_id, content, content_desc FROM user_content WHERE content_type = 'podcast_episode' OR 'podcast_episode_manual' AND user_id = ? ", user_id, (error, result) => {
             if (error) console.log('Content retrieval error:', error);
             RetrievedPodcastEpisodeData = result
-            console.log('episode query result = ', RetrievedPodcastEpisodeData)
+            //console.log('episode query result = ', RetrievedPodcastEpisodeData)
 
             if (result.length === 0) {
-                console.log('No podcast data')
+                //console.log('No podcast data')
                 response.send(false)
             } else if (result.content_desc === 'podcast_episode_manual') { // Manually inserted podcasts
                 console.log('To Do: write logic for user inserted podcast episodes.')
@@ -648,7 +658,7 @@ const router = app => {
 
     //POPULATE PODCAST EPISODES (iii): SEND STORED IDs TO LISTEN NOTES API TO RETRIEVE DATA
     app.get("/PodcastEpisodeAPIQuery", async (request, response) => {
-        console.log('Episode api route triggered')
+        //console.log('Episode api route triggered')
 
         PodcastEpisodeAPIQueryId = request.query
 
@@ -700,7 +710,7 @@ const router = app => {
     // RECENT ACTIVITY //
     app.get("/RecentActivity", (request, response) => {
         // RETRIEVE USER CONTENT DATA
-        console.log('recent activity route')
+        //console.log('recent activity route')
 
         pool.query("SELECT full_name, profile_picture, UC.user_id, content_id, content_type, content_desc FROM user_content UC LEFT JOIN user_profile UP ON UC.user_id = UP.user_id ORDER BY content_id DESC LIMIT 20 ", (error, result) => {
             if (error) console.log('Content retrieval error:', error);

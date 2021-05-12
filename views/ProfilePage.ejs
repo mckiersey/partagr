@@ -36,9 +36,15 @@
             <div class="col-4">
                 <div class="float-right" id="ProfilePictureSection">
                     <img id="ProfilePicture" src="<%=data.profile_picture%>" />
-                    <div id="MyProfileButton">
-                        <button class="btn btn-light" id="MyProfile">My Profile</button>
+                    <div class="span2">
+                        <div id="MyProfileButton">
+                            <button class="btn btn-light btn-block" id="MyProfile">My Profile</button>
+                        </div>
+                        <div class="SignInButton">
+                            <button class="btn btn-light btn-block" id="SignInButton">Sign in</button>
+                        </div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -55,14 +61,13 @@
             </div>
         </div>
         <!--VIDEO SECTION-->
+        <!--Video row 0-->
         <div class="row justify-content-center" id="video">
             <div class="col-8 d-flex justify-content-center">
                 <div id="VideoPosition1">
                 </div>
             </div>
-            <div class="spinner-border text-success PodcastLoader" id="spinner" role="status">
-                <span class="sr-only">Loading...</span>
-            </div>
+
         </div>
         <!--VIDEOS SPINNER-->
         <div class="row justify-content-center VideosLoader">
@@ -73,6 +78,7 @@
                 </div>
             </div>
         </div>
+        <!--Video row 0 form-->
         <div class="row justify-content-center">
             <div class="col-lg-8 col-md-12">
                 <div class="YouTubeForm OwnerElement">
@@ -85,23 +91,24 @@
                 </div>
             </div>
         </div>
+        <!--Video Row 1-->
         <div class="row">
-
-            <div class="col-4 d-flex justify-content-center">
+            <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 d-flex justify-content-center">
                 <div id="VideoPosition2">
                 </div>
             </div>
-            <div class="col-4 d-flex justify-content-center">
+            <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 d-flex justify-content-center">
                 <div id="VideoPosition3">
                 </div>
             </div>
-            <div class="col-4 d-flex justify-content-center">
+            <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 d-flex justify-content-center">
                 <div id="VideoPosition4">
                 </div>
             </div>
         </div>
+        <!--Video Row 1 forms-->
         <div class="row justify-content-center">
-            <div class="col-4 d-flex justify-content-center">
+            <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 d-flex justify-content-center">
                 <div class="YouTubeForm OwnerElement">
                     <label>Youtube Link</label>
                     <input type="text" name="YouTubeLink2" placeholder="YouTube link">
@@ -111,8 +118,7 @@
                     </div>
                 </div>
             </div>
-
-            <div class="col-4 d-flex justify-content-center">
+            <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 d-flex justify-content-center">
                 <div class="YouTubeForm OwnerElement">
                     <label>Youtube Link</label>
                     <input type="text" name="YouTubeLink3" placeholder="YouTube link">
@@ -123,7 +129,7 @@
                 </div>
             </div>
 
-            <div class="col-4 d-flex justify-content-center">
+            <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 d-flex justify-content-center">
                 <div class="YouTubeForm OwnerElement">
                     <label>Youtube Link</label>
                     <input type="text" name="YouTubeLink4" placeholder="YouTube link">
@@ -143,21 +149,21 @@
         </div>
         <div class="ShowMore">
             <div class="row">
-                <div class="col-4 d-flex justify-content-center">
+                <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 d-flex justify-content-center">
                     <div id="VideoPosition5">
                     </div>
                 </div>
-                <div class="col-4 d-flex justify-content-center">
+                <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 d-flex justify-content-center">
                     <div id="VideoPosition6">
                     </div>
                 </div>
-                <div class="col-4 d-flex justify-content-center">
+                <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 d-flex justify-content-center">
                     <div id="VideoPosition7">
                     </div>
                 </div>
             </div>
             <div class="row">
-                <div class="col-4 d-flex justify-content-center">
+                <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 d-flex justify-content-center">
                     <div class="YouTubeForm OwnerElement">
                         <label>Youtube Link</label>
                         <input type="text" name="YouTubeLink5" placeholder="YouTube link">
@@ -167,7 +173,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-4 d-flex justify-content-center">
+                <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 d-flex justify-content-center">
                     <div class="YouTubeForm OwnerElement">
                         <label>Youtube Link</label>
                         <input type="text" name="YouTubeLink6" placeholder="YouTube link">
@@ -177,7 +183,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-4 d-flex justify-content-center">
+                <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 d-flex justify-content-center">
                     <div class="YouTubeForm OwnerElement">
                         <label>Youtube Link</label>
                         <input type="text" name="YouTubeLink7" placeholder="YouTube link">
@@ -198,24 +204,24 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-4 d-flex justify-content-center">
+                <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 d-flex justify-content-center">
                     <div id="VideoPosition8">
                     </div>
 
                 </div>
-                <div class="col-4 d-flex justify-content-center">
+                <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 d-flex justify-content-center">
                     <div id="VideoPosition9">
                     </div>
 
                 </div>
-                <div class="col-4 d-flex justify-content-center">
+                <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 d-flex justify-content-center">
                     <div id="VideoPosition10">
                     </div>
 
                 </div>
             </div>
             <div class="row">
-                <div class="col-4 d-flex justify-content-center">
+                <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 d-flex justify-content-center">
                     <div class="YouTubeForm OwnerElement">
                         <label>Youtube Link</label>
                         <input type="text" name="YouTubeLink8" placeholder="YouTube link">
@@ -225,7 +231,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-4 d-flex justify-content-center">
+                <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 d-flex justify-content-center">
                     <div class="YouTubeForm OwnerElement">
                         <label>Youtube Link</label>
                         <input type="text" name="YouTubeLink9" placeholder="YouTube link">
@@ -235,7 +241,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-4 d-flex justify-content-center">
+                <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 d-flex justify-content-center">
                     <div class="YouTubeForm OwnerElement">
                         <label>Youtube Link</label>
                         <input type="text" name="YouTubeLink10" placeholder="YouTube link">
@@ -247,24 +253,24 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-4 d-flex justify-content-center">
+                <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 d-flex justify-content-center">
                     <div id="VideoPosition11">
                     </div>
 
                 </div>
-                <div class="col-4 d-flex justify-content-center">
+                <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 d-flex justify-content-center">
                     <div id="VideoPosition12">
                     </div>
 
                 </div>
-                <div class="col-4 d-flex justify-content-center">
+                <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 d-flex justify-content-center">
                     <div id="VideoPosition13">
                     </div>
 
                 </div>
             </div>
             <div class="row">
-                <div class="col-4 d-flex justify-content-center">
+                <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 d-flex justify-content-center">
                     <div class="YouTubeForm OwnerElement">
                         <label>Youtube Link</label>
                         <input type="text" name="YouTubeLink11" placeholder="YouTube link">
@@ -274,7 +280,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-4 d-flex justify-content-center">
+                <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 d-flex justify-content-center">
                     <div class="YouTubeForm OwnerElement">
                         <label>Youtube Link</label>
                         <input type="text" name="YouTubeLink12" placeholder="YouTube link">
@@ -284,7 +290,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-4 d-flex justify-content-center">
+                <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 d-flex justify-content-center">
                     <div class="YouTubeForm OwnerElement">
                         <label>Youtube Link</label>
                         <input type="text" name="YouTubeLink13" placeholder="YouTube link">
@@ -307,7 +313,7 @@
         <!--SPLIT INTO TWO COLUMNS-->
         <div class="row">
             <!--PODCAST SECTION-->
-            <div class="col-10 col-md-12">
+            <div class="col-10">
 
                 <div class="row top-buffer" align="left">
                     <div class="col-12">
@@ -475,53 +481,54 @@
             </div>
 
             <!--RECENTLY ADDED-->
-            <div class="col-2 col-md-12 RecentlyAdded">
-                <h3 class="RecentActivityTitleText">Recent Activity</h3>
+            <div class="col-2 RecentlyAdded">
                 <table class="table table-dark">
+                    <tr>
+                        <th colspan="2">Recent Activity</th>
+                    </tr>
                     <tbody id="RecentActivityList">
                         <!--Podcast Episodes populate here-->
                     </tbody>
                 </table>
             </div>
         </div>
-    </div>
 
-    <!-- ARTICLES SECTION: ROW 1-->
-    <div class="row" id="ArticleSection-row1" align="left">
-        <div class="col-4">
-            <ul id="populateArticles-row1-col1">
-                <!--Populate Articles-->
-            </ul>
+        <!-- ARTICLES SECTION: ROW 1-->
+        <div class="row" id="ArticleSection-row1" align="left">
+            <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12">
+                <ul id="populateArticles-row1-col1">
+                    <!--Populate Articles-->
+                </ul>
+            </div>
+            <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12">
+                <ul id="populateArticles-row1-col2">
+                    <!--Populate Articles-->
+                </ul>
+            </div>
+            <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12">
+                <ul id="populateArticles-row1-col3">
+                    <!--Populate Articles-->
+                </ul>
+            </div>
         </div>
-        <div class="col-4">
-            <ul id="populateArticles-row1-col2">
-                <!--Populate Articles-->
-            </ul>
+        <!-- ARTICLES SECTION: ROW 2-->
+        <div class="row" id="ArticleSection-row2" align="left">
+            <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12">
+                <ul id="populateArticles-row2-col1">
+                    <!--Populate Articles-->
+                </ul>
+            </div>
+            <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12">
+                <ul id="populateArticles-row2-col2">
+                    <!--Populate Articles-->
+                </ul>
+            </div>
+            <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12">
+                <ul id="populateArticles-row2-col3">
+                    <!--Populate Articles-->
+                </ul>
+            </div>
         </div>
-        <div class="col-4">
-            <ul id="populateArticles-row1-col3">
-                <!--Populate Articles-->
-            </ul>
-        </div>
-    </div>
-    <!-- ARTICLES SECTION: ROW 2-->
-    <div class="row" id="ArticleSection-row2" align="left">
-        <div class="col-4">
-            <ul id="populateArticles-row2-col1">
-                <!--Populate Articles-->
-            </ul>
-        </div>
-        <div class="col-4">
-            <ul id="populateArticles-row2-col2">
-                <!--Populate Articles-->
-            </ul>
-        </div>
-        <div class="col-4">
-            <ul id="populateArticles-row2-col3">
-                <!--Populate Articles-->
-            </ul>
-        </div>
-    </div>
 
 
 </body>
