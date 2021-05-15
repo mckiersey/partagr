@@ -249,6 +249,41 @@ const router = app => {
     // 5) If both match, the logged in user (from token) has the same google ID as that which is associated with the profile user id
     // 6) Insert content (VideoLink) into user_content table
 
+    //DEFINE INSERT VIDEO FUNCTION
+    async function InsertNewVideo(InsertVideoData) {
+        try { // INSET VIDEO -> MAKE THIS INTO A FUCNTION; can make this async
+            console.log("Test sequence step: C")
+
+            console.log("INSERTING NEW VIDEO")
+            var InsertVideoResult = await pool.query('INSERT INTO user_content SET ?', InsertVideoData) //, (InsertVideoError, InsertVideoResult) => {
+            //console.log('insert new video in position error: ', InsertVideoError)
+            //console.log('insert new video in position result: ', InsertVideoResult)
+            if (InsertVideoResult !== null) {
+                // console.log('FUNCTION = TRUE')
+                console.log("Test sequence step: C ii")
+
+                //response.send(true)
+                return "true"
+            } else {
+                console.log('Insertion error: ', InsertVideoError)
+                //response.send('Video not Added')
+                return "Video not added"
+            }
+            // });
+        } catch (error) {
+            console.log('Something went wrong, video not added: ', error)
+            //response.send('Video not Added')
+            return "Video not added"
+        }
+    }
+    async function RunInsertVideo() {
+        console.log("Test sequence step: B")
+        var InsertVideoResult = await InsertNewVideo(InsertVideoData)
+        //console.log("print function: ", InsertNewVideo(InsertVideoData))
+        console.log('insert video function result (B):', InsertVideoResult)
+        return InsertVideoResult
+    }
+
     app.post("/AddYouTubeVideo", async (request, response) => {
         console.log('**********************************')
         token = request.body.token
@@ -260,52 +295,48 @@ const router = app => {
 
         VerifiedTokenPayload = await verify(CLIENT_ID, token)
         var FrontEndGoogleUserId = VerifiedTokenPayload[0] //Google user ID
+        console.log('verified token payload = ', VerifiedTokenPayload)
         if (!VerifiedTokenPayload) { //if value == false
+            console.log("TOKEN FAIL")
             response.send('TOKEN FAIL')
         } else { //Token has been verified
+            console.log("CONTINUE AFTER TOKEN CHECK")
             // Now we ensure that this token corresponds to the ProfileUserId (the user Id seen in the browser url)
             try { // SELECT GOOGLE ID
                 pool.query("SELECT google_user_id FROM user_profile WHERE user_id = ?", ProfileUserId, (error, result) => { // value of app user id on row of google user id 
                     StoredGoogleUserID = result[0].google_user_id
                     if (FrontEndGoogleUserId == StoredGoogleUserID) {
-                        console.log('Authorised user editing correct profile: VIDEO')
-                        InsertData = { user_id: ProfileUserId, content: VideoID, content_type: "video", content_desc: VideoPosition }
+                        //console.log('Authorised user editing correct profile: VIDEO')
+                        InsertVideoData = { user_id: ProfileUserId, content: VideoID, content_type: "video", content_desc: VideoPosition }
 
                         // ADD VIDEO LINK TO DATA BASE
                         // ENSURE POSITION IS EMPTY FIRST
                         console.log("CHECK VIDEO POSITION STATUS")
                         let CheckIfAlreadyFullQuery = "SELECT content_desc FROM user_content WHERE user_id = ? AND content_type = 'video' AND content_desc =?"
                         pool.query(CheckIfAlreadyFullQuery, [ProfileUserId, VideoPosition], (error, PreviouslyPopulatedResult) => {
-                            console.log('check if already populated error: ', error)
-                            console.log('check if already populated result: ', PreviouslyPopulatedResult)
+                            // console.log('check if already populated error: ', error)
+                            //console.log('check if already populated result: ', PreviouslyPopulatedResult)
 
                             if (PreviouslyPopulatedResult.length > 0) {
-                                console.log('VIDEO ALREADY IN PLACE: DELETING')
+                                //  console.log('VIDEO ALREADY IN PLACE: DELETING')
                                 let DeleteIfAlreadyFullQuery = "DELETE FROM user_content WHERE user_id = ? AND content_type = 'video' AND content_desc =?"
                                 pool.query(DeleteIfAlreadyFullQuery, [ProfileUserId, VideoPosition], (error, result) => {
-                                    console.log('delete existing video in position error: ', error)
-                                    console.log('delete existing video in position result: ', result)
+                                    //  console.log('delete existing video in position error: ', error)
+                                    //  console.log('delete existing video in position result: ', result)
+                                    console.log("Test sequence step: A")
+                                    VideoResponseToSend = RunInsertVideo()
+                                    //  console.log('final result to send =', VideoResponseToSend)
+                                    response.send(VideoResponseToSend)
+
                                 });
+
                             } else {
-                                console.log('NO PREVIOUS VIDEO')
+                                //  console.log('NO PREVIOUS VIDEO')
+                                var InsertVideoResult = InsertNewVideo(InsertVideoData)
+                                response.send(InsertVideoResult)
                             }
                         });
-                        try { // INSET VIDEO
-                            console.log("INSERTING NEW VIDEO")
-                            pool.query('INSERT INTO user_content SET ?', InsertData, (InsertVideoError, InsertVideoResult) => {
-                                console.log('insert new video in position error: ', InsertVideoError)
-                                console.log('insert new video in position result: ', InsertVideoResult)
-                                if (InsertVideoResult !== null) {
-                                    response.send(true)
-                                } else {
-                                    console.log('Insertion error: ', InsertVideoError)
-                                    response.send('Video not Added')
-                                }
-                            });
-                        } catch (error) {
-                            console.log('Something went wrong, video not added: ', error)
-                            response.send('Video not Added')
-                        }
+
 
                     } else {
                         console.log('FrontEnd token Id does not match BackEnd Google ID')

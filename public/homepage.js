@@ -19,6 +19,7 @@ function getCookieValue(cname) {
     return "";
 }
 //Session Status
+/*
 var cookieToken = getCookieValue('USER_SESSION_TOKEN')
 console.log('Session status: cookie token value:', cookieToken)
 var SignOutButtonVisibility = document.getElementById("SignOutButton");
@@ -29,6 +30,7 @@ if (cookieToken == "") {
     document.getElementById('SessionStatusText').innerHTML =
         "<span style='color: RGB(170, 204, 0);'>Signed In</span>";
 }
+*/
 
 //SIGN IN/ SIGN UP: SET COOKIE VALUE IN BROWSER
 function onSignIn(googleUser) {
@@ -102,7 +104,7 @@ function signOut() {
 // RECENT ACTIVITY
 var GetActivity = server + '/RecentActivity'
 $.get(GetActivity, function (ActivityList, status) {
-    console.log('recent activity response = ', ActivityList)
+    //console.log('recent activity response = ', ActivityList)
     var i;
     for (i = 0; i < ActivityList.length; i++) {
 

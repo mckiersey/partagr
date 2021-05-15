@@ -10,7 +10,6 @@ $(document).ready(function () {
     var urlParams = new URLSearchParams(window.location.search);
     var user_id = urlParams.get('user_id');
     // User ID seen in the browser URL- a user Id is synonymous with profile ID - each user has their own profile 
-    var CookieToken = getCookieValue('USER_SESSION_TOKEN')
 
     // GET COOKIE FUNCTION
     function getCookieValue(cname) {
@@ -31,6 +30,7 @@ $(document).ready(function () {
 
     // MY PROFILE FUNCTION
     $(document).on('click', '#MyProfile', function () {
+        var CookieToken = getCookieValue('USER_SESSION_TOKEN')
 
         console.log('my profile click')
         console.log(server + '/MyProfile')
@@ -90,6 +90,7 @@ $(document).ready(function () {
     // 5) Else, insert 'Unlogged' text into section with ID tag = 'SessionStatusText'
 
     try {
+        var CookieToken = getCookieValue('USER_SESSION_TOKEN')
         $.get(server + '/Owner', {
             token: CookieToken,
             ProfileId: user_id,
@@ -115,6 +116,7 @@ $(document).ready(function () {
 
     ///////////////////////////  YOUTUBE ///////////////////////////
     $(document).on('click', '.AddYouTubeVideo', function (event) {
+        var CookieToken = getCookieValue('USER_SESSION_TOKEN')
         VideoPosition = event.target.id
         VideoPositionInteger = VideoPosition.match(/\d+/)[0] //get integer from string
         InputName = "YouTubeLink" + VideoPositionInteger
@@ -135,9 +137,14 @@ $(document).ready(function () {
                         console.log(' add video response data: ', data)
                         if (data == true) {
                             window.location.href = server + "/ProfilePage?user_id=" + user_id
+                        } else if (data = "TOKEN FAIL") {
+                            alert("Log in expired- please sign in again")
+                            //window.location.href = server + "/ProfilePage?user_id=" + user_id
+
                         } else {
                             console.log(data)
                             alert('Video not added, please try again')
+                            //window.location.href = server + "/ProfilePage?user_id=" + user_id
                         }
                     })
                 } catch (err) {
@@ -163,6 +170,7 @@ $(document).ready(function () {
     $(document).on('click', '#PostArticleButton', function () {
         ArticleLink = document.querySelector('input[name=ArticleLink]').value
         ArticleDescription = document.querySelector('input[name=ArticleDescription]').value
+        var CookieToken = getCookieValue('USER_SESSION_TOKEN')
 
         // console.log('To post: User id cookie retrieved: ', user_id, 'with article: ', link)
         try { // CLOSE THIS CLAUSE
@@ -173,14 +181,15 @@ $(document).ready(function () {
                 ArticleDescription: ArticleDescription
             }).done(function (data) {
                 if (data == true) {
-                    window.location.href = window.location.href
-                    // refresh page after successfully saving a new video
+                    window.location.href = server + "/ProfilePage?user_id=" + user_id
+                } else if (data = "TOKEN FAIL") {
+                    alert("Log in expried- please sign in again")
+                    //window.location.href = server + "/ProfilePage?user_id=" + user_id
+
                 } else {
-                    if (data === 'TOKEN FAIL') {
-                        alert('Verification Expired. Please sign in again')
-                    } else {
-                        alert('Article not added, please try again', data)
-                    }
+                    console.log(data)
+                    alert('Link not added, please try again')
+                    //window.location.href = server + "/ProfilePage?user_id=" + user_id
                 }
             });
         } catch (err) {
@@ -193,6 +202,7 @@ $(document).ready(function () {
 
     // PODCAST SEARCH
     $(document).on("click", "#PodcastSearchButton", function () {
+        var CookieToken = getCookieValue('USER_SESSION_TOKEN')
         console.log('Search podcast function executed- ', $(this))
         $('.PodcastSearchResultsSection').show()
         PodcastSearchTerm = $("#PodcastSearchText").val() //[0].value; // Retrieve submitted data
@@ -234,6 +244,7 @@ $(document).ready(function () {
 
     // PODCAST EPISODE SEARCH
     $(document).on("click", "#PodcastEpisodeSearchButton", function () {
+        var CookieToken = getCookieValue('USER_SESSION_TOKEN')
         $('.PodcastSearchResultsSection').show()
         PodcastEpisodeSearchTerm = $("#PodcastEpisodeSearchText").val() //[0].value; // Retrieve submitted data
         PodcastEpisodeSearchTermQueryFormat = PodcastEpisodeSearchTerm.replaceAll(" ", "%20")
@@ -327,6 +338,7 @@ $(document).ready(function () {
     // ADD PODCAST
     $(document).on('click', '.AddpodcastButton', function () {
         PodcastToAdd = this.id
+        var CookieToken = getCookieValue('USER_SESSION_TOKEN')
 
         try {
             $.post(server + '/AddPodcast', {
@@ -335,14 +347,15 @@ $(document).ready(function () {
                 PodcastId: PodcastToAdd
             }).done(function (data) {
                 if (data == true) {
-                    window.location.href = window.location.href
+                    window.location.href = server + "/ProfilePage?user_id=" + user_id
+                } else if (data = "TOKEN FAIL") {
+                    alert("Log in expried- please sign in again")
+                    window.location.href = server + "/ProfilePage?user_id=" + user_id
+
                 } else {
-                    if (data === 'TOKEN FAIL') {
-                        alert('Verification Expired. Please sign in again')
-                    } else {
-                        console.log(data)
-                        alert('Podcast not added, please try again', data)
-                    }
+                    console.log(data)
+                    alert('Podcast not added, please try again')
+                    window.location.href = server + "/ProfilePage?user_id=" + user_id
                 }
             });
         } catch (err) {
@@ -352,10 +365,9 @@ $(document).ready(function () {
     });
 
     // ADD PODCAST EPISODE 
-
-    // ADD PODCAST
     $(document).on('click', '.AddpodcastEpisodeButton', function () {
         alert('adding episode')
+        var CookieToken = getCookieValue('USER_SESSION_TOKEN')
         PodcastEpisodeToAdd = this.id
         try {
             $.post(server + '/AddPodcastEpisode', {
@@ -365,13 +377,14 @@ $(document).ready(function () {
             }).done(function (data) {
                 if (data == true) {
                     window.location.href = server + "/ProfilePage?user_id=" + user_id
+                } else if (data = "TOKEN FAIL") {
+                    alert("Log in expried- please sign in again")
+                    window.location.href = server + "/ProfilePage?user_id=" + user_id
+
                 } else {
                     console.log(data)
-                    if (data === 'TOKEN FAIL') {
-                        alert('Verification Expired. Please sign in again')
-                    } else {
-                        alert('Podcast not added, please try again')
-                    }
+                    alert('Podcast Episode not added, please try again')
+                    window.location.href = server + "/ProfilePage?user_id=" + user_id
                 }
             });
         } catch (err) {
@@ -613,10 +626,8 @@ $(document).ready(function () {
     //// *** DELETE DATA *** ////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-    // ARTICLES
-
     $(document).on('click', '.DeleteContentButton', function () {
+        var CookieToken = getCookieValue('USER_SESSION_TOKEN')
 
         console.log('DELETE CLICKED')
         ContentToDelete = $(this).attr('name')
