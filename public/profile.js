@@ -137,14 +137,13 @@ $(document).ready(function () {
                         console.log(' add video response data: ', data)
                         if (data == true) {
                             window.location.href = server + "/ProfilePage?user_id=" + user_id
-                        } else if (data = "TOKEN FAIL") {
+                        } else if (data == "TOKEN FAIL") {
                             alert("Log in expired- please sign in again")
-                            //window.location.href = server + "/ProfilePage?user_id=" + user_id
+                            window.location.href = server + "/ProfilePage?user_id=" + user_id
 
                         } else {
-                            console.log(data)
                             alert('Video not added, please try again')
-                            //window.location.href = server + "/ProfilePage?user_id=" + user_id
+                            window.location.href = server + "/ProfilePage?user_id=" + user_id
                         }
                     })
                 } catch (err) {
@@ -182,14 +181,14 @@ $(document).ready(function () {
             }).done(function (data) {
                 if (data == true) {
                     window.location.href = server + "/ProfilePage?user_id=" + user_id
-                } else if (data = "TOKEN FAIL") {
+                } else if (data == "TOKEN FAIL") {
                     alert("Log in expried- please sign in again")
-                    //window.location.href = server + "/ProfilePage?user_id=" + user_id
+                    window.location.href = server + "/ProfilePage?user_id=" + user_id
 
                 } else {
                     console.log(data)
                     alert('Link not added, please try again')
-                    //window.location.href = server + "/ProfilePage?user_id=" + user_id
+                    window.location.href = server + "/ProfilePage?user_id=" + user_id
                 }
             });
         } catch (err) {
@@ -348,7 +347,7 @@ $(document).ready(function () {
             }).done(function (data) {
                 if (data == true) {
                     window.location.href = server + "/ProfilePage?user_id=" + user_id
-                } else if (data = "TOKEN FAIL") {
+                } else if (data == "TOKEN FAIL") {
                     alert("Log in expried- please sign in again")
                     window.location.href = server + "/ProfilePage?user_id=" + user_id
 
@@ -377,7 +376,7 @@ $(document).ready(function () {
             }).done(function (data) {
                 if (data == true) {
                     window.location.href = server + "/ProfilePage?user_id=" + user_id
-                } else if (data = "TOKEN FAIL") {
+                } else if (data == "TOKEN FAIL") {
                     alert("Log in expried- please sign in again")
                     window.location.href = server + "/ProfilePage?user_id=" + user_id
 

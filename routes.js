@@ -254,8 +254,7 @@ const router = app => {
         try { // INSET VIDEO -> MAKE THIS INTO A FUCNTION; can make this async
             console.log("Test sequence step: C")
 
-            console.log("INSERTING NEW VIDEO")
-            var InsertVideoResult = await pool.query('INSERT INTO user_content SET ?', InsertVideoData) //, (InsertVideoError, InsertVideoResult) => {
+            var InsertVideoResult = pool.query('INSERT INTO user_content SET ?', InsertVideoData) //, (InsertVideoError, InsertVideoResult) => {
             //console.log('insert new video in position error: ', InsertVideoError)
             //console.log('insert new video in position result: ', InsertVideoResult)
             if (InsertVideoResult !== null) {
@@ -276,13 +275,15 @@ const router = app => {
             return "Video not added"
         }
     }
-    async function RunInsertVideo() {
-        console.log("Test sequence step: B")
-        var InsertVideoResult = await InsertNewVideo(InsertVideoData)
-        //console.log("print function: ", InsertNewVideo(InsertVideoData))
-        console.log('insert video function result (B):', InsertVideoResult)
-        return InsertVideoResult
-    }
+    /*
+        async function RunInsertVideo(InsertVideoData) {
+            console.log("Test sequence step: B")
+            return InsertVideoResult = await InsertNewVideo(InsertVideoData)
+            console.log('insert video function result (D):', InsertVideoResult)
+            //response.send(InsertVideoResult)
+    
+        }
+        */
 
     app.post("/AddYouTubeVideo", async (request, response) => {
         console.log('**********************************')
@@ -297,7 +298,6 @@ const router = app => {
         var FrontEndGoogleUserId = VerifiedTokenPayload[0] //Google user ID
         console.log('verified token payload = ', VerifiedTokenPayload)
         if (!VerifiedTokenPayload) { //if value == false
-            console.log("TOKEN FAIL")
             response.send('TOKEN FAIL')
         } else { //Token has been verified
             console.log("CONTINUE AFTER TOKEN CHECK")
@@ -324,16 +324,19 @@ const router = app => {
                                     //  console.log('delete existing video in position error: ', error)
                                     //  console.log('delete existing video in position result: ', result)
                                     console.log("Test sequence step: A")
-                                    VideoResponseToSend = RunInsertVideo()
-                                    //  console.log('final result to send =', VideoResponseToSend)
-                                    response.send(VideoResponseToSend)
+
+                                    var ResponseToSend = InsertNewVideo(InsertVideoData)
+
+                                    console.log('tst result = ', ResponseToSend)
+                                    console.log('end')
+                                    response.send(ResponseToSend)
 
                                 });
 
                             } else {
                                 //  console.log('NO PREVIOUS VIDEO')
                                 var InsertVideoResult = InsertNewVideo(InsertVideoData)
-                                response.send(InsertVideoResult)
+                                //response.send(InsertVideoResult)
                             }
                         });
 

@@ -55,11 +55,11 @@ p {
     width: 30px;
 }
 
-#ShowMore,
+
 #ShowLess {
     color: RGB(229, 229, 229);
     font-family: helvetica;
-    padding: 200px;
+    padding: 20px;
 }
 
 .ShowMore {
@@ -70,6 +70,13 @@ p {
 #ShowLess {
     margin-top: 50px;
     padding: 20px;
+}
+
+#ShowMore {
+    margin-top: 50px;
+    padding: 20px;
+    color: RGB(229, 229, 229);
+    font-family: helvetica;
 }
 
 .YouTubeForm {
