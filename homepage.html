@@ -37,24 +37,24 @@
         <!--SPLIT INTO TWO COLUMNS-->
         <div class="row">
             <div class="col-10">
-                <div class="row ">
+                <div class="row">
                     <!--SIGN IN WITH GOOGLE-->
                     <div class="col">
-                        <div class="row justify-content-center">
+                        <div class="row justify-content-center top-buffer left-buffer">
                             <div class="col-5 text-center">
-                                <H2>Sign up with google</h2>
+                                <H2>Sign up & sign in with google</h2>
                             </div>
                         </div>
-                        <div class="row" align="center">
-                            <div class="col">
+                        <div class="row justify-content-center left-buffer">
+                            <div class="col d-flex justify-content-center">
                                 <div class="g-signin2" data-width="200" data-height="60" data-onsuccess="onSignIn"
                                     id='SignInButton'>
                                 </div>
                             </div>
                         </div>
-                        <div class="row" align="center">
-                            <div class="col">
-                                <h2><b>Partagr</b>, share your internet</h2>
+                        <div class="row justify-content-center top-buffer  left-buffer">
+                            <div class="col d-flex justify-content-center">
+                                <h2 id="TagLine"><b>Partagr</b>, share your internet</h2>
                             </div>
                         </div>
                     </div>
@@ -92,6 +92,14 @@
             font-size: 200px;
         }
 
+        .top-buffer {
+            margin-top: 140px;
+        }
+
+        .left-buffer {
+            margin-left: 250px
+        }
+
 
         .brand-text {
             padding-left: 40px;
@@ -119,12 +127,7 @@
             margin-top: 10px;
         }
 
-        #SignInText {
-            position: absolute;
-            top: 250px;
-            right: 360px;
-            margin-top: 20px;
-        }
+
 
         .Profile {
             position: relative;
@@ -158,6 +161,10 @@
             color: white;
         }
 
+        #TagLine {
+            margin-top: 20px;
+            font-size: 50px;
+        }
 
         .RecentActivityTitleText {
             color: grey;
