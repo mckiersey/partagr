@@ -486,7 +486,7 @@ $(document).ready(function () {
     $.get(GetPodcastsUrl, function (PodcastList, status) {
         $('.PodcastLoader').hide()
         if (PodcastList == false) {
-            document.getElementById('PopulatePodcasts').innerHTML += "<h3>No podcasts found- use the search function to add a podcast.</h3>"
+            document.getElementById('PopulatePodcasts').innerHTML += "<h3 class='PodcastInstructions'>Use <b>Edit Mode</b> to search podcasts</h3>"
         }
         for (var content_id in PodcastList) {
             if (PodcastList.hasOwnProperty(content_id)) {
@@ -505,7 +505,7 @@ $(document).ready(function () {
 
         $('.PodcastEpisodeLoader').hide()
         if (PodcastEpisodeList == false) {
-            document.getElementById('PopulatePodcastEpisodes').innerHTML += "<h3>No podcast episodes found- use the search function to add an episode.</h3>"
+            document.getElementById('PopulatePodcastEpisodes').innerHTML += "<h3 class='PodcastInstructions'>Use <b>Edit Mode</b> to search podcast episodes</h3>"
         }
         for (var content_id in PodcastEpisodeList) {
             desc = PodcastEpisodeList[content_id].description

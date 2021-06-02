@@ -83,6 +83,15 @@ p {
     margin: 15px;
 }
 
+.PodcastInstructions {
+    color: #8e9aaf;
+    font-size: 20px;
+}
+
+.PodcastSubsection {
+    margin-top: 20px;
+}
+
 .LinkText {
     color: #8e9aaf;
     text-decoration: none;

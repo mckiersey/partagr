@@ -368,48 +368,13 @@
                             <div class="col-10 d-flex justify-content-between" id="PodcastDescription"></div>
                         </div>
                         <!--MANUAL PODCAST INPUT-->
-                        <div class="row justify-content-center ManualPodcastInput PodcastSearchResultsSection">
-                            <div class="col d-flex justify-content-center">
 
-                                <div class="row justify-content-around">
-                                    <div class="col-5 d-flex justify-content-center">
-                                        <h2 class="PodcastSearchSectionTitle">Can't find what you're looking for?</h2>
-                                        <p class="PodcastSearchSectionTitle">You can manually search <a
-                                                href="https://www.listennotes.com" target="_blank">here </a>
-                                            -or
-                                            anywhere else
-                                            online (usually the
-                                            podacast's own website is a good bet). Just copy the player URL you find and
-                                            add
-                                            your
-                                            own
-                                            description!</p>
-                                    </div>
-
-                                    <div class="col-5 d-flex justify-content-center">
-                                        <div class="ManualPodcastInput">
-                                            <label>Podcast Episode URL</label>
-                                            <input type="text" name="ManualPodcastEpisodeURL"
-                                                id="ManualPodcastEpisodeURL"
-                                                placeholder="Hint: Googling the podcast's own website usually works">
-                                            <br>
-                                            <label>Episode Description</label>
-                                            <input type="text" name="MaualPodcastEpisodeDescription"
-                                                placeholder="Optional">
-                                            <div>
-                                                <button class="btn btn-light"
-                                                    id="PostManualPodcastEpisode">Submit</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 <!--POPULATE PODCASTS-->
                 <div class="row justify-content-center" id="podcast">
                     <div class="col-8" id="PopulatePodcasts">
+                        <h2>Podcasts</h2>
                         <h3 class="PodcastLoader">Finding your podcasts...</h3>
                         <div class="spinner-border text-success PodcastLoader" id="spinner" role="status">
                             <span class="sr-only">Loading...</span>
@@ -419,7 +384,7 @@
                 </div>
 
                 <!--POPULATE PODCASTS EPISODES-->
-                <div class="row justify-content-center" id="podcast_episode">
+                <div class="row justify-content-center PodcastSubsection" id="podcast_episode">
                     <div class="col-8  border" id="PopulatePodcastEpisodes">
                         <h2>Podcast Episodes</h2>
                         <h3 class="PodcastEpisodeLoader">Finding your podcast episodes...</h3>
