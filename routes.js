@@ -26,6 +26,7 @@ async function verify(CLIENT_ID, token) {
         });
 
         const payload = ticket.getPayload(); // The verified token gives back a ticket. This ticket contains things like user ID, email and profile picture (all from a user's Google Account)
+        console.log('payload= ', payload)
         const AuthUserId = payload.sub;
         const UserName = payload.name;
         const UserEmail = payload.email;
@@ -262,7 +263,7 @@ const router = app => {
                 console.log("Test sequence step: C ii")
 
                 //response.send(true)
-                return "true"
+                return true
             } else {
                 console.log('Insertion error: ', InsertVideoError)
                 //response.send('Video not Added')
@@ -275,15 +276,7 @@ const router = app => {
             return "Video not added"
         }
     }
-    /*
-        async function RunInsertVideo(InsertVideoData) {
-            console.log("Test sequence step: B")
-            return InsertVideoResult = await InsertNewVideo(InsertVideoData)
-            console.log('insert video function result (D):', InsertVideoResult)
-            //response.send(InsertVideoResult)
-    
-        }
-        */
+
 
     app.post("/AddYouTubeVideo", async (request, response) => {
         console.log('**********************************')
@@ -323,13 +316,13 @@ const router = app => {
                                 pool.query(DeleteIfAlreadyFullQuery, [ProfileUserId, VideoPosition], (error, result) => {
                                     //  console.log('delete existing video in position error: ', error)
                                     //  console.log('delete existing video in position result: ', result)
-                                    console.log("Test sequence step: A")
 
                                     var ResponseToSend = InsertNewVideo(InsertVideoData)
+                                    Promise.resolve(ResponseToSend).then(function (value) {
+                                        console.log('in function value: ', value)
+                                        response.send(value)
+                                    })
 
-                                    console.log('tst result = ', ResponseToSend)
-                                    console.log('end')
-                                    response.send(ResponseToSend)
 
                                 });
 

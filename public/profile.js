@@ -134,6 +134,7 @@ $(document).ready(function () {
                         VideoID: VideoID,
                         Position: VideoPositionInteger
                     }).done(function (data) {
+                        console.log('length of response = ', data.length)
                         console.log(' add video response data: ', data)
                         if (data == true) {
                             window.location.href = server + "/ProfilePage?user_id=" + user_id
