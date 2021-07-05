@@ -30,8 +30,15 @@ $(document).ready(function () {
 
     // MY PROFILE FUNCTION
     $(document).on('click', '#MyProfile', function () {
+        var BaseProfiledUrl = server + '/ProfilePage?user_id='
+        var ProfileUrl = BaseProfiledUrl + user_id
+        console.log('GO HOME: ', ProfileUrl)
+        window.location.href = ProfileUrl
+    });
+    /*
+    $(document).on('click', '#MyProfile', function () {
         var CookieToken = getCookieValue('USER_SESSION_TOKEN')
-
+ 
         console.log('my profile click')
         console.log(server + '/MyProfile')
         try {
@@ -48,13 +55,16 @@ $(document).ready(function () {
             console.log('failed to post to backend:', err)
         }
     });
+    */
 
 
     // RETURN TO HOME PAGE
-    document.getElementById('banner-name').innerHTML = "<a id='banner-name-text' href=" + server + ">partagr.com</h1>"
+    document.getElementById('banner-name').innerHTML = "<a id='banner-name-text' href=" + server + ">partagr</h1>"
     $(document).on('click', '#SignInButton', function () {
         window.location.href = server
     });
+
+
 
     // REMOVE RECENT ACTIVITY FOR PHONES
 
@@ -97,11 +107,12 @@ $(document).ready(function () {
         }).done(function (data) {
             console.log('Server response :', data)
             if (data == 'User is profile owner') {
-                $('.OwnerSwitch').show() //show edit switch
+                console.log('profile owner')
+                $('.OwnerPermissionSection').show() //show edit switch
                 $('.SignInButton').hide()
             } else {
                 console.log('not profile owner')
-                $('.OwnerSwitch').hide() //hide edit switch
+                $('.OwnerPermissionSection').hide() //hide edit switch
                 $('.SignInButton').show()
 
                 /*
@@ -245,7 +256,7 @@ $(document).ready(function () {
     // PODCAST EPISODE SEARCH
     $(document).on("click", "#PodcastEpisodeSearchButton", function () {
         var CookieToken = getCookieValue('USER_SESSION_TOKEN')
-        $('.PodcastSearchResultsSection').show()
+        $('.PodcastEpisodeSearchResultsSection').show()
         PodcastEpisodeSearchTerm = $("#PodcastEpisodeSearchText").val() //[0].value; // Retrieve submitted data
         PodcastEpisodeSearchTermQueryFormat = PodcastEpisodeSearchTerm.replaceAll(" ", "%20")
         try {
@@ -266,7 +277,7 @@ $(document).ready(function () {
                         thumbnail = data[result_number].thumbnail
                         PodcastEpisodeID = data[result_number].id
                         if (result_number <= 1) {
-                            document.getElementById('PodcastSearchResultThumbnail_1').innerHTML +=
+                            document.getElementById('PodcastEpisodeSearchResultThumbnail_1').innerHTML +=
                                 `<div class="row">` +
                                 `<div class = "col">` +
                                 `<img height="60" width="60" class="PodcastEpisodeSearchThumbnail" src=${thumbnail} />` +
@@ -275,7 +286,7 @@ $(document).ready(function () {
                                 `</div></div>`
 
                         } else if (result_number > 1 && result_number <= 3) {
-                            document.getElementById('PodcastSearchResultThumbnail_2').innerHTML +=
+                            document.getElementById('PodcastEpisodeSearchResultThumbnail_2').innerHTML +=
                                 `<div class="row">` +
                                 `<div class = "col-12">` +
                                 `<img height="60" width="60" class="PodcastEpisodeSearchThumbnail" src=${thumbnail} />` +
@@ -286,7 +297,7 @@ $(document).ready(function () {
                                 `<button class="btn btn-light AddpodcastEpisodeButton" id= ${PodcastEpisodeID}> Add Episode</button>` +
                                 `</div></div>`
                         } else if (result_number > 3 && result_number <= 5) {
-                            document.getElementById('PodcastSearchResultThumbnail_3').innerHTML +=
+                            document.getElementById('PodcastEpisodeSearchResultThumbnail_3').innerHTML +=
                                 `<div class="row">` +
                                 `<div class = "col-12">` +
                                 `<img height="60" width="60" class="PodcastEpisodeSearchThumbnail" src=${thumbnail} />` +
@@ -298,7 +309,7 @@ $(document).ready(function () {
                                 `</div></div>`
 
                         } else if (result_number > 5 && result_number <= 7) {
-                            document.getElementById('PodcastSearchResultThumbnail_4').innerHTML +=
+                            document.getElementById('PodcastEpisodeSearchResultThumbnail_4').innerHTML +=
                                 `<div class="row">` +
                                 `<div class = "col-12">` +
                                 `<img height="60" width="60" class="PodcastEpisodeSearchThumbnail" src=${thumbnail} />` +
@@ -310,7 +321,7 @@ $(document).ready(function () {
                                 `</div></div>`
 
                         } else if (result_number > 7 && result_number <= 9) {
-                            document.getElementById('PodcastSearchResultThumbnail_5').innerHTML +=
+                            document.getElementById('PodcastEpisodeSearchResultThumbnail_5').innerHTML +=
                                 `<div class="row">` +
                                 `<div class = "col-12">` +
                                 `<img height="60" width="60" class="PodcastEpisodeSearchThumbnail" src=${thumbnail} />` +
@@ -366,7 +377,6 @@ $(document).ready(function () {
 
     // ADD PODCAST EPISODE 
     $(document).on('click', '.AddpodcastEpisodeButton', function () {
-        alert('adding episode')
         var CookieToken = getCookieValue('USER_SESSION_TOKEN')
         PodcastEpisodeToAdd = this.id
         try {
@@ -486,7 +496,6 @@ $(document).ready(function () {
     $.get(GetPodcastsUrl, function (PodcastList, status) {
         $('.PodcastLoader').hide()
         if (PodcastList == false) {
-            document.getElementById('PopulatePodcasts').innerHTML += "<h3 class='PodcastInstructions'>Use <b>Edit Mode</b> to search podcasts</h3>"
         }
         for (var content_id in PodcastList) {
             if (PodcastList.hasOwnProperty(content_id)) {
@@ -505,7 +514,6 @@ $(document).ready(function () {
 
         $('.PodcastEpisodeLoader').hide()
         if (PodcastEpisodeList == false) {
-            document.getElementById('PopulatePodcastEpisodes').innerHTML += "<h3 class='PodcastInstructions'>Use <b>Edit Mode</b> to search podcast episodes</h3>"
         }
         for (var content_id in PodcastEpisodeList) {
             desc = PodcastEpisodeList[content_id].description
