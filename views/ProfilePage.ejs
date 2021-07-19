@@ -38,32 +38,38 @@
             <div class="col-4" id="banner-name">
             </div>
             <div class="col-4">
-                <div class="float-right" id="ProfilePictureSection">
-                    <img id="ProfilePicture" src="<%=data.profile_picture%>" />
-                    <div class="span2">
-                        <div id="MyProfileButton">
-                            <button class="btn btn-light btn-block OwnerSwitch" id="MyProfile">Home</button>
-                        </div>
-                        <div class="SignInButton">
-                            <button class="btn btn-light btn-block" id="SignInButton">Sign in</button>
+                <div class = "row ">
+                    <div class = "col">
+                        <div class="float-right" id="ProfilePictureSection">
+                            <img id="ProfilePicture" src="<%=data.profile_picture%>" />
+                            <div class="span2">
+                                <div id="MyProfileButton">
+                                    <button class="btn btn-light btn-block OwnerSwitch" id="MyProfile">My Profile</button>
+                                </div>
+                                <div class="SignInButton">
+                                    <button class="btn btn-light btn-block" id="SignInButton">Sign in</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                </div>
+                
+                <!--EDIT MODE SWITCH-->
+                <div class="row OwnerSwitchRow">
+                    <div class="col">
+                        <!-- EDIT SWITCH-->
+                        <div class="custom-control custom-switch OwnerPermissionSection" id="editModeSwitch"
+                            align="right">
+                            <input class="custom-control-input OwnerSwitch" id="customSwitch1" type="checkbox" checked
+                                data-toggle="toggle" data-on="Add content" data-off="off" data-onstyle="success"
+                                data-offstyle="secondary" data-width="130" data-height="10">
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                </div>
-            </div>
         </div>
-        <!--EDIT MODE SWITCH-->
-        <div class="row">
-            <div class="col">
-                <!-- EDIT SWITCH-->
-                <div class="custom-control custom-switch OwnerPermissionSection" id="editModeSwitch" align="right">
-                    <p class="text-success OwnerSwitch EditModeSwitchText" for="customSwitch1">
-                        Add Content</p>
-                    <input type="checkbox" class="custom-control-input OwnerSwitch" id="customSwitch1" checked
-                        data-toggle="toggle" data-onstyle="secondary" data-width="25" data-height="10">
-                </div>
-            </div>
-        </div>
+
         <!--VIDEO SECTION-->
         <!--Video row 0-->
         <div class="row justify-content-center" id="video">
@@ -90,7 +96,7 @@
                         placeholder="YouTube link">
                     </br>
                     <div>
-                        <button class="btn btn-light AddYouTubeVideo" id="VideoButtonPosition1">Submit</button>
+                        <button class="btn btn-light" id="VideoButtonPosition1">Submit</button>
                     </div>
                 </div>
             </div>
@@ -142,11 +148,11 @@
         <!--COLLAPSABLE VIDEO SECTION: SHOW MORE-->
         <div class="row justify-content-center">
             <div class="col text-center">
-                <h2><a href="#" class="GetMoreVideos" id="ShowMore">Show More</a></h2>
+                <h2><a href="#VideoPosition3" class="GetMoreVideos" id="ShowMore">Show More</a></h2>
             </div>
         </div>
         <div class="ShowMore">
-        <!--Video Row 2-->
+            <!--Video Row 2-->
             <div class="row d-flex justify-content-around VideoRow">
                 <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 ">
                     <div id="VideoPosition5">
@@ -160,7 +166,7 @@
                     <div id="VideoPosition7">
                     </div>
                 </div>
-            </div>        
+            </div>
             <!--Video Row 2 forms-->
             <div class="row">
                 <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 d-flex justify-content-center">
@@ -298,7 +304,7 @@
             </div>
             <div class="row justify-content-center">
                 <div class="col text-center">
-                    <h2><a href="#" id="ShowLess">Show Less</a></h2>
+                    <h2><a href="#VideoPosition1" id="ShowLess">Show Less</a></h2>
                 </div>
             </div>
         </div>
@@ -323,20 +329,50 @@
                     </div>
                 </div>
                 <!---PODCAST SEARCH BAR-->
-                <div class="row" align="center">
-                    <!--Podcast search-->
+                <div class="row OwnerElement d-flex justify-content-around PodcastSearchTitle">
                     <div class="col">
+                        <h2 class="OwnerElement">Podcast Search Bar</h2>
+                        <p class="OwnerElement"> Search for & add your favourite podcast content directly in your profile. </p>
+                    </div>
+                </div>
+                <hr class="OwnerElement">
+                <!--Show search-->
+                <div class="row d-flex justify-content-around">
+                    <!--Podcast search-->
+                    <div class="col-6">
+                        <h3 class="OwnerElement">Podcast Shows</h3>
+                        <p class="OwnerElement PodcastInstructions">This American Life, The Daily, Radiolab etc.</p>
                         <div id="PodcastSearchForm" class="OwnerElement">
                             <input id="PodcastSearchText" type="text" name="PodcastSearch"
                                 placeholder="Search podcast show">
                             <button class="btn btn-light" id="PodcastSearchButton"><i class="fa fa-search"></i></button>
                         </div>
+                        <div class="spinner-border text-success PodcastSearchSpinners PodcastShowSearch" id="spinner" role="status">
+                            <span class="sr-only">Searching shows...</span>
+                        </div>
+                    </div>
+                 <!--Episode search-->
+                    <div class="col-6">
+                        <h3 class="OwnerElement">Podcast Episodes</h3>
+                        <p class="OwnerElement PodcastInstructions">Add your favourite episodes here.</p>
+
+                        <div id="PodcastEpisodeSearchForm" class="OwnerElement">
+                            <input id="PodcastEpisodeSearchText" type="text" name="PodcastEpisodeSearch"
+                                placeholder="Search episode title">
+                            <button class="btn btn-light" id="PodcastEpisodeSearchButton"><i
+                                    class="fa fa-search"></i></button>
+                        </div>
+                        <div class="spinner-border text-success PodcastSearchSpinners PodcastEpisodeSearch" id="spinner" role="status">
+                            <span class="sr-only">Searching episodes...</span>
+                        </div>
                     </div>
                 </div>
+
+                <!--PODCAST SEARCH RESULTS-->
                 <!--EPISODE SEARCH RESULT-->
-                <div class="row justify-content-center">
+                <div class="row justify-content-center" id="EpisodeResults">
                     <div class="col-10 PodcastSearchResultsSection">
-                        <h3 class="PodcastSearchSectionTitle">Podcast search results...</h3>
+                        <h3 class="PodcastSearchSectionTitle">Show search results...</h3>
                         <div class="row justify-content-center">
                             <div class="col-2" id="PodcastSearchResultThumbnail_1">
                             </div>
@@ -367,22 +403,11 @@
                         <!--Podcast thumbnails go here-->
                     </div>
                 </div>
-                <!--Episode search-->
-                <div class="row">
-                    <div class="col-12">
-
-                        <div id="PodcastEpisodeSearchForm" class="OwnerElement">
-                            <input id="PodcastEpisodeSearchText" type="text" name="PodcastEpisodeSearch"
-                                placeholder="Search podcast episode title">
-                            <button class="btn btn-light" id="PodcastEpisodeSearchButton"><i
-                                    class="fa fa-search"></i></button>
-                        </div>
-                    </div>
-                </div>
+               
                 <!--EPISODE SEARCH RESULT-->
-                <div class="row justify-content-center">
+                <div class="row justify-content-center PodcastEpisodeResultsSection">
                     <div class="col-10 PodcastEpisodeSearchResultsSection">
-                        <h3 class="PodcastEpisodeSearchSectionTitle">Podcast search results...</h3>
+                        <h3 class="PodcastEpisodeSearchSectionTitle">Episode search results...</h3>
                         <div class="row justify-content-center">
                             <div class="col-2" id="PodcastEpisodeSearchResultThumbnail_1">
                             </div>

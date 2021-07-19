@@ -26,7 +26,7 @@ async function verify(CLIENT_ID, token) {
         });
 
         const payload = ticket.getPayload(); // The verified token gives back a ticket. This ticket contains things like user ID, email and profile picture (all from a user's Google Account)
-        console.log('payload= ', payload)
+        //console.log('payload= ', payload)
         const AuthUserId = payload.sub;
         const UserName = payload.name;
         const UserEmail = payload.email;
@@ -44,11 +44,11 @@ async function TokenToUserID(user_session_token) {
     try {
         pool.query("SELECT user_id FROM user_profile WHERE google_user_id = ?", google_user_id, function (error, result) {
             return result[0].user_id
-            if (result.length === 0) {
+            if (result == null) {
                 console.log('TokenToUserID: No matching user ID')
             } else {
                 console.log('The result to be returned from calling this function: ', result[0].user_id)
-                //return result[0].user_id
+                return result[0].user_id
             }
         });
     } catch (err) {
@@ -56,15 +56,17 @@ async function TokenToUserID(user_session_token) {
     }
 }
 
+  
 // DEFINE APP
 const router = app => {
-
+/*
     app.post("/MyProfile", async (request, response) => {
         token = request.body.token
         corresponding_user_id = await TokenToUserID(token)
         console.log('the output of calling the async function in the app.post requst , which should be printed last = ', corresponding_user_id)
         response.send(corresponding_user_id)
     })
+    */
 
 
 
@@ -75,7 +77,7 @@ const router = app => {
 
     // HOME: DESCRIPTION
     // 1) Display landing page
-    app.get('/', (request, response) => {
+    app.get('/landing', (request, response) => {
         homepage_file = "/homepage.html"
         response.sendFile(homepage_file, { root: __dirname })
     });
@@ -107,7 +109,7 @@ const router = app => {
             try { // CHECK IF USER ALREADY EXISTS IN DATABASE
                 pool.query("SELECT * FROM user_profile WHERE google_user_id = ?", google_user_id, function (error, result) {
                     // User not in user_profile table => This is a New User
-                    if (result.length === 0) {
+                    if (result == null) {
                         console.log('No result from existing user query: Inserting new user into user_profile DB')
                         try {  //INSERT NEW USER INTO: USER_PROFILE
                             pool.query('INSERT INTO user_profile SET?', new_user_data, (error, result) => {
@@ -181,20 +183,35 @@ const router = app => {
         }
     }) // END OF GET: PROTECTED PROFILE
 
-
-    // GET MY PROFILE: DESCRIPTION
+// GET MY PROFILE: DESCRIPTION
     // FUNCTION: DISPLAY THE PROFILE OF THE LOGGED IN USER
     // 1) Take user_session_token from browser
     // 2) Use TokenToUserID to find corresponding partagr ID
     // 3) response.send this ID back to client
-    /*
+    
     app.post("/MyProfile", async (request, response) => {
         token = request.body.token
-        corresponding_user_id = await TokenToUserID(token)
-        console.log('the output of token to user = ', corresponding_user_id)
-        response.send(corresponding_user_id)
-    })
-    */
+        console.log('The token is: ', token)
+        VerifiedTokenPayload = await verify(CLIENT_ID, token)
+        
+    var google_user_id = VerifiedTokenPayload[0]
+    try {
+        pool.query("SELECT user_id FROM user_profile WHERE google_user_id = ?", google_user_id, function (error, result) {
+            if (result == null) {
+                console.log('TokenToUserID: No matching user ID')
+            } else {
+                console.log('The result to be returned from calling this function: ', result[0].user_id)
+                corresponding_user_id = result[0].user_id.toString()
+                console.log('the output of token to user = ', corresponding_user_id)
+                response.send(corresponding_user_id)
+            }
+        })
+    } catch (err) {
+        console.log('TokenToUserID ' + err)
+    }
+    
+})
+  
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
