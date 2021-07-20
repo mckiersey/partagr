@@ -79,7 +79,7 @@ p {
 }
 
 #ShowLess {
-    color: SteelBlue;
+    color:#219ebc;
     font-family: helvetica;
     padding: 20px;
 }
@@ -88,7 +88,7 @@ p {
     font-size: 10px;
     display: none;
     padding: 20px;
-    color: SteelBlue !;
+    color: #219ebc !;
 }
 
 #ShowLess {
@@ -318,7 +318,9 @@ a:link {
 }
 
 .AddpodcastButton {
-    margin: 10px;
+    margin-bottom: 15px;
+    margin-top: 5px;
+
 }
 
 .AddpodcastEpisodeButton {
@@ -357,6 +359,7 @@ a:link {
     width: 200px;
     height: 20px;
     margin: 15px;
+    margin-bottom: 40px;
 }
 
 .PodcastEpisodeTitle {

@@ -246,11 +246,16 @@ $(document).ready(function () {
                     PodcastID = data[3]
                     description = data[4]
                     console.log('description = ', description)
-                    document.getElementById('PodcastSearchResultThumbnail_'+ ShowSearchCount).innerHTML +=
+                    document.getElementById('PodcastSearchResultThumbnails').innerHTML +=
+                    `<div class="col-2" id="PodcastSearchResultThumbnail_"${ShowSearchCount}>` +
                         `<img height = "200" width = "200" src = ${thumbnail}></img>` +
-                        `<button class="btn btn-light AddpodcastButton" id= ${PodcastID}> Add Podcast</button>`
-                    document.getElementById('PodcastDescription').innerHTML += `<p> ${description}</p>`
-
+                    `</div>` +
+                    `<div class="row justify-content-center">` +
+                        `<div class="col-10 d-flex justify-content-between" id="PodcastDescription_${ShowSearchCount}>"></div>` +
+                            `<p> ${description}</p>` +
+                        `</div>` +
+                        `<button class="btn btn-light AddpodcastButton" id= ${PodcastID}> Add Podcast</button>` +
+                    `</div>`
                 }
                 $('.PodcastShowSearch').hide()
 
