@@ -59,15 +59,6 @@ async function TokenToUserID(user_session_token) {
   
 // DEFINE APP
 const router = app => {
-/*
-    app.post("/MyProfile", async (request, response) => {
-        token = request.body.token
-        corresponding_user_id = await TokenToUserID(token)
-        console.log('the output of calling the async function in the app.post requst , which should be printed last = ', corresponding_user_id)
-        response.send(corresponding_user_id)
-    })
-    */
-
 
 
 
@@ -418,10 +409,14 @@ const router = app => {
         var PodcastSearchTerm = req.body.PodcastSearchTerm
         var PodcastSearchTermAPI = 'https://listen-api.listennotes.com/api/v2/search?q=' + PodcastSearchTerm + '&type=podcast'
         const response = await unirest.get(PodcastSearchTermAPI).header('X-ListenAPI-Key', sourceFile.podcastAPIKey)
-        if (response.body.results.length === 0) {
+        console.log('podcast search = ', response.caseless.dict)
+        if (response.status === 429){
+            res.send(response.status)
+        }
+        else if (response.body.results.length === 0) {
             console.log('search fail')
             res.send(false)
-        } else {
+        } else  {
             // console.log(response.body.results[0])
             var thumbnail = response.body.results[0].thumbnail
             var title = response.body.results[0].title_original
@@ -436,15 +431,15 @@ const router = app => {
     // PODCAST EPISODE SEARCH
     app.post('/SearchPodcastEpisodes', async (req, res) => {
         var PodcastEpisodeSearchTerm = req.body.PodcastEpisodeSearchTerm
-        console.log('episode api: ', PodcastEpisodeSearchTerm)
+        //console.log('episode api: ', PodcastEpisodeSearchTerm)
         var PodcastSearchTermAPI = 'https://listen-api.listennotes.com/api/v2/search?q=' + PodcastEpisodeSearchTerm + '&type=episode'
         const QueryResponse = await unirest.get(PodcastSearchTermAPI).header('X-ListenAPI-Key', sourceFile.podcastAPIKey)
         response = QueryResponse.toJSON()
-        //console.log('search results count: ', response)
-        console.log('search results count: ', response.body.count)
-
-
-        if (response.body.results.length === 0) {
+       
+        if (response.statusCode === 429){
+            res.send(response.status)
+        }
+        else if (response.body.results.length === 0) {
             console.log('search fail')
             res.send(false)
         } else {
@@ -453,9 +448,7 @@ const router = app => {
             var EmptyArrayOutside = {}
 
             for (i = 0; i < response.body.count; i++) {
-                console.log('thumbnails: ', response.body.results[i].thumbnail)
-                //var EmptyArrayInside = {}
-                console.log('array is empty: ', EmptyArrayOutside)
+                
                 var thumbnail = response.body.results[i].thumbnail
                 var title = response.body.results[i].title_original
                 var id = response.body.results[i].id
@@ -656,6 +649,11 @@ const router = app => {
                 //console.log(content_id + " -> " + PodcastAPIQueryId[content_id]); //https://stackoverflow.com/a/684692/6065710
                 var PodcastSearchIDAPI = "https://listen-api.listennotes.com/api/v2/podcasts/" + PodcastAPIQueryId[content_id]
                 const response = await unirest.get(PodcastSearchIDAPI).header('X-ListenAPI-Key', sourceFile.podcastAPIKey)
+                if (response.status === 429){
+                    res.send(response.status)
+                }
+                console.log('podcast populate quota count = ', response.caseless.dict)
+
                 //console.log('podcast reponse= ', response.toJSON().body.title)
                 PodcastTitle = response.toJSON().body.title
                 PodcastImage = response.toJSON().body.image
@@ -712,7 +710,9 @@ const router = app => {
                 console.log(content_id + " -> " + PodcastEpisodeAPIQueryId[content_id]); //https://stackoverflow.com/a/684692/6065710
                 var PodcastEpisodeSearchIdAPI = "https://listen-api.listennotes.com/api/v2/episodes/" + PodcastEpisodeAPIQueryId[content_id]
                 const response = await unirest.get(PodcastEpisodeSearchIdAPI).header('X-ListenAPI-Key', sourceFile.podcastAPIKey)
-
+                if (response.status === 429){
+                    res.send(response.status)
+                }
                 PodcastEpisodeTitle = response.toJSON().body.title
                 PodcastEpisodeImage = response.toJSON().body.image
                 PodcastEpisodeID = response.toJSON().body.id

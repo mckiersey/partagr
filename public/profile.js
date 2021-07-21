@@ -235,7 +235,10 @@ $(document).ready(function () {
                 PodcastSearchTerm: PodcastSearchTermQueryFormat
             }).done(function (data) {
                 console.log('Server response :', data)
-                if (data == false) {
+                if (data == 429) {
+                    alert("Podcast partner quota limit reached for this month")
+                }
+                else if (data == false) {
                     console.log('search fail')
                     alert('No podcast found- try another search term')
                 } else {
@@ -281,7 +284,10 @@ $(document).ready(function () {
                 PodcastEpisodeSearchTerm: PodcastEpisodeSearchTermQueryFormat
             }).done(function (data) {
                 console.log('Server response :', data)
-                if (data == false) {
+                if (data == 429) {
+                    alert("Podcast partner quota limit reached for this month")
+                }
+                else if (data == false) {
                     alert('No episode found- try another search term')
                     $('.ManualPodcastInput').show()
 
@@ -373,7 +379,10 @@ $(document).ready(function () {
                 ProfileId: user_id,
                 PodcastId: PodcastToAdd
             }).done(function (data) {
-                if (data == true) {
+                if (data == 429) {
+                    alert("Podcast partner quota limit reached for this month")
+                }
+                else if (data == true) {
                     window.location.href = server + "/ProfilePage?user_id=" + user_id
                 } else if (data == "TOKEN FAIL") {
                     alert("Log in expried- please sign in again")
@@ -401,7 +410,10 @@ $(document).ready(function () {
                 ProfileId: user_id,
                 PodcastEpisodeID: PodcastEpisodeToAdd
             }).done(function (data) {
-                if (data == true) {
+                if (data == 429) {
+                    alert("Podcast partner quota limit reached for this month")
+                }
+                else if (data == true) {
                     window.location.href = server + "/ProfilePage?user_id=" + user_id
                 } else if (data == "TOKEN FAIL") {
                     alert("Log in expried- please sign in again")
@@ -551,6 +563,7 @@ $(document).ready(function () {
 
     // CLICK TO PLAY PODCAST EPISODE
     $(document).on('click', '.ClickToPlay', function () {
+        window.location = "#PodcastPlayer"
         EpisodeToPlay = $(this).attr('name')
         console.log('to play = ', EpisodeToPlay)
         if ($('#PodcastPlayerFrame').length)  //Replace an existant player with a new one
