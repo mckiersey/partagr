@@ -1,5 +1,5 @@
-var ProductionMode = 'DEV'
-//var ProductionMode = 'PROD'
+//var ProductionMode = 'DEV'
+var ProductionMode = 'PROD'
 
 if (ProductionMode == 'DEV') {
     var server = 'http://localhost'
