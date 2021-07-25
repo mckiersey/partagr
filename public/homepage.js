@@ -50,7 +50,7 @@ function onSignIn(googleUser) {
         // Get token from browser
         var CookieToken = getCookieValue("USER_SESSION_TOKEN");
         try {
-          $.post(server + "/ProfileRoute", {
+          $.post("/ProfileRoute", {
             token: CookieToken,
           }).done(function (data) {
             VerificationStatus = data[0];
