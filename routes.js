@@ -68,7 +68,7 @@ const router = app => {
 
     // HOME: DESCRIPTION
     // 1) Display landing page
-    app.get('/index', (request, response) => {
+    app.get('/', (request, response) => {
         homepage_file = "/homepage.html"
         response.sendFile(homepage_file, { root: __dirname })
     });
