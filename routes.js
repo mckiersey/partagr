@@ -324,7 +324,11 @@ const router = app => {
                         pool.query(CheckIfAlreadyFullQuery, [ProfileUserId, VideoPosition], (error, PreviouslyPopulatedResult) => {
                             // console.log('check if already populated error: ', error)
                             //console.log('check if already populated result: ', PreviouslyPopulatedResult)
-
+                            if (PreviouslyPopulatedResult == null) {
+                                    console.log('NO PREVIOUS VIDEO')
+                                   var InsertVideoResult = InsertNewVideo(InsertVideoData)
+                                   //response.send(InsertVideoResult)
+                            }    
                             if (PreviouslyPopulatedResult.length > 0) {
                                 //  console.log('VIDEO ALREADY IN PLACE: DELETING')
                                 let DeleteIfAlreadyFullQuery = "DELETE FROM user_content WHERE user_id = ? AND content_type = 'video' AND content_desc =?"
