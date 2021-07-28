@@ -96,9 +96,10 @@ const router = app => {
                 google_user_id: google_user_id, first_name: google_first_name, full_name: google_user_name,
                 email: google_email, profile_picture: google_profile_picture
             }
-
+            console.log("Checking if user already exists...")
             try { // CHECK IF USER ALREADY EXISTS IN DATABASE
                 pool.query("SELECT * FROM user_profile WHERE google_user_id = ?", google_user_id, function (error, result) {
+                   console.log("Result from existing user check: ", result)
                     // User not in user_profile table => This is a New User
                     if (result == null) {
                         console.log('No result from existing user query: Inserting new user into user_profile DB')
