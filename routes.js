@@ -109,9 +109,11 @@ const router = app => {
                             console.log('Unable to create new user, error: ', error)
                         }
                         response.send(true); //New user added
+                        console.log("New user added")
                         // User exists in user_profile table => This is NOT a New User
                     } else {
                         response.send(true); //Existing user- signing in
+                        console.log("Existing user signing in")
                     }
                 });
             } catch (err) {

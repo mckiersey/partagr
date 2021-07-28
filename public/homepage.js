@@ -39,7 +39,7 @@ function onSignIn(googleUser) {
     $.post(server + "/SignIn", {
       token: id_token,
     }).done(function (data) {
-      console.log("Server response :", data);
+      console.log("Sign in: Server response :", data);
       if (data == true) {
         // Automatic direction to profil
 
