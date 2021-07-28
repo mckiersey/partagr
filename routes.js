@@ -773,7 +773,7 @@ const router = app => {
     app.get("/RecentActivity", (request, response) => {
         // RETRIEVE USER CONTENT DATA
         //console.log('recent activity route')
-
+        try{
         pool.query("SELECT full_name, profile_picture, UC.user_id, content_id, content_type, content_desc FROM user_content UC LEFT JOIN user_profile UP ON UC.user_id = UP.user_id ORDER BY content_id DESC LIMIT 20 ", (error, result) => {
             if (error) console.log('Content retrieval error:', error);
             try {
@@ -789,8 +789,11 @@ const router = app => {
                 }
             } catch (error) {
                 console.log("User content error: ", error)
-            }
-        }); // RETRIEVE USER CONTENT DATA: END
+            }     
+        }) // RETRIEVE USER CONTENT DATA: END
+    } catch(error){
+        console.log("Error likely due to database not existing: ", error)
+    }
     });
 
 
