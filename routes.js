@@ -572,7 +572,11 @@ const router = app => {
             try {
                 video_content = result
                 //console.log('video query result = ', video_content)
-                if (result.length === 0) {
+                if (result == null){
+                    console.log('Table does not yet exist')
+                    response.send(false)
+                }
+                else if (result.length === 0) {
                     console.log('No video data')
                     response.send(false)
                 } else {
@@ -595,7 +599,11 @@ const router = app => {
             try {
                 more_video_content = result
                 //console.log('video query result = ', video_content)
-                if (result.length === 0) {
+                if (result == null){
+                    console.log('Table does not yet exist')
+                    response.send(false)
+                }
+                else if (result.length === 0) {
                     console.log('No video data')
                     response.send(false)
                 } else {
@@ -620,8 +628,11 @@ const router = app => {
         pool.query("SELECT content_id, content FROM user_content WHERE content_type = 'podcast' AND user_id = ? ", user_id, (error, result) => {
             if (error) console.log('Content retrieval error:', error);
             RetrievedPodcastData = result
-
-            if (result.length === 0) {
+            if (result == null){
+                console.log('Table does not yet exist')
+                response.send(false)
+            }
+            else if (result.length === 0) {
                 //console.log('No podcast data')
                 response.send(false)
             } else {
@@ -678,8 +689,11 @@ const router = app => {
             if (error) console.log('Content retrieval error:', error);
             RetrievedPodcastEpisodeData = result
             //console.log('episode query result = ', RetrievedPodcastEpisodeData)
-
-            if (result.length === 0) {
+            if (result == null){
+                console.log('Table does not yet exist')
+                response.send(false)
+            }
+            else if (result.length === 0) {
                 //console.log('No podcast data')
                 response.send(false)
             } else if (result.content_desc === 'podcast_episode_manual') { // Manually inserted podcasts
@@ -740,7 +754,11 @@ const router = app => {
             if (error) console.log('Content retrieval error:', error);
             try {
                 RetrievedArticleData = result
-                if (result.length === 0) {
+                if (result == null){
+                    console.log('Table does not yet exist')
+                    response.send(false)
+                }
+                else if (result.length === 0) {
                     console.log('No article data')
                 } else {
                     response.send(RetrievedArticleData)
@@ -760,7 +778,11 @@ const router = app => {
             if (error) console.log('Content retrieval error:', error);
             try {
                 AllRecentActivity = result
-                if (result.length === 0) {
+                if (result == null){
+                    console.log('Table does not yet exist')
+                    response.send(false)
+                }
+                else if(result.length === 0) {
                     console.log('No recent activity')
                 } else {
                     response.send(AllRecentActivity)
@@ -783,7 +805,11 @@ const router = app => {
             try {
                 //console.log('article retrieval result = ', result)
                 RetrievedArticleData = result
-                if (result.length === 0) {
+                if (result == null){
+                    console.log('Table does not yet exist')
+                    response.send(false)
+                }
+                else if (result.length === 0) {
                     console.log('No article data')
                 } else {
                     console.log('sending back to client: ', RetrievedArticleData)
