@@ -271,8 +271,8 @@ const router = app => {
             console.log("Test sequence step: C")
 
             var InsertVideoResult = pool.query('INSERT INTO user_content SET ?', InsertVideoData) //, (InsertVideoError, InsertVideoResult) => {
-            console.log('insert new video in position error: ', InsertVideoError)
-            console.log('insert new video in position result: ', InsertVideoResult)
+            //console.log('insert new video in position error: ', InsertVideoError)
+            //console.log('insert new video in position result: ', InsertVideoResult)
             if (InsertVideoResult !== null) {
                 // console.log('FUNCTION = TRUE')
                 console.log("Test sequence step: C ii")
