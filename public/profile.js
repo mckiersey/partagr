@@ -64,7 +64,7 @@ $(document).ready(function () {
     // RETURN TO HOME PAGE
     document.getElementById('banner-name').innerHTML = "<a id='banner-name-text' href=" + server + "/landing>partagr</h1>"
     $(document).on('click', '#SignInButton', function () {
-        window.location.href = server + "/landing"
+        window.location.href = server + "/"
     });
 
 
