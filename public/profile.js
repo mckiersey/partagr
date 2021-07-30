@@ -242,15 +242,14 @@ $(document).ready(function () {
                     console.log('search fail')
                     alert('No podcast found- try another search term')
                 } else {
-                    console.log(data)
                     for (var podcast_result_number in data) {
+                        
                         title = data[podcast_result_number].title
                         thumbnail = data[podcast_result_number].thumbnail
+                        listenURL = data[podcast_result_number].url
                         PodcastID = data[podcast_result_number].id
-                        listenURL = data[podcast_result_number].listenURL
                         description = data[podcast_result_number].description
 
-                        console.log('description = ', description)
                         document.getElementById('PodcastSearchResultThumbnails').innerHTML +=
                         `<div class="col-2" id="PodcastSearchResultThumbnail_"${ShowSearchCount}>` +
                             `<img height = "200" width = "200" src = ${thumbnail}></img>` +

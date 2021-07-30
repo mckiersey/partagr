@@ -428,15 +428,21 @@ const router = app => {
             console.log('search fail')
             res.send(false)
         } else  {
-            for (i = 0; i < 2; i++) { // show top 3 results
+            var EmptyShowArrayOutside = {}
+
+            for (i = 0; i < 3; i++) { // show top 3 results
+            console.log(response.body.results)
+
             // console.log(response.body.results[0])
             var thumbnail = response.body.results[i].thumbnail
             var title = response.body.results[i].title_original
             var url = response.body.results[i].listennotes_url
             var id = response.body.results[i].id
             var description = response.body.results[i].description_original
-            res.status(200).send([title, thumbnail, url, id, description])
+            EmptyShowArrayOutside[i] = { 'thumbnail': thumbnail, 'title': title, 'id': id, 'url': url, 'description': description }
+
             }
+            res.status(200).send(EmptyShowArrayOutside)
         }
     });
 
