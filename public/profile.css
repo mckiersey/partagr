@@ -403,6 +403,11 @@ a:link {
     padding-bottom: 100px;
 }
 
+ul
+{
+list-style-type: none;
+}
+
 #ArticleDiscovery {
     margin-top: 10px;
     margin-bottom: 100px;

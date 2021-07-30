@@ -428,14 +428,15 @@ const router = app => {
             console.log('search fail')
             res.send(false)
         } else  {
+            for (i = 0; i < 2; i++) { // show top 3 results
             // console.log(response.body.results[0])
-            var thumbnail = response.body.results[0].thumbnail
-            var title = response.body.results[0].title_original
-            var url = response.body.results[0].listennotes_url
-            var id = response.body.results[0].id
-            var description = response.body.results[0].description_original
-            //var allText = response.body.results[0] // alt text?
+            var thumbnail = response.body.results[i].thumbnail
+            var title = response.body.results[i].title_original
+            var url = response.body.results[i].listennotes_url
+            var id = response.body.results[i].id
+            var description = response.body.results[i].description_original
             res.status(200).send([title, thumbnail, url, id, description])
+            }
         }
     });
 
