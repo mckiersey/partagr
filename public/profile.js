@@ -245,10 +245,10 @@ $(document).ready(function () {
                     console.log(data)
                     for (var podcast_result_number in data) {
                         title = data[podcast_result_number].title
-                        thumbnail = data[result_number].thumbnail
-                        PodcastEpisodeID = data[result_number].id
-                        listenURL = data[result_number].listenURL
-                        description = data[result_number].description
+                        thumbnail = data[podcast_result_number].thumbnail
+                        PodcastID = data[podcast_result_number].id
+                        listenURL = data[podcast_result_number].listenURL
+                        description = data[podcast_result_number].description
 
                         console.log('description = ', description)
                         document.getElementById('PodcastSearchResultThumbnails').innerHTML +=
