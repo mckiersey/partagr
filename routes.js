@@ -703,7 +703,7 @@ const router = app => {
         //console.log('podast user id = ', user_id)
 
         // POPULATE PODCAST EPISODES (ii): RETRIEVE USER CONTENT DATA
-        pool.query("SELECT content_id, content, content_desc FROM user_content WHERE content_type = 'podcast_episode' OR 'podcast_episode_manual' AND user_id = ? ", user_id, (error, result) => {
+        pool.query("SELECT content_id, content, content_desc FROM user_content WHERE (content_type = 'podcast_episode' OR content_type ='podcast_episode_manual') AND user_id = ? ", user_id, (error, result) => {
             if (error) console.log('Content retrieval error:', error);
             RetrievedPodcastEpisodeData = result
             //console.log('episode query result = ', RetrievedPodcastEpisodeData)
