@@ -130,6 +130,7 @@ $(document).ready(function () {
 
     ///////////////////////////  YOUTUBE ///////////////////////////
     $(document).on('click', '.AddYouTubeVideo', function (event) {
+        console.log('Video submit button clicked')
         var CookieToken = getCookieValue('USER_SESSION_TOKEN')
         VideoPosition = event.target.id
         VideoPositionInteger = VideoPosition.match(/\d+/)[0] //get integer from string
@@ -459,7 +460,7 @@ $(document).ready(function () {
 
                 } else {
                     document.getElementById(VideoElementID).innerHTML +=
-                        `<iframe id="iFrame${VideoPositionInteger}" width="400" height="250" src="https://www.youtube.com/embed/${VideoID}" title="YouTube video player" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` +
+                        `<iframe id="iFrame${VideoPositionInteger}" width="340" height="200" src="https://www.youtube.com/embed/${VideoID}" title="YouTube video player" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` +
                         `<input type = "image" src = "DeleteIcon.png" name = ${ContentID} class="DeleteContentButton OwnerElement"/>`
                 }
             }
@@ -490,7 +491,7 @@ $(document).ready(function () {
                         console.log('value of MoreVideoCounter = ', MoreVideosCounter)
                         console.log('video id', VideoID)
                         document.getElementById(VideoElementID).innerHTML +=
-                            `<iframe id="iFrame${VideoPositionInteger}" width="400" height="250" src="https://www.youtube.com/embed/${VideoID}" title="YouTube video player" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` +
+                            `<iframe id="iFrame${VideoPositionInteger}" width="340" height="200" src="https://www.youtube.com/embed/${VideoID}" title="YouTube video player" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` +
                             `<input type = "image" src = "DeleteIcon.png" name = ${ContentID} class="DeleteContentButton OwnerElement"/>`
                     }
                     document.getElementById("iFrame" + VideoPositionInteger).onload = function () {

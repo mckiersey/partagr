@@ -585,7 +585,7 @@ const router = app => {
         //console.log('Video route triggered')
         user_id = request.query.user_id
         // RETRIEVE USER CONTENT DATA
-        pool.query("SELECT content_id, content, content_desc FROM user_content WHERE content_type = 'video' AND user_id = ? AND content_desc <= 4;", user_id, (error, result) => {
+        pool.query("SELECT content_id, content, content_desc FROM user_content WHERE content_type = 'video' AND user_id = ? AND content_desc <= 5;", user_id, (error, result) => {
             if (error) console.log('Content retrieval error:');
             try {
                 video_content = result
@@ -612,7 +612,7 @@ const router = app => {
         //console.log('More Video route triggered')
         user_id = request.query.user_id
         // RETRIEVE USER CONTENT DATA
-        pool.query("SELECT content_id, content, content_desc FROM user_content WHERE content_type = 'video' AND user_id = ? AND content_desc > 4;", user_id, (error, result) => {
+        pool.query("SELECT content_id, content, content_desc FROM user_content WHERE content_type = 'video' AND user_id = ? AND content_desc > 5;", user_id, (error, result) => {
             if (error) console.log('Content retrieval error:');
             try {
                 more_video_content = result
