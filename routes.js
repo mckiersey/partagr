@@ -43,7 +43,6 @@ async function TokenToUserID(user_session_token) {
     var google_user_id = VerifiedTokenPayload[0]
     try {
         pool.query("SELECT user_id FROM user_profile WHERE google_user_id = ?", google_user_id, function (error, result) {
-            return result[0].user_id
             if (result == null) {
                 console.log('TokenToUserID: No matching user ID')
             } else {
@@ -101,7 +100,7 @@ const router = app => {
                 pool.query("SELECT * FROM user_profile WHERE google_user_id = ?", google_user_id, function (error, result) {
                    console.log("Result from existing user check: ", result)
                     // User not in user_profile table => This is a New User
-                    if (result.length === 0) {
+                    if (result.length === 0 || result == null) {
                         console.log('No result from existing user query: Inserting new user into user_profile DB')
                         try {  //INSERT NEW USER INTO: USER_PROFILE
                             pool.query('INSERT INTO user_profile SET?', new_user_data, (error, result) => {
