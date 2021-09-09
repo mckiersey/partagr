@@ -29,13 +29,15 @@ $(document).ready(function () {
     }
 
     // MY PROFILE FUNCTION
+    /*
     $(document).on('click', '#MyProfile', function () {
         var BaseProfiledUrl = server + '/ProfilePage?user_id='
         var ProfileUrl = BaseProfiledUrl + user_id
         console.log('GO HOME: ', ProfileUrl)
         window.location.href = ProfileUrl
     });
-    /*
+    */
+    
     $(document).on('click', '#MyProfile', function () {
         var CookieToken = getCookieValue('USER_SESSION_TOKEN')
  
@@ -45,6 +47,7 @@ $(document).ready(function () {
             $.post(server + '/MyProfile', {
                 token: CookieToken
             }).done(function (data) {
+                console.log('my profile data response:', data)
                 logged_in_user_id = data[0]
                 // Redirect back to BackEnd to render profile page
                 var BaseProfiledUrl = server + '/ProfilePage?user_id='
@@ -55,13 +58,13 @@ $(document).ready(function () {
             console.log('failed to post to backend:', err)
         }
     });
-    */
+    
 
 
     // RETURN TO HOME PAGE
-    document.getElementById('banner-name').innerHTML = "<a id='banner-name-text' href=" + server + ">partagr</h1>"
+    document.getElementById('banner-name').innerHTML = "<a id='banner-name-text' href=" + server + "/>partagr</h1>"
     $(document).on('click', '#SignInButton', function () {
-        window.location.href = server
+        window.location.href = server + "/"
     });
 
 
@@ -127,6 +130,7 @@ $(document).ready(function () {
 
     ///////////////////////////  YOUTUBE ///////////////////////////
     $(document).on('click', '.AddYouTubeVideo', function (event) {
+        console.log('Video submit button clicked')
         var CookieToken = getCookieValue('USER_SESSION_TOKEN')
         VideoPosition = event.target.id
         VideoPositionInteger = VideoPosition.match(/\d+/)[0] //get integer from string
@@ -212,7 +216,11 @@ $(document).ready(function () {
     ///////////////////////////  PODCASTS ///////////////////////////
 
     // PODCAST SEARCH
+    var ShowSearchCount = 0
     $(document).on("click", "#PodcastSearchButton", function () {
+        ShowSearchCount += 1
+        $('.PodcastShowSearch').show()
+
         var CookieToken = getCookieValue('USER_SESSION_TOKEN')
         console.log('Search podcast function executed- ', $(this))
         $('.PodcastSearchResultsSection').show()
@@ -228,24 +236,35 @@ $(document).ready(function () {
                 PodcastSearchTerm: PodcastSearchTermQueryFormat
             }).done(function (data) {
                 console.log('Server response :', data)
-                if (data == false) {
+                if (data == 429) {
+                    alert("Podcast partner quota limit reached for this month")
+                }
+                else if (data == false) {
                     console.log('search fail')
                     alert('No podcast found- try another search term')
                 } else {
-                    console.log(data)
-                    title = data[0]
-                    thumbnail = data[1]
-                    listenURL = data[2]
-                    PodcastID = data[3]
-                    description = data[4]
-                    console.log('description = ', description)
-                    document.getElementById('PodcastSearchResultThumbnail_1').innerHTML +=
-                        `<h3> Add <emph> podcast</emph></h3>` +
-                        `<img height = "200" width = "200" src = ${thumbnail}></img>` +
-                        `<button class="btn btn-light AddpodcastButton" id= ${PodcastID}> Add Podcast</button>`
-                    document.getElementById('PodcastDescription').innerHTML += `<p> ${description}</p>`
+                    for (var podcast_result_number in data) {
+                        
+                        title = data[podcast_result_number].title
+                        thumbnail = data[podcast_result_number].thumbnail
+                        listenURL = data[podcast_result_number].url
+                        PodcastID = data[podcast_result_number].id
+                        description = data[podcast_result_number].description
 
+                        document.getElementById('PodcastSearchResultThumbnails').innerHTML +=
+                        `<div class="col-2" id="PodcastSearchResultThumbnail_"${ShowSearchCount}>` +
+                            `<img height = "200" width = "200" src = ${thumbnail}></img>` +
+                        `</div>` +
+                        `<div class="row justify-content-center">` +
+                            `<div class="col-10 d-flex justify-content-between" id="PodcastDescription_${ShowSearchCount}>"></div>` +
+                                `<p> ${description}</p>` +
+                            `</div>` +
+                            `<button class="btn btn-light AddpodcastButton" id= ${PodcastID}> Add Podcast</button>` +
+                        `</div>`
+                    }
                 }
+                $('.PodcastShowSearch').hide()
+
             });
         } catch (err) {
             console.log('failed to post to backend')
@@ -255,7 +274,9 @@ $(document).ready(function () {
 
     // PODCAST EPISODE SEARCH
     $(document).on("click", "#PodcastEpisodeSearchButton", function () {
+
         var CookieToken = getCookieValue('USER_SESSION_TOKEN')
+        $('.PodcastEpisodeSearch').show()
         $('.PodcastEpisodeSearchResultsSection').show()
         PodcastEpisodeSearchTerm = $("#PodcastEpisodeSearchText").val() //[0].value; // Retrieve submitted data
         PodcastEpisodeSearchTermQueryFormat = PodcastEpisodeSearchTerm.replaceAll(" ", "%20")
@@ -266,7 +287,10 @@ $(document).ready(function () {
                 PodcastEpisodeSearchTerm: PodcastEpisodeSearchTermQueryFormat
             }).done(function (data) {
                 console.log('Server response :', data)
-                if (data == false) {
+                if (data == 429) {
+                    alert("Podcast partner quota limit reached for this month")
+                }
+                else if (data == false) {
                     alert('No episode found- try another search term')
                     $('.ManualPodcastInput').show()
 
@@ -333,6 +357,9 @@ $(document).ready(function () {
                                 `</div></div>`
                         }
                         $('.ManualPodcastInput').show()
+                        window.location.href = "#EpisodeResults"
+                        $('.PodcastEpisodeSearch').hide()
+
                     }
                 }
             });
@@ -340,8 +367,6 @@ $(document).ready(function () {
             console.log('failed to post to backend')
             console.log('Error: ' + err)
         }
-
-
     });
 
 
@@ -357,7 +382,10 @@ $(document).ready(function () {
                 ProfileId: user_id,
                 PodcastId: PodcastToAdd
             }).done(function (data) {
-                if (data == true) {
+                if (data == 429) {
+                    alert("Podcast partner quota limit reached for this month")
+                }
+                else if (data == true) {
                     window.location.href = server + "/ProfilePage?user_id=" + user_id
                 } else if (data == "TOKEN FAIL") {
                     alert("Log in expried- please sign in again")
@@ -385,7 +413,10 @@ $(document).ready(function () {
                 ProfileId: user_id,
                 PodcastEpisodeID: PodcastEpisodeToAdd
             }).done(function (data) {
-                if (data == true) {
+                if (data == 429) {
+                    alert("Podcast partner quota limit reached for this month")
+                }
+                else if (data == true) {
                     window.location.href = server + "/ProfilePage?user_id=" + user_id
                 } else if (data == "TOKEN FAIL") {
                     alert("Log in expried- please sign in again")
@@ -429,7 +460,7 @@ $(document).ready(function () {
 
                 } else {
                     document.getElementById(VideoElementID).innerHTML +=
-                        `<iframe id="iFrame${VideoPositionInteger}" width="560" height="315" src="https://www.youtube.com/embed/${VideoID}" title="YouTube video player" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` +
+                        `<iframe id="iFrame${VideoPositionInteger}" width="340" height="200" src="https://www.youtube.com/embed/${VideoID}" title="YouTube video player" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` +
                         `<input type = "image" src = "DeleteIcon.png" name = ${ContentID} class="DeleteContentButton OwnerElement"/>`
                 }
             }
@@ -460,7 +491,7 @@ $(document).ready(function () {
                         console.log('value of MoreVideoCounter = ', MoreVideosCounter)
                         console.log('video id', VideoID)
                         document.getElementById(VideoElementID).innerHTML +=
-                            `<iframe id="iFrame${VideoPositionInteger}" width="560" height="315" src="https://www.youtube.com/embed/${VideoID}" title="YouTube video player" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` +
+                            `<iframe id="iFrame${VideoPositionInteger}" width="340" height="200" src="https://www.youtube.com/embed/${VideoID}" title="YouTube video player" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` +
                             `<input type = "image" src = "DeleteIcon.png" name = ${ContentID} class="DeleteContentButton OwnerElement"/>`
                     }
                     document.getElementById("iFrame" + VideoPositionInteger).onload = function () {
@@ -535,6 +566,7 @@ $(document).ready(function () {
 
     // CLICK TO PLAY PODCAST EPISODE
     $(document).on('click', '.ClickToPlay', function () {
+        window.location = "#PodcastPlayer"
         EpisodeToPlay = $(this).attr('name')
         console.log('to play = ', EpisodeToPlay)
         if ($('#PodcastPlayerFrame').length)  //Replace an existant player with a new one
@@ -608,7 +640,7 @@ $(document).ready(function () {
             var user_photo = ActivityList[i].profile_picture
 
             document.getElementById('RecentActivityList').innerHTML += `<tr>`
-                + `<td><a href=${server}/ProfilePage?user_id=${user_id}><img class="ActivityProfileImage" height="50" width="50" src="${user_photo}"></a></td>`
+                + `<td><a href=${server}/ProfilePage?user_id=${user_id}><img class="ActivityProfileImage" height="30" width="30" src="${user_photo}"></a></td>`
                 + `<td><a class="RecentActivityText" href=${server}/ProfilePage?user_id=${user_id}#${content_type}><p LinkText id= ${content_id}>${user_name} just added a new ${content_type}</p></a></td>`
                 + `</tr>`
         }

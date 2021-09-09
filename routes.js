@@ -26,7 +26,7 @@ async function verify(CLIENT_ID, token) {
         });
 
         const payload = ticket.getPayload(); // The verified token gives back a ticket. This ticket contains things like user ID, email and profile picture (all from a user's Google Account)
-        console.log('payload= ', payload)
+        //console.log('payload= ', payload)
         const AuthUserId = payload.sub;
         const UserName = payload.name;
         const UserEmail = payload.email;
@@ -43,12 +43,11 @@ async function TokenToUserID(user_session_token) {
     var google_user_id = VerifiedTokenPayload[0]
     try {
         pool.query("SELECT user_id FROM user_profile WHERE google_user_id = ?", google_user_id, function (error, result) {
-            return result[0].user_id
-            if (result.length === 0) {
+            if (result == null) {
                 console.log('TokenToUserID: No matching user ID')
             } else {
                 console.log('The result to be returned from calling this function: ', result[0].user_id)
-                //return result[0].user_id
+                return result[0].user_id
             }
         });
     } catch (err) {
@@ -56,16 +55,9 @@ async function TokenToUserID(user_session_token) {
     }
 }
 
+  
 // DEFINE APP
 const router = app => {
-
-    app.post("/MyProfile", async (request, response) => {
-        token = request.body.token
-        corresponding_user_id = await TokenToUserID(token)
-        console.log('the output of calling the async function in the app.post requst , which should be printed last = ', corresponding_user_id)
-        response.send(corresponding_user_id)
-    })
-
 
 
 
@@ -103,11 +95,12 @@ const router = app => {
                 google_user_id: google_user_id, first_name: google_first_name, full_name: google_user_name,
                 email: google_email, profile_picture: google_profile_picture
             }
-
+            console.log("Checking if user already exists...")
             try { // CHECK IF USER ALREADY EXISTS IN DATABASE
                 pool.query("SELECT * FROM user_profile WHERE google_user_id = ?", google_user_id, function (error, result) {
+                   console.log("Result from existing user check: ", result)
                     // User not in user_profile table => This is a New User
-                    if (result.length === 0) {
+                    if (result == null || result.length === 0 ) {
                         console.log('No result from existing user query: Inserting new user into user_profile DB')
                         try {  //INSERT NEW USER INTO: USER_PROFILE
                             pool.query('INSERT INTO user_profile SET?', new_user_data, (error, result) => {
@@ -116,9 +109,11 @@ const router = app => {
                             console.log('Unable to create new user, error: ', error)
                         }
                         response.send(true); //New user added
+                        console.log("New user added")
                         // User exists in user_profile table => This is NOT a New User
                     } else {
                         response.send(true); //Existing user- signing in
+                        console.log("Existing user signing in")
                     }
                 });
             } catch (err) {
@@ -143,12 +138,16 @@ const router = app => {
         } else { //Token has been verified
             google_user_id = VerifiedTokenPayload[0]
             // FIND APP USER ID (use internal app ID, rather than google id to identify a user)
+            try{
             pool.query("SELECT user_id FROM user_profile WHERE google_user_id = ?", google_user_id, (error, result) => { // value of app user id on row of google user id 
-                if (error) throw console.log('Find user ID error: ', error);
+                if (error) throw console.log('Find user ID error: ', error, "Query result = ", result);
                 user_id = result[0].user_id
                 var SuccessResponseArray = ["* Token verification SUCCESS: User logged in *", user_id]
                 response.send(SuccessResponseArray)
             }); // FIND APP USER ID: END
+        } catch(error){
+            console.log("Error likely due to database not existing: ", error)
+        }
         } // END OF IF/ELSE CLAUSE VERIFICATION CLAUSE
     }); // END OF POST: PROFILE ROUTE
 
@@ -181,20 +180,35 @@ const router = app => {
         }
     }) // END OF GET: PROTECTED PROFILE
 
-
-    // GET MY PROFILE: DESCRIPTION
+// GET MY PROFILE: DESCRIPTION
     // FUNCTION: DISPLAY THE PROFILE OF THE LOGGED IN USER
     // 1) Take user_session_token from browser
     // 2) Use TokenToUserID to find corresponding partagr ID
     // 3) response.send this ID back to client
-    /*
+    
     app.post("/MyProfile", async (request, response) => {
         token = request.body.token
-        corresponding_user_id = await TokenToUserID(token)
-        console.log('the output of token to user = ', corresponding_user_id)
-        response.send(corresponding_user_id)
-    })
-    */
+        console.log('The token is: ', token)
+        VerifiedTokenPayload = await verify(CLIENT_ID, token)
+        
+    var google_user_id = VerifiedTokenPayload[0]
+    try {
+        pool.query("SELECT user_id FROM user_profile WHERE google_user_id = ?", google_user_id, function (error, result) {
+            if (result == null) {
+                console.log('TokenToUserID: No matching user ID')
+            } else {
+                console.log('The result to be returned from calling this function: ', result[0].user_id)
+                corresponding_user_id = result[0].user_id.toString()
+                console.log('the output of token to user = ', corresponding_user_id)
+                response.send(corresponding_user_id)
+            }
+        })
+    } catch (err) {
+        console.log('TokenToUserID ' + err)
+    }
+    
+})
+  
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -309,8 +323,12 @@ const router = app => {
                         pool.query(CheckIfAlreadyFullQuery, [ProfileUserId, VideoPosition], (error, PreviouslyPopulatedResult) => {
                             // console.log('check if already populated error: ', error)
                             //console.log('check if already populated result: ', PreviouslyPopulatedResult)
-
-                            if (PreviouslyPopulatedResult.length > 0) {
+                            if (PreviouslyPopulatedResult == null) {
+                                    console.log('NO PREVIOUS VIDEO')
+                                   var InsertVideoResult = InsertNewVideo(InsertVideoData)
+                                   response.send(InsertVideoResult) // this was previous commented out
+                            }    
+                            else if (PreviouslyPopulatedResult.length > 0) {
                                 //  console.log('VIDEO ALREADY IN PLACE: DELETING')
                                 let DeleteIfAlreadyFullQuery = "DELETE FROM user_content WHERE user_id = ? AND content_type = 'video' AND content_desc =?"
                                 pool.query(DeleteIfAlreadyFullQuery, [ProfileUserId, VideoPosition], (error, result) => {
@@ -401,33 +419,44 @@ const router = app => {
         var PodcastSearchTerm = req.body.PodcastSearchTerm
         var PodcastSearchTermAPI = 'https://listen-api.listennotes.com/api/v2/search?q=' + PodcastSearchTerm + '&type=podcast'
         const response = await unirest.get(PodcastSearchTermAPI).header('X-ListenAPI-Key', sourceFile.podcastAPIKey)
-        if (response.body.results.length === 0) {
+        console.log('podcast search = ', response.caseless.dict)
+        if (response.status === 429){
+            res.send(response.status)
+        }
+        else if (response.body.results.length === 0) {
             console.log('search fail')
             res.send(false)
-        } else {
+        } else  {
+            var EmptyShowArrayOutside = {}
+
+            for (i = 0; i < 3; i++) { // show top 3 results
+            console.log(response.body.results)
+
             // console.log(response.body.results[0])
-            var thumbnail = response.body.results[0].thumbnail
-            var title = response.body.results[0].title_original
-            var url = response.body.results[0].listennotes_url
-            var id = response.body.results[0].id
-            var description = response.body.results[0].description_original
-            //var allText = response.body.results[0] // alt text?
-            res.status(200).send([title, thumbnail, url, id, description])
+            var thumbnail = response.body.results[i].thumbnail
+            var title = response.body.results[i].title_original
+            var url = response.body.results[i].listennotes_url
+            var id = response.body.results[i].id
+            var description = response.body.results[i].description_original
+            EmptyShowArrayOutside[i] = { 'thumbnail': thumbnail, 'title': title, 'id': id, 'url': url, 'description': description }
+
+            }
+            res.status(200).send(EmptyShowArrayOutside)
         }
     });
 
     // PODCAST EPISODE SEARCH
     app.post('/SearchPodcastEpisodes', async (req, res) => {
         var PodcastEpisodeSearchTerm = req.body.PodcastEpisodeSearchTerm
-        console.log('episode api: ', PodcastEpisodeSearchTerm)
+        //console.log('episode api: ', PodcastEpisodeSearchTerm)
         var PodcastSearchTermAPI = 'https://listen-api.listennotes.com/api/v2/search?q=' + PodcastEpisodeSearchTerm + '&type=episode'
         const QueryResponse = await unirest.get(PodcastSearchTermAPI).header('X-ListenAPI-Key', sourceFile.podcastAPIKey)
         response = QueryResponse.toJSON()
-        //console.log('search results count: ', response)
-        console.log('search results count: ', response.body.count)
-
-
-        if (response.body.results.length === 0) {
+       
+        if (response.statusCode === 429){
+            res.send(response.status)
+        }
+        else if (response.body.results.length === 0) {
             console.log('search fail')
             res.send(false)
         } else {
@@ -436,9 +465,7 @@ const router = app => {
             var EmptyArrayOutside = {}
 
             for (i = 0; i < response.body.count; i++) {
-                console.log('thumbnails: ', response.body.results[i].thumbnail)
-                //var EmptyArrayInside = {}
-                console.log('array is empty: ', EmptyArrayOutside)
+                
                 var thumbnail = response.body.results[i].thumbnail
                 var title = response.body.results[i].title_original
                 var id = response.body.results[i].id
@@ -557,12 +584,16 @@ const router = app => {
         //console.log('Video route triggered')
         user_id = request.query.user_id
         // RETRIEVE USER CONTENT DATA
-        pool.query("SELECT content_id, content, content_desc FROM user_content WHERE content_type = 'video' AND user_id = ? AND content_desc <= 4;", user_id, (error, result) => {
+        pool.query("SELECT content_id, content, content_desc FROM user_content WHERE content_type = 'video' AND user_id = ? AND content_desc <= 5;", user_id, (error, result) => {
             if (error) console.log('Content retrieval error:');
             try {
                 video_content = result
                 //console.log('video query result = ', video_content)
-                if (result.length === 0) {
+                if (result == null){
+                    console.log('Table does not yet exist')
+                    response.send(false)
+                }
+                else if (result.length === 0) {
                     console.log('No video data')
                     response.send(false)
                 } else {
@@ -580,12 +611,16 @@ const router = app => {
         //console.log('More Video route triggered')
         user_id = request.query.user_id
         // RETRIEVE USER CONTENT DATA
-        pool.query("SELECT content_id, content, content_desc FROM user_content WHERE content_type = 'video' AND user_id = ? AND content_desc > 4;", user_id, (error, result) => {
+        pool.query("SELECT content_id, content, content_desc FROM user_content WHERE content_type = 'video' AND user_id = ? AND content_desc > 5;", user_id, (error, result) => {
             if (error) console.log('Content retrieval error:');
             try {
                 more_video_content = result
                 //console.log('video query result = ', video_content)
-                if (result.length === 0) {
+                if (result == null){
+                    console.log('Table does not yet exist')
+                    response.send(false)
+                }
+                else if (result.length === 0) {
                     console.log('No video data')
                     response.send(false)
                 } else {
@@ -610,8 +645,11 @@ const router = app => {
         pool.query("SELECT content_id, content FROM user_content WHERE content_type = 'podcast' AND user_id = ? ", user_id, (error, result) => {
             if (error) console.log('Content retrieval error:', error);
             RetrievedPodcastData = result
-
-            if (result.length === 0) {
+            if (result == null){
+                console.log('Table does not yet exist')
+                response.send(false)
+            }
+            else if (result.length === 0) {
                 //console.log('No podcast data')
                 response.send(false)
             } else {
@@ -639,6 +677,11 @@ const router = app => {
                 //console.log(content_id + " -> " + PodcastAPIQueryId[content_id]); //https://stackoverflow.com/a/684692/6065710
                 var PodcastSearchIDAPI = "https://listen-api.listennotes.com/api/v2/podcasts/" + PodcastAPIQueryId[content_id]
                 const response = await unirest.get(PodcastSearchIDAPI).header('X-ListenAPI-Key', sourceFile.podcastAPIKey)
+                if (response.status === 429){
+                    res.send(response.status)
+                }
+                console.log('podcast populate quota count = ', response.caseless.dict)
+
                 //console.log('podcast reponse= ', response.toJSON().body.title)
                 PodcastTitle = response.toJSON().body.title
                 PodcastImage = response.toJSON().body.image
@@ -659,12 +702,15 @@ const router = app => {
         //console.log('podast user id = ', user_id)
 
         // POPULATE PODCAST EPISODES (ii): RETRIEVE USER CONTENT DATA
-        pool.query("SELECT content_id, content, content_desc FROM user_content WHERE content_type = 'podcast_episode' OR 'podcast_episode_manual' AND user_id = ? ", user_id, (error, result) => {
+        pool.query("SELECT content_id, content, content_desc FROM user_content WHERE (content_type = 'podcast_episode' OR content_type ='podcast_episode_manual') AND user_id = ? ", user_id, (error, result) => {
             if (error) console.log('Content retrieval error:', error);
             RetrievedPodcastEpisodeData = result
             //console.log('episode query result = ', RetrievedPodcastEpisodeData)
-
-            if (result.length === 0) {
+            if (result == null){
+                console.log('Table does not yet exist')
+                response.send(false)
+            }
+            else if (result.length === 0) {
                 //console.log('No podcast data')
                 response.send(false)
             } else if (result.content_desc === 'podcast_episode_manual') { // Manually inserted podcasts
@@ -695,7 +741,9 @@ const router = app => {
                 console.log(content_id + " -> " + PodcastEpisodeAPIQueryId[content_id]); //https://stackoverflow.com/a/684692/6065710
                 var PodcastEpisodeSearchIdAPI = "https://listen-api.listennotes.com/api/v2/episodes/" + PodcastEpisodeAPIQueryId[content_id]
                 const response = await unirest.get(PodcastEpisodeSearchIdAPI).header('X-ListenAPI-Key', sourceFile.podcastAPIKey)
-
+                if (response.status === 429){
+                    res.send(response.status)
+                }
                 PodcastEpisodeTitle = response.toJSON().body.title
                 PodcastEpisodeImage = response.toJSON().body.image
                 PodcastEpisodeID = response.toJSON().body.id
@@ -723,7 +771,11 @@ const router = app => {
             if (error) console.log('Content retrieval error:', error);
             try {
                 RetrievedArticleData = result
-                if (result.length === 0) {
+                if (result == null){
+                    console.log('Table does not yet exist')
+                    response.send(false)
+                }
+                else if (result.length === 0) {
                     console.log('No article data')
                 } else {
                     response.send(RetrievedArticleData)
@@ -738,20 +790,27 @@ const router = app => {
     app.get("/RecentActivity", (request, response) => {
         // RETRIEVE USER CONTENT DATA
         //console.log('recent activity route')
-
+        try{
         pool.query("SELECT full_name, profile_picture, UC.user_id, content_id, content_type, content_desc FROM user_content UC LEFT JOIN user_profile UP ON UC.user_id = UP.user_id ORDER BY content_id DESC LIMIT 20 ", (error, result) => {
             if (error) console.log('Content retrieval error:', error);
             try {
                 AllRecentActivity = result
-                if (result.length === 0) {
+                if (result == null){
+                    console.log('Table does not yet exist')
+                    response.send(false)
+                }
+                else if(result.length === 0) {
                     console.log('No recent activity')
                 } else {
                     response.send(AllRecentActivity)
                 }
             } catch (error) {
                 console.log("User content error: ", error)
-            }
-        }); // RETRIEVE USER CONTENT DATA: END
+            }     
+        }) // RETRIEVE USER CONTENT DATA: END
+    } catch(error){
+        console.log("Error likely due to database not existing: ", error)
+    }
     });
 
 
@@ -766,7 +825,11 @@ const router = app => {
             try {
                 //console.log('article retrieval result = ', result)
                 RetrievedArticleData = result
-                if (result.length === 0) {
+                if (result == null){
+                    console.log('Table does not yet exist')
+                    response.send(false)
+                }
+                else if (result.length === 0) {
                     console.log('No article data')
                 } else {
                     console.log('sending back to client: ', RetrievedArticleData)
