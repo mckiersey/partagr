@@ -1,5 +1,6 @@
-databases.sql
 
+databases.sql
+package-lock.json
 
 # Logs
 logs
