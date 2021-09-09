@@ -100,7 +100,8 @@ const router = app => {
                 pool.query("SELECT * FROM user_profile WHERE google_user_id = ?", google_user_id, function (error, result) {
                    console.log("Result from existing user check: ", result)
                     // User not in user_profile table => This is a New User
-                    if (result == null || result.length === 0 ) {
+                    if (result == null ) {
+                        console.log("NO QUERY RESULT: Creating new table...")
                         console.log('No result from existing user query: Inserting new user into user_profile DB')
                         try {  //INSERT NEW USER INTO: USER_PROFILE
                             pool.query('INSERT INTO user_profile SET?', new_user_data, (error, result) => {
@@ -111,6 +112,17 @@ const router = app => {
                         response.send(true); //New user added
                         console.log("New user added")
                         // User exists in user_profile table => This is NOT a New User
+                    }else if (result.length == 0 ) {
+                            console.log('No result from existing user query: Inserting new user into user_profile DB')
+                            try {  //INSERT NEW USER INTO: USER_PROFILE
+                                pool.query('INSERT INTO user_profile SET?', new_user_data, (error, result) => {
+                                });
+                            } catch (error) {
+                                console.log('Unable to create new user, error: ', error)
+                            }
+                            response.send(true); //New user added
+                            console.log("New user added")
+                            // User exists in user_profile table => This is NOT a New User
                     } else {
                         response.send(true); //Existing user- signing in
                         console.log("Existing user signing in")
