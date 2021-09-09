@@ -140,7 +140,7 @@ const router = app => {
             // FIND APP USER ID (use internal app ID, rather than google id to identify a user)
             try{
             pool.query("SELECT user_id FROM user_profile WHERE google_user_id = ?", google_user_id, (error, result) => { // value of app user id on row of google user id 
-                if (error) throw console.log('Find user ID error: ', error);
+                if (error) throw console.log('Find user ID error: ', error, "Query result = ", result);
                 user_id = result[0].user_id
                 var SuccessResponseArray = ["* Token verification SUCCESS: User logged in *", user_id]
                 response.send(SuccessResponseArray)
