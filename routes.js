@@ -105,6 +105,7 @@ const router = app => {
                         console.log('No result from existing user query: Inserting new user into user_profile DB')
                         try {  //INSERT NEW USER INTO: USER_PROFILE
                             pool.query('INSERT INTO user_profile SET?', new_user_data, (error, result) => {
+                            console.log('Output of first user to be written: RESULT = ', result, 'ERROR = ', error)
                             });
                         } catch (error) {
                             console.log('Unable to create new user, error: ', error)
