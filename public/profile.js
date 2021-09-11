@@ -652,12 +652,15 @@ $(document).ready(function () {
 
     // DISCOVER ARTICLE
     $(document).on('click', '#ArticleDiscovery', function () {
+        console.log('discover article clicked')
         DiscoverArticleUrl = server + '/DiscoverArticle?user_id=' + user_id
         $.get(DiscoverArticleUrl, function (UsersArticles, status) {
             RandomArticlePosition = Math.floor(Math.random() * UsersArticles.length);
             DisoveryArticle = UsersArticles[RandomArticlePosition].content
-            window.open(DisoveryArticle, '_blank' // <- This is what makes it open in a new window.
-            );
+            console.log('Article to discover', DisoveryArticle)
+
+            window.open(DisoveryArticle, '_blank') // <- This is what makes it open in a new window.
+        
         });
 
     });
