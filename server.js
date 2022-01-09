@@ -10,7 +10,6 @@ cookieParser = require('cookie-parser');
 
 
 
-
 // middlewear
 // Setting the view engine
 app.set('view engine', 'ejs');
