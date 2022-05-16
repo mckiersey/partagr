@@ -51,6 +51,16 @@ p {
     margin: 5px;
 }
 
+.toggle-on{
+    line-height: 25px !important;
+
+}
+
+.toggle-off{
+    line-height: 25px !important;
+
+}
+
 .OwnerSwitchRow{
     margin-top: 15px;
 }
