@@ -38,10 +38,9 @@ $(document).ready(function () {
     });
     */
     
-    $(document).on('click', '#MyProfile', function () {
+    $(document).on('click', '#ProfilePicture', function () {
         var CookieToken = getCookieValue('USER_SESSION_TOKEN')
  
-        console.log('my profile click')
         console.log(server + '/MyProfile')
         try {
             $.post(server + '/MyProfile', {
@@ -60,9 +59,12 @@ $(document).ready(function () {
     });
     
 
+    // Click Partagr to return
+       $(document).on('click', '#banner-name-text', function () {
+        window.location.href = server + "/"
+    });
 
     // RETURN TO HOME PAGE
-    document.getElementById('banner-name').innerHTML = "<a id='banner-name-text' href=" + server + "/>partagr</h1>"
     $(document).on('click', '#SignInButton', function () {
         window.location.href = server + "/"
     });

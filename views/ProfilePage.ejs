@@ -34,39 +34,49 @@
 <body>
     <div class="container-fluid">
         <!--BANNER-->
-        <div class="row align-items-center justify-content-between banner">
-            <div class="col-4" id="banner-name">
+        <div class="row align-items-center justify-content-around banner">
+            <div class="col-xl-2 col-lg-12 col-md-12 col-sm-12 border border-success" id="banner-name">
+                <h1 id='banner-name-text'>partagr</h1>
             </div>
-            <div class="col-4">
-                <div class = "row ">
-                    <div class = "col">
-                        <div class="float-right" id="ProfilePictureSection">
-                            <img id="ProfilePicture" src="<%=data.profile_picture%>" />
-                            <div class="span2">
-                                <div id="MyProfileButton">
-                                    <button class="btn btn-light btn-block OwnerSwitch" id="MyProfile">My Profile</button>
-                                </div>
-                                <div class="SignInButton">
-                                    <button class="btn btn-light btn-block" id="SignInButton">Sign in</button>
-                                </div>
-                            </div>
+            
+            <!--OWNER PROFILE PIC COLUMN-->
+            <div class="col-xl-8 col-lg-10 col-md-10 col-sm-9 border border-success">
+                <div class="float-left" id="ProfilePictureSection">
+                    <img id="OwnerProfilePicture" src="<%=data.profile_picture%>" />
+                </div>
+            </div>
+            <!--START COLUMN-->
+            <div class="col-xl-2 col-lg-2 col-md-2 col-sm-3 border border-danger">
+                <!--MY PROFILE PIC ROW-->
+                <div class="row justify-content-around">
+                    <!--MY PROFILE PIC COLUMN-->
+                    <div class="float-left" id="ProfilePictureSection">
+                    <div class="col justify-content-around">
+                        <img id="MyProfilePicture" src="<%=data.profile_picture%>"/>
                         </div>
                     </div>
                 </div>
-                
-                <!--EDIT MODE SWITCH-->
-                <div class="row OwnerSwitchRow">
-                    <div class="col">
-                        <!-- EDIT SWITCH-->
-                        <div class="custom-control custom-switch OwnerPermissionSection" id="editModeSwitch"
-                            align="right">
-                            <input class="custom-control-input OwnerSwitch" id="customSwitch1" type="checkbox" 
-                                data-toggle="toggle" data-on="Editing" data-off="Add Content" data-onstyle="success"
-                                data-offstyle="secondary" data-width="130" data-height="10">
+
+                <!--SIGN IN ROW-->
+                <div class="row align-items-center">
+                    <!--SIGN IN COLUMN-->
+                    <div class="col border-primary">
+                        <div class="SignInButton">
+                            <button class="btn btn-light btn-block" id="SignInButton">Sign in</button>
                         </div>
-                    </div>
-                </div>
+                  
+        
+            <!-- EDIT SWITCH-->
+            <div class="custom-control custom-switch OwnerPermissionSection" id="editModeSwitch">
+                <input class="custom-control-input OwnerSwitch" id="customSwitch1" type="checkbox" 
+                    data-toggle="toggle" data-on="Editing" data-off="Add Content" data-onstyle="success"
+                    data-offstyle="secondary" data-width="130" data-height="5">
             </div>
+        </div>
+    </div>
+        <!--END COLUMN-->
+        </div>
+             
 
         </div>
         <!--OVERALL EXPLAINER TAGLINE-->
