@@ -34,26 +34,27 @@
 <body>
     <div class="container-fluid">
         <!--BANNER-->
-        <div class="row align-items-center justify-content-around banner">
-            <div class="col-xl-2 col-lg-12 col-md-12 col-sm-12 border border-success" id="banner-name">
+        <div class="row banner align-items-center">
+            <div class="col-xl-2 col-lg-12 col-md-12 col-sm-12 border border-success d-flex justify-content-center" id="banner-name">
                 <a id='banner-name-text' href="https://www.partagr.com/">partagr</a>
             </div>
             
-            <!--OWNER PROFILE PIC COLUMN-->
-            <div class="col-xl-8 col-lg-10 col-md-10 col-sm-9 border border-success">
-                <div class="float-left" id="ProfilePictureSection">
-                    <img id="OwnerProfilePicture" src="<%=data.profile_picture%>" />
+            <!--OWNER PROFILE PIC COLUMN: LINKED TO PAGE-->
+            <div class="col-xl-8 col-lg-10 col-md-12 col-sm-12 border border-danger">
+                <div class="row  align-items-center">
+                    <div class="col-xl-2 col-lg-12 col-md-12 col-sm-12 border border-success d-flex justify-content-center">
+                        <img id="OwnerProfilePicture" src="<%=data.profile_picture%>" />
+                    </div>
                 </div>
             </div>
             <!--START COLUMN-->
-            <div class="col-xl-2 col-lg-2 col-md-2 col-sm-3 border border-danger">
+            <div class="col-xl-2 col-lg-2 col-md-12 col-sm-12 border border-success">
                 <!--MY PROFILE PIC ROW-->
-                <div class="row justify-content-around">
-                    <!--MY PROFILE PIC COLUMN-->
-                    <div class="float-left" id="ProfilePictureSection">
-                    <div class="col justify-content-around">
-                        <img id="MyProfilePicture" src="<%=data.profile_picture%>"/>
-                        </div>
+                <div class="row align-items-center border border-success">
+
+                    <!--MY PROFILE PIC COLUMN: LINKED TO SIGNED IN USER--> 
+                    <div class="col">
+                        <img id="MyProfilePicture" class="float-right" src="<%=data.profile_picture%>"/>
                     </div>
                 </div>
 
@@ -61,8 +62,8 @@
                 <div class="row align-items-center">
                     <!--SIGN IN COLUMN-->
                     <div class="col border-primary">
-                        <div class="SignInButton">
-                            <button class="btn btn-light btn-block" id="SignInButton">Sign in</button>
+                        <div class="SignInButton float-right">
+                            <button class="btn btn-dark btn-block" id="SignInButton">Sign in</button>
                         </div>
                   
         

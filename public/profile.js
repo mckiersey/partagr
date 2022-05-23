@@ -59,10 +59,6 @@ $(document).ready(function () {
     });
     
 
-    // Click Partagr to return
-       $(document).on('click', '#banner-name-text', function () {
-        window.location.href = server + "/"
-    });
 
     // RETURN TO HOME PAGE
     $(document).on('click', '#SignInButton', function () {
