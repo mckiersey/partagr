@@ -152,10 +152,14 @@ const router = app => {
             google_user_id = VerifiedTokenPayload[0]
             // FIND APP USER ID (use internal app ID, rather than google id to identify a user)
             try{
-            pool.query("SELECT user_id FROM user_profile WHERE google_user_id = ?", google_user_id, (error, result) => { // value of app user id on row of google user id 
+            pool.query("SELECT user_id, profile_picture FROM user_profile WHERE google_user_id = ?", google_user_id, (error, result) => { // value of app user id on row of google user id 
                 if (error) throw console.log('Find user ID error: ', error, "Query result = ", result);
                 user_id = result[0].user_id
-                var SuccessResponseArray = ["* Token verification SUCCESS: User logged in *", user_id]
+                signedInUserProfilePhoto = result[0].profile_picture
+
+                console.log('** ADDING PICTURE QUERY **', result)
+                var SuccessResponseArray = ["* Token verification SUCCESS: User logged in *", user_id,signedInUserProfilePhoto]
+                console.log('TO SEND TO FRONT END: ', SuccessResponseArray )
                 response.send(SuccessResponseArray)
             }); // FIND APP USER ID: END
         } catch(error){
@@ -163,6 +167,9 @@ const router = app => {
         }
         } // END OF IF/ELSE CLAUSE VERIFICATION CLAUSE
     }); // END OF POST: PROFILE ROUTE
+
+
+
 
 
     // GET PROFILEPAGE ROUTE: DESCRIPTION

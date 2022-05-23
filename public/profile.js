@@ -431,6 +431,23 @@ $(document).ready(function () {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //// *** POPULATE PROFILE DATA *** ////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    // GET LOGGED IN USER PROFILE PHOTO
+    var GetLoggedProfilePhoto = server + '/LoggedUserProfilePhoto'
+    var CookieToken = getCookieValue('USER_SESSION_TOKEN')
+        PodcastEpisodeToAdd = this.id
+        try {
+            $.post(GetLoggedProfilePhoto, {
+                token: CookieToken
+            }).done(function (data) {
+                console.log('profile photo return data ', data)
+            });
+        } catch (err) {
+            console.log('failed to post to backend')
+            console.log('Error: ' + err)
+        }
+    });
+    
 
     // GET VIDEOS
     var GetVideoUrl = server + '/Videos?user_id=' + user_id
