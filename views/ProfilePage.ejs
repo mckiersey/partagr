@@ -53,8 +53,7 @@
                 <div class="row align-items-center border border-success">
 
                     <!--MY PROFILE PIC COLUMN: LINKED TO SIGNED IN USER--> 
-                    <div class="col">
-                        <img id="LoggedInProfilePicture" class="float-right" src="<%=data.profile_picture%>"/>
+                    <div class="col" id= "LoggedInProfilePictureSpace">
                     </div>
                 </div>
 
@@ -68,7 +67,7 @@
                   
         
             <!-- EDIT SWITCH-->
-            <div class="custom-control custom-switch OwnerPermissionSection" id="editModeSwitch">
+            <div class="custom-control custom-switch OwnerPermissionSection float-right" id="editModeSwitch">
                 <input class="custom-control-input OwnerSwitch" id="customSwitch1" type="checkbox" 
                     data-toggle="toggle" data-on="Editing" data-off="Add Content" data-onstyle="success"
                     data-offstyle="secondary" data-width="130" data-height="5">

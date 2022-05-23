@@ -155,10 +155,7 @@ const router = app => {
             pool.query("SELECT user_id, profile_picture FROM user_profile WHERE google_user_id = ?", google_user_id, (error, result) => { // value of app user id on row of google user id 
                 if (error) throw console.log('Find user ID error: ', error, "Query result = ", result);
                 user_id = result[0].user_id
-                signedInUserProfilePhoto = result[0].profile_picture
-
-                console.log('** ADDING PICTURE QUERY **', result)
-                var SuccessResponseArray = ["* Token verification SUCCESS: User logged in *", user_id,signedInUserProfilePhoto]
+                var SuccessResponseArray = ["* Token verification SUCCESS: User logged in *", user_id]
                 console.log('TO SEND TO FRONT END: ', SuccessResponseArray )
                 response.send(SuccessResponseArray)
             }); // FIND APP USER ID: END
@@ -199,6 +196,7 @@ const router = app => {
             console.log('Error retrieving user data, error: ', error)
         }
     }) // END OF GET: PROTECTED PROFILE
+
 
 // GET MY PROFILE: DESCRIPTION
     // FUNCTION: DISPLAY THE PROFILE OF THE LOGGED IN USER
@@ -266,7 +264,7 @@ const router = app => {
                         console.log('Authorised user editing correct profile')
                         response.send('User is profile owner')
                     } else {
-                        response.send('User is not profile owner')
+                        response.send('User is logged in, but user is not profile owner')
                     }
                 });
             } catch (error) {
@@ -275,6 +273,51 @@ const router = app => {
         }
     });
 
+
+    // GET LOGGED IN USER PHOTO REQUEST: DESCRIPTION
+    // FUNCTION: Get logged user's profile photo, regardless of whether you are viewing your own profile, or your friend's
+
+    app.get("/LoggedUserProfilePhoto", async (request, response) => {
+        token = request.query.token
+
+        VerifiedTokenPayload = await verify(CLIENT_ID, token)
+        var LoggedUserGoogleUserId = VerifiedTokenPayload[0] //Google user ID
+        if (!VerifiedTokenPayload) { //if value == false
+            response.send('TOKEN FAIL')
+        } else {
+
+            try {
+                pool.query("SELECT profile_picture FROM user_profile WHERE google_user_id = ?", LoggedUserGoogleUserId, (error, result) => { // value of app user id on row of google user id                   
+                    if (error) console.log('Content retrieval error:', error);
+                    try {
+                        logged_user_photo = result
+                        if (result == null){
+                            console.log('Table does not yet exist')
+                            response.send(false)
+                        }
+                        else if (result.length === 0) {
+                            console.log('No logged user profile data')
+                            response.send(false)
+                        } else {
+                            response.send(logged_user_photo)
+                        }
+                    } catch (error) {
+                        console.log("User content error (No profile picture data for this logged in user)")
+                    }
+                });
+            } catch (error) {
+                        console.log("Logged user profile picture query failure")
+            }
+        }
+    }); // RETRIEVE USER PROFILE PICTURE DATA: END
+
+
+    
+
+
+
+
+    
     // POST ADDVIDEO ROUTE: DESCRIPTION
     // FUNCTION: ENABLE USER TO ADD CONTENT (BUT ONLY TO HER PAGE)
     // 1) Verify token, taken from browser is valid

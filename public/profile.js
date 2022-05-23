@@ -107,20 +107,70 @@ $(document).ready(function () {
                 console.log('profile owner')
                 $('.OwnerPermissionSection').show() //show edit switch
                 $('.SignInButton').hide()
-            } else {
-                console.log('not profile owner')
+            } else if (date = "User is logged in, but user is not profile owner") {
+                console.log('User is logged in, but user is not profile owner')
                 $('.OwnerPermissionSection').hide() //hide edit switch
-                $('.SignInButton').show()
+                $('.SignInButton').hide()
 
-                /*
-                document.getElementById('SessionStatusText').innerHTML =
-                    "<span style='color: red;'>Unlogged</span>";
-                    */
+               // $('.ReturnToMyProfileButton').show() -> just click profile picture
+            } else {
+            $('.OwnerPermissionSection').hide() //hide edit switch
+            $('.SignInButton').show()
+            }
+        });
+
+    } catch (err) {
+        console.log('Error: ' + err)
+    }
+
+
+
+ // GET LOGGED IN USER PHOTO REQUEST: DESCRIPTION
+    
+    try {
+        var CookieToken = getCookieValue('USER_SESSION_TOKEN')
+        $.get(server + '/LoggedUserProfilePhoto', {
+            token: CookieToken,
+        }).done(function (data) {
+            console.log('Server response (profile picture) :', data[0].profile_picture)
+            console.log('data - ', data)
+            var GenericProfilePhotos = ["DefaultProfilePictureGirl.jpeg", "DefaultProfilePictureBeardGuy.jpeg"]
+            var GenericProfilePhoto =  GenericProfilePhotos[Math.floor(Math.random() * GenericProfilePhotos.length)]; //random selection of male or female avatar.
+            console.log('random: ', GenericProfilePhoto)
+            if (data == false) {
+                console.log('No profile picture for logged in user')
+                document.getElementById('LoggedInProfilePictureSpace').innerHTML += 
+                `<img id="LoggedInProfilePicture" class="float-right" src=${GenericProfilePhoto}>`
+
+             } else if (data == "TOKEN FAIL") {
+                console.log('User not logged in')
+                document.getElementById('LoggedInProfilePictureSpace').innerHTML += 
+                `<img id="LoggedInProfilePicture" class="float-right" src=${GenericProfilePhoto}>`
+
+            } else{
+                console.log('Insert profile picture for logged user')
+                logged_user_profile_photo = data[0].profile_picture
+                document.getElementById('LoggedInProfilePictureSpace').innerHTML += 
+                `<img id="LoggedInProfilePicture" class="float-right" src="${logged_user_profile_photo}" referrerpolicy="no-referrer">`
             }
         });
     } catch (err) {
         console.log('Error: ' + err)
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     ///////////////////////////  YOUTUBE ///////////////////////////
     $(document).on('click', '.AddYouTubeVideo', function (event) {
@@ -413,7 +463,7 @@ $(document).ready(function () {
                 else if (data == true) {
                     window.location.href = server + "/ProfilePage?user_id=" + user_id
                 } else if (data == "TOKEN FAIL") {
-                    alert("Log in expried- please sign in again")
+                    alert("Log in expired- please sign in again")
                     window.location.href = server + "/ProfilePage?user_id=" + user_id
 
                 } else {
@@ -432,22 +482,8 @@ $(document).ready(function () {
     //// *** POPULATE PROFILE DATA *** ////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
-    // GET LOGGED IN USER PROFILE PHOTO
-    var GetLoggedProfilePhoto = server + '/LoggedUserProfilePhoto'
-    var CookieToken = getCookieValue('USER_SESSION_TOKEN')
-        PodcastEpisodeToAdd = this.id
-        try {
-            $.post(GetLoggedProfilePhoto, {
-                token: CookieToken
-            }).done(function (data) {
-                console.log('profile photo return data ', data)
-            });
-        } catch (err) {
-            console.log('failed to post to backend')
-            console.log('Error: ' + err)
-        }
-    });
-    
+ 
+
 
     // GET VIDEOS
     var GetVideoUrl = server + '/Videos?user_id=' + user_id
