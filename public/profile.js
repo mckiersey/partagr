@@ -30,7 +30,7 @@ $(document).ready(function () {
 
 
     
-    $(document).on('click', '#MyProfilePicture', function () {
+    $(document).on('click', '#LoggedInProfilePicture', function () {
         var CookieToken = getCookieValue('USER_SESSION_TOKEN')
  
         console.log(server + '/MyProfile')
