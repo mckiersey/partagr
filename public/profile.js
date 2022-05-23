@@ -28,17 +28,9 @@ $(document).ready(function () {
         return "";
     }
 
-    // MY PROFILE FUNCTION
-    /*
-    $(document).on('click', '#MyProfile', function () {
-        var BaseProfiledUrl = server + '/ProfilePage?user_id='
-        var ProfileUrl = BaseProfiledUrl + user_id
-        console.log('GO HOME: ', ProfileUrl)
-        window.location.href = ProfileUrl
-    });
-    */
+
     
-    $(document).on('click', '#ProfilePicture', function () {
+    $(document).on('click', '#MyProfilePicture', function () {
         var CookieToken = getCookieValue('USER_SESSION_TOKEN')
  
         console.log(server + '/MyProfile')
@@ -59,6 +51,10 @@ $(document).ready(function () {
     });
     
 
+    // Click Partagr to return
+       $(document).on('click', '#banner-name-text', function () {
+        window.location.href = server + "/"
+    });
 
     // RETURN TO HOME PAGE
     $(document).on('click', '#SignInButton', function () {
