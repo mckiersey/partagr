@@ -159,7 +159,220 @@ $(document).ready(function () {
     }
 
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //// *** POPULATE PROFILE DATA *** ////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+ 
 
+
+    // GET VIDEOS
+    var GetVideoUrl = server + '/Videos?user_id=' + user_id
+    $.get(GetVideoUrl, function (VideoList, status) {
+        if (VideoList == false) {
+            $(".VideosLoader").hide()
+            document.getElementById('VideoPosition1').innerHTML += "<h3 id='NoVideosFound'>No videos found</h3>"
+        } else {
+            var VideoCounter;
+            for (VideoCounter = 0; VideoCounter < VideoList.length; VideoCounter++) {
+                var VideoPositionInteger = VideoList[VideoCounter].content_desc
+                var VideoID = VideoList[VideoCounter].content
+                var ContentID = VideoList[VideoCounter].content_id
+                VideoElementID = "VideoPosition" + VideoPositionInteger
+                //console.log('value of VideoCounter = ', VideoCounter)
+                console.log('video id', VideoID)
+                if (VideoPositionInteger == 1) {
+                    document.getElementById(VideoElementID).innerHTML +=
+                        `<iframe id="iFrame${VideoPositionInteger}" width="900" height="450" src="https://www.youtube.com/embed/${VideoID}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` +
+                        `<input type = "image" src = "DeleteIcon.png" name = ${ContentID} class="DeleteContentButton OwnerElement"/>`
+
+                } else {
+                    document.getElementById(VideoElementID).innerHTML +=
+                        `<iframe id="iFrame${VideoPositionInteger}" width="340" height="200" src="https://www.youtube.com/embed/${VideoID}" title="YouTube video player" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` +
+                        `<input type = "image" src = "DeleteIcon.png" name = ${ContentID} class="DeleteContentButton OwnerElement"/>`
+                }
+            }
+            document.getElementById("iFrame" + VideoPositionInteger).onload = function () {
+                $(".VideosLoader").slideUp("fast")
+            };
+        }
+    });
+
+    // GET MORE VIDEOS
+    var MoreVideoClickCounter = 0
+    $(document).on('click', '.GetMoreVideos', function () {
+        console.log('more video click counter:', MoreVideoClickCounter)
+        if (MoreVideoClickCounter == 0) {
+            console.log('/!\ getting more videos!')
+            var GetMoreVideosUrl = server + '/GetMoreVideos?user_id=' + user_id
+            $.get(GetMoreVideosUrl, function (MoreVideosList, status) {
+                if (MoreVideosList == false) {
+                    $(".MoreVideosLoader").hide()
+                } else {
+                    var MoreVideosCounter;
+                    var NumberVideosToLoad = MoreVideosList.length
+                    for (MoreVideosCounter = 0; MoreVideosCounter < NumberVideosToLoad; MoreVideosCounter++) {
+                        var VideoPositionInteger = MoreVideosList[MoreVideosCounter].content_desc
+                        var VideoID = MoreVideosList[MoreVideosCounter].content
+                        var ContentID = MoreVideosList[MoreVideosCounter].content_id
+                        VideoElementID = "VideoPosition" + VideoPositionInteger
+                        console.log('value of MoreVideoCounter = ', MoreVideosCounter)
+                        console.log('video id', VideoID)
+                        document.getElementById(VideoElementID).innerHTML +=
+                            `<iframe id="iFrame${VideoPositionInteger}" width="340" height="200" src="https://www.youtube.com/embed/${VideoID}" title="YouTube video player" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` +
+                            `<input type = "image" src = "DeleteIcon.png" name = ${ContentID} class="DeleteContentButton OwnerElement"/>`
+                    }
+                    document.getElementById("iFrame" + VideoPositionInteger).onload = function () {
+                        $(".MoreVideosLoader").slideUp("fast")
+                    };
+                }
+            });
+            $('.ShowMore').slideDown("slow");
+            $('#ShowMore').slideUp()
+            $('#ShowLess').show()
+        } else {
+
+            $('.ShowMore').slideDown("slow");
+            $('#ShowMore').slideUp()
+            $('#ShowLess').show()
+        }
+        MoreVideoClickCounter++
+
+    });
+
+    // SHOW MORE VIDEOS
+
+    $("#ShowLess").click(function () {
+        $('.ShowMore').slideUp("fast");
+        $('#ShowLess').hide()
+        $('#ShowMore').show()
+    });
+
+    // GET PODCASTS
+    var GetPodcastsUrl = server + '/Podcasts?user_id=' + user_id
+    //console.log('Loading podcasts...')
+
+    $.get(GetPodcastsUrl, function (PodcastList, status) {
+        $('.PodcastLoader').hide()
+        if (PodcastList == false) {
+        }
+        for (var content_id in PodcastList) {
+            if (PodcastList.hasOwnProperty(content_id)) {
+                document.getElementById('PopulatePodcasts').innerHTML +=
+                    `<a href = ${PodcastList[content_id].website} target = "_blank" > <img class="SavedPodcastThumbnail" src=${PodcastList[content_id].image} alt=${PodcastList[content_id].title}></a>` +
+                    `<input type = "image" src = "DeleteIcon.png" name = ${content_id} class="DeleteContentButton OwnerElement"/>`
+            }
+        }
+    });
+
+    // GET PODCAST EPISODES
+    var GetPodcastEpisodesUrl = server + '/PodcastEpisodes?user_id=' + user_id
+    //console.log('Loading podcast episodes...')
+
+    $.get(GetPodcastEpisodesUrl, function (PodcastEpisodeList, status) {
+
+        $('.PodcastEpisodeLoader').hide()
+        if (PodcastEpisodeList == false) {
+        }
+        for (var content_id in PodcastEpisodeList) {
+            desc = PodcastEpisodeList[content_id].description
+            firstParagraph = desc.substr(0, desc.indexOf('</p>'));
+            if (PodcastEpisodeList.hasOwnProperty(content_id)) {
+                document.getElementById('podcast-episode-table').innerHTML += `<tr>`
+                    + `<td rowspan ="2"> <input type="image" name=${PodcastEpisodeList[content_id].episodeID} class="SavedPodcastEpisodeThumbnail ClickToPlay" src=${PodcastEpisodeList[content_id].image}></td>`
+                    + `<td class="PodcastEpisodeTitle ClickToPlay"> ${PodcastEpisodeList[content_id].title}</td>`
+                    + `<td> <input class="PodcastPlayButton ClickToPlay" type="image" name=${PodcastEpisodeList[content_id].episodeID} src="PlayButton.png"></td>`
+                    + `</tr>`
+                    + `<tr>`
+                    + `<td> ${firstParagraph}</td>`
+                    + `<td> <input type="image" src="DeleteIcon.png" name=${content_id} class="DeleteContentButton OwnerElement"/></td>`
+                    + `</tr>`
+            }
+        }
+    });
+
+
+    // CLICK TO PLAY PODCAST EPISODE
+    $(document).on('click', '.ClickToPlay', function () {
+        window.location = "#PodcastPlayer"
+        EpisodeToPlay = $(this).attr('name')
+        console.log('to play = ', EpisodeToPlay)
+        if ($('#PodcastPlayerFrame').length)  //Replace an existant player with a new one
+        {
+            $('#PodcastPlayerFrame').remove();
+            document.getElementById('PodcastPlayer').innerHTML +=
+                `<iframe id=PodcastPlayerFrame src = "https://www.listennotes.com/embedded/e/${EpisodeToPlay}/" height = "300px" width = "100%" style = "width: 1px; min-width: 100%;" frameborder = "0" scrolling = "no" loading = "lazy"></iframe>`
+        } else {
+            document.getElementById('PodcastPlayer').innerHTML +=
+                `<iframe id=PodcastPlayerFrame src = "https://www.listennotes.com/embedded/e/${EpisodeToPlay}/" height = "300px" width = "100%" style = "width: 1px; min-width: 100%;" frameborder = "0" scrolling = "no" loading = "lazy"></iframe>`
+        }
+    });
+
+
+    // GET ARTICLES 
+    var GetArticleUrl = server + '/Articles?user_id=' + user_id
+    $.get(GetArticleUrl, function (ArticleList, status) {
+        var i;
+        for (i = 0; i < ArticleList.length; i++) {
+
+            var caption = ArticleList[i].content_desc
+            var articleLink = ArticleList[i].content
+            var contentID = ArticleList[i].content_id
+
+            var pathArray = articleLink.split('/');
+            var protocol = pathArray[0];
+            var host = pathArray[2];
+            var baseUrl = protocol + '//' + host;
+            if (i < 5) {
+                document.getElementById('populateArticles-row1-col1').innerHTML +=
+                    `<li> <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=LinkText href=${articleLink} target="_blank">  ${caption}</a></li>` +
+                    `<input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement"/>`
+            } else if (i >= 5 && i < 10) {
+                document.getElementById('populateArticles-row1-col2').innerHTML +=
+                    `<li> <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=LinkText href=${articleLink} target="_blank">  ${caption}</a></li > ` +
+                    `<input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement"/>`
+            } else if (i >= 10 && i < 15) {
+                document.getElementById('populateArticles-row1-col3').innerHTML +=
+                    `<li class=LinkText > <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=LinkText href=${articleLink} target="_blank">  ${caption}</a></li>` +
+                    `<input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement"/>`
+
+
+            } else if (i > 15 && i <= 20) {
+                document.getElementById('populateArticles-row2-col1').innerHTML +=
+                    `<li class=LinkText > <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=LinkText href=${articleLink} target="_blank">  ${caption}</a></li>` +
+                    `<input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement"/>`
+            } else if (i > 20 && i <= 25) {
+                document.getElementById('populateArticles-row2-col2').innerHTML +=
+                    `<li class=LinkText > <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=LinkText href=${articleLink} target="_blank">  ${caption}</a></li>` +
+                    `<input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement"/> `
+            } else if (i > 25 && i <= 30) {
+                document.getElementById('populateArticles-row2-col3').innerHTML +=
+                    `<li class=LinkText > <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=LinkText href=${articleLink} target="_blank">  ${caption}</a></li>` +
+                    `<input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement"/> `
+
+            }
+        }
+    });
+
+    // RECENT ACTIVITY
+    var GetActivity = server + '/RecentActivity'
+    $.get(GetActivity, function (ActivityList, status) {
+        //console.log('recent activity response = ', ActivityList)
+        var i;
+        for (i = 0; i < ActivityList.length; i++) {
+
+            var content_type = ActivityList[i].content_type
+            var user_name = ActivityList[i].full_name
+            var user_id = ActivityList[i].user_id
+            var content_id = ActivityList[i].content_id
+            var user_photo = ActivityList[i].profile_picture
+
+            document.getElementById('RecentActivityList').innerHTML += `<tr>`
+                + `<td><a href=${server}/ProfilePage?user_id=${user_id}><img class="ActivityProfileImage" height="30" width="30" src="${user_photo}"></a></td>`
+                + `<td><a class="RecentActivityText" href=${server}/ProfilePage?user_id=${user_id}#${content_type}><p LinkText id= ${content_id}>${user_name} just added a new ${content_type}</p></a></td>`
+                + `</tr>`
+        }
+    })
 
 
 
@@ -478,220 +691,7 @@ $(document).ready(function () {
         }
     });
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //// *** POPULATE PROFILE DATA *** ////
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     
- 
-
-
-    // GET VIDEOS
-    var GetVideoUrl = server + '/Videos?user_id=' + user_id
-    $.get(GetVideoUrl, function (VideoList, status) {
-        if (VideoList == false) {
-            $(".VideosLoader").hide()
-            document.getElementById('VideoPosition1').innerHTML += "<h3 id='NoVideosFound'>No videos found</h3>"
-        } else {
-            var VideoCounter;
-            for (VideoCounter = 0; VideoCounter < VideoList.length; VideoCounter++) {
-                var VideoPositionInteger = VideoList[VideoCounter].content_desc
-                var VideoID = VideoList[VideoCounter].content
-                var ContentID = VideoList[VideoCounter].content_id
-                VideoElementID = "VideoPosition" + VideoPositionInteger
-                //console.log('value of VideoCounter = ', VideoCounter)
-                console.log('video id', VideoID)
-                if (VideoPositionInteger == 1) {
-                    document.getElementById(VideoElementID).innerHTML +=
-                        `<iframe id="iFrame${VideoPositionInteger}" width="900" height="450" src="https://www.youtube.com/embed/${VideoID}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` +
-                        `<input type = "image" src = "DeleteIcon.png" name = ${ContentID} class="DeleteContentButton OwnerElement"/>`
-
-                } else {
-                    document.getElementById(VideoElementID).innerHTML +=
-                        `<iframe id="iFrame${VideoPositionInteger}" width="340" height="200" src="https://www.youtube.com/embed/${VideoID}" title="YouTube video player" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` +
-                        `<input type = "image" src = "DeleteIcon.png" name = ${ContentID} class="DeleteContentButton OwnerElement"/>`
-                }
-            }
-            document.getElementById("iFrame" + VideoPositionInteger).onload = function () {
-                $(".VideosLoader").slideUp("fast")
-            };
-        }
-    });
-
-    // GET MORE VIDEOS
-    var MoreVideoClickCounter = 0
-    $(document).on('click', '.GetMoreVideos', function () {
-        console.log('more video click counter:', MoreVideoClickCounter)
-        if (MoreVideoClickCounter == 0) {
-            console.log('/!\ getting more videos!')
-            var GetMoreVideosUrl = server + '/GetMoreVideos?user_id=' + user_id
-            $.get(GetMoreVideosUrl, function (MoreVideosList, status) {
-                if (MoreVideosList == false) {
-                    $(".MoreVideosLoader").hide()
-                } else {
-                    var MoreVideosCounter;
-                    var NumberVideosToLoad = MoreVideosList.length
-                    for (MoreVideosCounter = 0; MoreVideosCounter < NumberVideosToLoad; MoreVideosCounter++) {
-                        var VideoPositionInteger = MoreVideosList[MoreVideosCounter].content_desc
-                        var VideoID = MoreVideosList[MoreVideosCounter].content
-                        var ContentID = MoreVideosList[MoreVideosCounter].content_id
-                        VideoElementID = "VideoPosition" + VideoPositionInteger
-                        console.log('value of MoreVideoCounter = ', MoreVideosCounter)
-                        console.log('video id', VideoID)
-                        document.getElementById(VideoElementID).innerHTML +=
-                            `<iframe id="iFrame${VideoPositionInteger}" width="340" height="200" src="https://www.youtube.com/embed/${VideoID}" title="YouTube video player" loading="lazy" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>` +
-                            `<input type = "image" src = "DeleteIcon.png" name = ${ContentID} class="DeleteContentButton OwnerElement"/>`
-                    }
-                    document.getElementById("iFrame" + VideoPositionInteger).onload = function () {
-                        $(".MoreVideosLoader").slideUp("fast")
-                    };
-                }
-            });
-            $('.ShowMore').slideDown("slow");
-            $('#ShowMore').slideUp()
-            $('#ShowLess').show()
-        } else {
-
-            $('.ShowMore').slideDown("slow");
-            $('#ShowMore').slideUp()
-            $('#ShowLess').show()
-        }
-        MoreVideoClickCounter++
-
-    });
-
-    // SHOW MORE VIDEOS
-
-    $("#ShowLess").click(function () {
-        $('.ShowMore').slideUp("fast");
-        $('#ShowLess').hide()
-        $('#ShowMore').show()
-    });
-
-    // GET PODCASTS
-    var GetPodcastsUrl = server + '/Podcasts?user_id=' + user_id
-    //console.log('Loading podcasts...')
-
-    $.get(GetPodcastsUrl, function (PodcastList, status) {
-        $('.PodcastLoader').hide()
-        if (PodcastList == false) {
-        }
-        for (var content_id in PodcastList) {
-            if (PodcastList.hasOwnProperty(content_id)) {
-                document.getElementById('PopulatePodcasts').innerHTML +=
-                    `<a href = ${PodcastList[content_id].website} target = "_blank" > <img class="SavedPodcastThumbnail" src=${PodcastList[content_id].image} alt=${PodcastList[content_id].title}></a>` +
-                    `<input type = "image" src = "DeleteIcon.png" name = ${content_id} class="DeleteContentButton OwnerElement"/>`
-            }
-        }
-    });
-
-    // GET PODCAST EPISODES
-    var GetPodcastEpisodesUrl = server + '/PodcastEpisodes?user_id=' + user_id
-    //console.log('Loading podcast episodes...')
-
-    $.get(GetPodcastEpisodesUrl, function (PodcastEpisodeList, status) {
-
-        $('.PodcastEpisodeLoader').hide()
-        if (PodcastEpisodeList == false) {
-        }
-        for (var content_id in PodcastEpisodeList) {
-            desc = PodcastEpisodeList[content_id].description
-            firstParagraph = desc.substr(0, desc.indexOf('</p>'));
-            if (PodcastEpisodeList.hasOwnProperty(content_id)) {
-                document.getElementById('podcast-episode-table').innerHTML += `<tr>`
-                    + `<td rowspan ="2"> <input type="image" name=${PodcastEpisodeList[content_id].episodeID} class="SavedPodcastEpisodeThumbnail ClickToPlay" src=${PodcastEpisodeList[content_id].image}></td>`
-                    + `<td class="PodcastEpisodeTitle ClickToPlay"> ${PodcastEpisodeList[content_id].title}</td>`
-                    + `<td> <input class="PodcastPlayButton ClickToPlay" type="image" name=${PodcastEpisodeList[content_id].episodeID} src="PlayButton.png"></td>`
-                    + `</tr>`
-                    + `<tr>`
-                    + `<td> ${firstParagraph}</td>`
-                    + `<td> <input type="image" src="DeleteIcon.png" name=${content_id} class="DeleteContentButton OwnerElement"/></td>`
-                    + `</tr>`
-            }
-        }
-    });
-
-
-    // CLICK TO PLAY PODCAST EPISODE
-    $(document).on('click', '.ClickToPlay', function () {
-        window.location = "#PodcastPlayer"
-        EpisodeToPlay = $(this).attr('name')
-        console.log('to play = ', EpisodeToPlay)
-        if ($('#PodcastPlayerFrame').length)  //Replace an existant player with a new one
-        {
-            $('#PodcastPlayerFrame').remove();
-            document.getElementById('PodcastPlayer').innerHTML +=
-                `<iframe id=PodcastPlayerFrame src = "https://www.listennotes.com/embedded/e/${EpisodeToPlay}/" height = "300px" width = "100%" style = "width: 1px; min-width: 100%;" frameborder = "0" scrolling = "no" loading = "lazy"></iframe>`
-        } else {
-            document.getElementById('PodcastPlayer').innerHTML +=
-                `<iframe id=PodcastPlayerFrame src = "https://www.listennotes.com/embedded/e/${EpisodeToPlay}/" height = "300px" width = "100%" style = "width: 1px; min-width: 100%;" frameborder = "0" scrolling = "no" loading = "lazy"></iframe>`
-        }
-    });
-
-
-    // GET ARTICLES 
-    var GetArticleUrl = server + '/Articles?user_id=' + user_id
-    $.get(GetArticleUrl, function (ArticleList, status) {
-        var i;
-        for (i = 0; i < ArticleList.length; i++) {
-
-            var caption = ArticleList[i].content_desc
-            var articleLink = ArticleList[i].content
-            var contentID = ArticleList[i].content_id
-
-            var pathArray = articleLink.split('/');
-            var protocol = pathArray[0];
-            var host = pathArray[2];
-            var baseUrl = protocol + '//' + host;
-            if (i < 5) {
-                document.getElementById('populateArticles-row1-col1').innerHTML +=
-                    `<li> <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=LinkText href=${articleLink} target="_blank">  ${caption}</a></li>` +
-                    `<input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement"/>`
-            } else if (i >= 5 && i < 10) {
-                document.getElementById('populateArticles-row1-col2').innerHTML +=
-                    `<li> <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=LinkText href=${articleLink} target="_blank">  ${caption}</a></li > ` +
-                    `<input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement"/>`
-            } else if (i >= 10 && i < 15) {
-                document.getElementById('populateArticles-row1-col3').innerHTML +=
-                    `<li class=LinkText > <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=LinkText href=${articleLink} target="_blank">  ${caption}</a></li>` +
-                    `<input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement"/>`
-
-
-            } else if (i > 15 && i <= 20) {
-                document.getElementById('populateArticles-row2-col1').innerHTML +=
-                    `<li class=LinkText > <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=LinkText href=${articleLink} target="_blank">  ${caption}</a></li>` +
-                    `<input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement"/>`
-            } else if (i > 20 && i <= 25) {
-                document.getElementById('populateArticles-row2-col2').innerHTML +=
-                    `<li class=LinkText > <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=LinkText href=${articleLink} target="_blank">  ${caption}</a></li>` +
-                    `<input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement"/> `
-            } else if (i > 25 && i <= 30) {
-                document.getElementById('populateArticles-row2-col3').innerHTML +=
-                    `<li class=LinkText > <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=LinkText href=${articleLink} target="_blank">  ${caption}</a></li>` +
-                    `<input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement"/> `
-
-            }
-        }
-    });
-
-    // RECENT ACTIVITY
-    var GetActivity = server + '/RecentActivity'
-    $.get(GetActivity, function (ActivityList, status) {
-        //console.log('recent activity response = ', ActivityList)
-        var i;
-        for (i = 0; i < ActivityList.length; i++) {
-
-            var content_type = ActivityList[i].content_type
-            var user_name = ActivityList[i].full_name
-            var user_id = ActivityList[i].user_id
-            var content_id = ActivityList[i].content_id
-            var user_photo = ActivityList[i].profile_picture
-
-            document.getElementById('RecentActivityList').innerHTML += `<tr>`
-                + `<td><a href=${server}/ProfilePage?user_id=${user_id}><img class="ActivityProfileImage" height="30" width="30" src="${user_photo}"></a></td>`
-                + `<td><a class="RecentActivityText" href=${server}/ProfilePage?user_id=${user_id}#${content_type}><p LinkText id= ${content_id}>${user_name} just added a new ${content_type}</p></a></td>`
-                + `</tr>`
-        }
-    })
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //// *** DISCOVERY *** ////
