@@ -107,8 +107,8 @@ $(document).ready(function () {
                 console.log('profile owner')
                 $('.OwnerPermissionSection').show() //show edit switch
                 $('.SignInButton').hide()
-            } else if (date = "User is logged in, but user is not profile owner") {
-                console.log('User is logged in, but user is not profile owner')
+            } else if (data == "User is logged in, but user is not profile owner") {
+                console.log('TEST-User is logged in, but user is not profile owner')
                 $('.OwnerPermissionSection').hide() //hide edit switch
                 $('.SignInButton').hide()
 
