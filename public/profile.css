@@ -283,6 +283,10 @@ a:link {
     margin-bottom: 30px;
 }
 
+#podcast{
+    margin-bottom: 20px;
+}
+
 /* Style the submit button */
 #PodcastSearchButton,
 #PodcastEpisodeSearchButton {
@@ -367,8 +371,8 @@ a:link {
 }
 
 .SavedPodcastThumbnail {
-    width: 120;
-    height: 120px;
+    width: 140;
+    height: 140px;
     margin: 5px;
     border-radius: 25px;
 
