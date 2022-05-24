@@ -367,8 +367,8 @@ a:link {
 }
 
 .SavedPodcastThumbnail {
-    width: 160px;
-    height: 160px;
+    width: 120;
+    height: 120px;
     margin: 5px;
     border-radius: 25px;
 

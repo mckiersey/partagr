@@ -259,8 +259,10 @@ $(document).ready(function () {
         for (var content_id in PodcastList) {
             if (PodcastList.hasOwnProperty(content_id)) {
                 document.getElementById('PopulatePodcasts').innerHTML +=
+                    `<div class="col-2.4">` +
                     `<a href = ${PodcastList[content_id].website} target = "_blank" > <img class="SavedPodcastThumbnail" src=${PodcastList[content_id].image} alt=${PodcastList[content_id].title}></a>` +
-                    `<input type = "image" src = "DeleteIcon.png" name = ${content_id} class="DeleteContentButton OwnerElement"/>`
+                    `<input type = "image" src = "DeleteIcon.png" name = ${content_id} class="DeleteContentButton OwnerElement"/>` +
+                    `</div>`
             }
         }
     });
