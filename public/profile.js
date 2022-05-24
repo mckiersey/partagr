@@ -490,7 +490,7 @@ $(document).ready(function () {
     $.get(GetVideoUrl, function (VideoList, status) {
         if (VideoList == false) {
             $(".VideosLoader").hide()
-            document.getElementById('VideoPosition1').innerHTML += "<h3>No videos found.</h3>"
+            document.getElementById('VideoPosition1').innerHTML += "<h3 id='NoVideosFound'>No videos found</h3>"
         } else {
             var VideoCounter;
             for (VideoCounter = 0; VideoCounter < VideoList.length; VideoCounter++) {

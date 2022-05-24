@@ -6,6 +6,12 @@ p {
     font-family: helvetica;
 }
 
+.banner {
+    min-height: 120px;
+    background-color: #2E4053;
+
+
+}
 
 #banner-name-text {
     color: RGB(229, 229, 229);
@@ -13,6 +19,7 @@ p {
     font-size: 60px;
     text-decoration: none;
     margin-left: 20px;
+    display: fixed;
 
 }
 
@@ -21,6 +28,8 @@ p {
     border-radius: 80px;
     height: 75px;
     width: 75px;
+    display: fixed;
+
 }
 
 #LoggedInProfilePicture {
@@ -28,6 +37,8 @@ p {
     height: 40px;
     width: 40px;
     margin-bottom: 15px;
+    display: fixed;
+
 }
 
 
@@ -45,10 +56,6 @@ p {
     color: white;
 }
 
-.banner {
-    height: 120px;
-    background-color: #2E4053;
-}
 
 
 .EditModeSwitchText {
@@ -91,6 +98,9 @@ p {
 #VideoPosition1 {
     margin-top: 30px;
 }
+#NoVideosFound{
+    font-size: 15px;
+}
 
 .VideoPosition{
     margin-top:20px;
@@ -103,7 +113,6 @@ p {
 }
 
 .ShowMore {
-    font-size: 10px;
     display: none;
     padding: 20px;
     color: #219ebc !;
@@ -112,12 +121,15 @@ p {
 #ShowLess {
     margin-top: 50px;
     padding: 20px;
+    font-size: 15px !important;
+
 }
 
 #ShowMore {
     margin-top: 50px;
     padding: 20px;
     font-family: helvetica;
+    font-size: 15px !important;
 }
 
 .YouTubeForm {
