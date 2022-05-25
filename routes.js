@@ -284,482 +284,6 @@ const router = (app) => {
   });
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  //// *** EDIT PROFILE *** ////
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-  /// THE FOLLOWING ROUTES REQUIRE TWO CONDITIONS:
-  // 1) THE USER IS SIGNED IN WITH A VALID TOKEN
-  // 2) THE USER IS ON HER OWN PAGE
-
-  // IF THESE CONDITIONS ARE MET, THE USER CAN EDIT HER PAGE.
-
-  // GET OWNER ROUTE: DESCRIPTION
-  // FUNCTION: Check whether the profile viewer is the profile owner- e.g. are you viewing your own profile, or your friend's?
-  // 1) Verify token, taken from browser is valid
-  // 2) If valid, find google user id associated with valid token = FrontEndGoogleUserId
-  // 3) Find StoredGoogleUserId corresponding to profile (user) Id- taken from browser url
-  // 4) Compare FrontEndGoogleUserId (from token) with StoredGoogleUserID (corresponding to profile ID)
-  // 5) If both match, the logged in user (from token) has the same google ID as that which is associated with the profile user id => The logged in user is viewing her own profile, and not someone else's
-  app.get("/Owner", async (request, response) => {
-    ProfileUserId = request.query.ProfileId;
-    token = request.query.token;
-
-    VerifiedTokenPayload = await verify(CLIENT_ID, token);
-    var FrontEndGoogleUserId = VerifiedTokenPayload[0]; //Google user ID
-    if (!VerifiedTokenPayload) {
-      //if value == false
-      response.send("TOKEN FAIL");
-    } else {
-      // Now we ensure that this token corresponds to the ProfileUserId (the user Id seen in the browser url)
-      try {
-        pool.query(
-          "SELECT google_user_id FROM user_profile WHERE user_id = ?",
-          ProfileUserId,
-          (error, result) => {
-            // value of app user id on row of google user id
-            StoredGoogleUserID = result[0].google_user_id;
-            if (FrontEndGoogleUserId == StoredGoogleUserID) {
-              console.log("Authorised user editing correct profile");
-              response.send("User is profile owner");
-            } else {
-              response.send("User is logged in, but user is not profile owner");
-            }
-          }
-        );
-      } catch (error) {
-        console.log("Error from check that token matches profile");
-      }
-    }
-  });
-
-  // GET LOGGED IN USER PHOTO REQUEST: DESCRIPTION
-  // FUNCTION: Get logged user's profile photo, regardless of whether you are viewing your own profile, or your friend's
-
-  app.get("/LoggedUserProfilePhoto", async (request, response) => {
-    token = request.query.token;
-
-    VerifiedTokenPayload = await verify(CLIENT_ID, token);
-    var LoggedUserGoogleUserId = VerifiedTokenPayload[0]; //Google user ID
-    if (!VerifiedTokenPayload) {
-      //if value == false
-      response.send("TOKEN FAIL");
-    } else {
-      try {
-        pool.query(
-          "SELECT profile_picture FROM user_profile WHERE google_user_id = ?",
-          LoggedUserGoogleUserId,
-          (error, result) => {
-            // value of app user id on row of google user id
-            if (error) console.log("Content retrieval error:", error);
-            try {
-              logged_user_photo = result;
-              if (result == null) {
-                console.log("Table does not yet exist");
-                response.send(false);
-              } else if (result.length === 0) {
-                console.log("No logged user profile data");
-                response.send(false);
-              } else {
-                response.send(logged_user_photo);
-              }
-            } catch (error) {
-              console.log(
-                "User content error (No profile picture data for this logged in user)"
-              );
-            }
-          }
-        );
-      } catch (error) {
-        console.log("Logged user profile picture query failure");
-      }
-    }
-  }); // RETRIEVE USER PROFILE PICTURE DATA: END
-
-  // POST ADDVIDEO ROUTE: DESCRIPTION
-  // FUNCTION: ENABLE USER TO ADD CONTENT (BUT ONLY TO HER PAGE)
-  // 1) Verify token, taken from browser is valid
-  // 2) If valid, find google user id associated with valid token = FrontEndGoogleUserId
-  // 3) Find StoredGoogleUserId corresponding to profile (user) Id- taken from browser url
-  // 4) Compare FrontEndGoogleUserId (from token) with StoredGoogleUserID (corresponding to profile ID)
-  // 5) If both match, the logged in user (from token) has the same google ID as that which is associated with the profile user id
-  // 6) Insert content (VideoLink) into user_content table
-
-  //DEFINE INSERT VIDEO FUNCTION
-  async function InsertNewVideo(InsertVideoData) {
-    try {
-      // INSET VIDEO -> MAKE THIS INTO A FUCNTION; can make this async
-      console.log("Test sequence step: C");
-
-      var InsertVideoResult = pool.query(
-        "INSERT INTO user_content SET ?",
-        InsertVideoData
-      ); //, (InsertVideoError, InsertVideoResult) => {
-      //console.log('insert new video in position error: ', InsertVideoError)
-      //console.log('insert new video in position result: ', InsertVideoResult)
-      if (InsertVideoResult !== null) {
-        // console.log('FUNCTION = TRUE')
-        console.log("Test sequence step: C ii");
-
-        //response.send(true)
-        return true;
-      } else {
-        console.log("Insertion error: ", InsertVideoError);
-        //response.send('Video not Added')
-        return "Video not added";
-      }
-      // });
-    } catch (error) {
-      console.log("Something went wrong, video not added: ", error);
-      //response.send('Video not Added')
-      return "Video not added";
-    }
-  }
-
-  app.post("/AddYouTubeVideo", async (request, response) => {
-    console.log("**********************************");
-    token = request.body.token;
-    ProfileUserId = request.body.ProfileId;
-    VideoID = request.body.VideoID;
-    VideoPosition = request.body.Position;
-    console.log("** NEW video id ", VideoID);
-    console.log("** NEW video position ", VideoPosition);
-
-    VerifiedTokenPayload = await verify(CLIENT_ID, token);
-    var FrontEndGoogleUserId = VerifiedTokenPayload[0]; //Google user ID
-    console.log("verified token payload = ", VerifiedTokenPayload);
-    if (!VerifiedTokenPayload) {
-      //if value == false
-      response.send("TOKEN FAIL");
-    } else {
-      //Token has been verified
-      console.log("CONTINUE AFTER TOKEN CHECK");
-      // Now we ensure that this token corresponds to the ProfileUserId (the user Id seen in the browser url)
-      try {
-        // SELECT GOOGLE ID
-        pool.query(
-          "SELECT google_user_id FROM user_profile WHERE user_id = ?",
-          ProfileUserId,
-          (error, result) => {
-            // value of app user id on row of google user id
-            StoredGoogleUserID = result[0].google_user_id;
-            if (FrontEndGoogleUserId == StoredGoogleUserID) {
-              //console.log('Authorised user editing correct profile: VIDEO')
-              InsertVideoData = {
-                user_id: ProfileUserId,
-                content: VideoID,
-                content_type: "video",
-                content_desc: VideoPosition,
-              };
-
-              // ADD VIDEO LINK TO DATA BASE
-              // ENSURE POSITION IS EMPTY FIRST
-              console.log("CHECK VIDEO POSITION STATUS");
-              let CheckIfAlreadyFullQuery =
-                "SELECT content_desc FROM user_content WHERE user_id = ? AND content_type = 'video' AND content_desc =?";
-              pool.query(
-                CheckIfAlreadyFullQuery,
-                [ProfileUserId, VideoPosition],
-                (error, PreviouslyPopulatedResult) => {
-                  // console.log('check if already populated error: ', error)
-                  //console.log('check if already populated result: ', PreviouslyPopulatedResult)
-                  if (PreviouslyPopulatedResult == null) {
-                    console.log("NO PREVIOUS VIDEO");
-                    var InsertVideoResult = InsertNewVideo(InsertVideoData);
-                    response.send(InsertVideoResult); // this was previous commented out
-                  } else if (PreviouslyPopulatedResult.length > 0) {
-                    //  console.log('VIDEO ALREADY IN PLACE: DELETING')
-                    let DeleteIfAlreadyFullQuery =
-                      "DELETE FROM user_content WHERE user_id = ? AND content_type = 'video' AND content_desc =?";
-                    pool.query(
-                      DeleteIfAlreadyFullQuery,
-                      [ProfileUserId, VideoPosition],
-                      (error, result) => {
-                        //  console.log('delete existing video in position error: ', error)
-                        //  console.log('delete existing video in position result: ', result)
-
-                        var ResponseToSend = InsertNewVideo(InsertVideoData);
-                        Promise.resolve(ResponseToSend).then(function (value) {
-                          console.log("in function value: ", value);
-                          response.send(value);
-                        });
-                      }
-                    );
-                  } else {
-                    //  console.log('NO PREVIOUS VIDEO')
-                    var InsertVideoResult = InsertNewVideo(InsertVideoData);
-                    //response.send(InsertVideoResult)
-                  }
-                }
-              );
-            } else {
-              console.log("FrontEnd token Id does not match BackEnd Google ID");
-              response.send("Video not Added");
-            }
-          }
-        ); // END OF: SELECT GOOGLE ID
-      } catch (error) {
-        console.log("Error from check that token matches profile");
-        response.send("Video not Added");
-      }
-    }
-  });
-
-  // ADD ARTICLE
-  app.post("/AddArticle", async (request, response) => {
-    console.log("Add article route");
-    token = request.body.token;
-    ProfileUserId = request.body.ProfileId;
-    ArticleLink = request.body.ArticleLink;
-    ArticleDescription = request.body.ArticleDescription;
-
-    VerifiedTokenPayload = await verify(CLIENT_ID, token);
-    var FrontEndGoogleUserId = VerifiedTokenPayload[0]; //Google user ID
-    if (!VerifiedTokenPayload) {
-      //if value == false
-      response.send("TOKEN FAIL");
-    } else {
-      //Token has been verified
-      // Now we ensure that this token corresponds to the ProfileUserId (the user Id seen in the browser url)
-      try {
-        // SELECT GOOGLE ID
-        pool.query(
-          "SELECT google_user_id FROM user_profile WHERE user_id = ?",
-          ProfileUserId,
-          (error, result) => {
-            // value of app user id on row of google user id
-            StoredGoogleUserID = result[0].google_user_id;
-            if (FrontEndGoogleUserId == StoredGoogleUserID) {
-              console.log("Authorised user editing correct profile");
-              InsertData = {
-                user_id: ProfileUserId,
-                content: ArticleLink,
-                content_type: "article",
-                content_desc: ArticleDescription,
-              };
-              // ADD ARTICLE LINK TO DATA BASE
-              try {
-                // INSET ARTICLE
-                pool.query(
-                  "INSERT INTO user_content SET ?",
-                  InsertData,
-                  (error, result) => {
-                    if (result !== null) {
-                      response.send(true);
-                    } else {
-                      console.log("Insertion error: ", error);
-                      response.send("Article not Added");
-                    }
-                  }
-                );
-              } catch (error) {
-                console.log("Something went wrong, article not added: ", error);
-                response.send("Article not Added");
-              }
-            } else {
-              console.log("FrontEnd token Id does not match BackEnd Google ID");
-              response.send("Article not Added");
-            }
-          }
-        ); // END OF: SELECT GOOGLE ID
-      } catch (error) {
-        console.log("Error from check that token matches profile");
-        response.send("Article not Added");
-      }
-    }
-  });
-
-  ///////////////////////////  PODCASTS ///////////////////////////
-
-  // SEARCH PODCASTS //
-  // PODCAST SEARCH
-  app.post("/SearchPodcasts", async (req, res) => {
-    console.log("podcasts route");
-    var PodcastSearchTerm = req.body.PodcastSearchTerm;
-    var PodcastSearchTermAPI =
-      "https://listen-api.listennotes.com/api/v2/search?q=" +
-      PodcastSearchTerm +
-      "&type=podcast";
-    const response = await unirest
-      .get(PodcastSearchTermAPI)
-      .header("X-ListenAPI-Key", sourceFile.podcastAPIKey);
-    console.log("podcast search = ", response.caseless.dict);
-    if (response.status === 429) {
-      res.send(response.status);
-    } else if (response.body.results.length === 0) {
-      console.log("search fail");
-      res.send(false);
-    } else {
-      var EmptyShowArrayOutside = {};
-
-      for (i = 0; i < 3; i++) {
-        // show top 3 results
-        console.log(response.body.results);
-
-        // console.log(response.body.results[0])
-        var thumbnail = response.body.results[i].thumbnail;
-        var title = response.body.results[i].title_original;
-        var url = response.body.results[i].listennotes_url;
-        var id = response.body.results[i].id;
-        var description = response.body.results[i].description_original;
-        EmptyShowArrayOutside[i] = {
-          thumbnail: thumbnail,
-          title: title,
-          id: id,
-          url: url,
-          description: description,
-        };
-      }
-      res.status(200).send(EmptyShowArrayOutside);
-    }
-  });
-
-  // PODCAST EPISODE SEARCH
-  app.post("/SearchPodcastEpisodes", async (req, res) => {
-    var PodcastEpisodeSearchTerm = req.body.PodcastEpisodeSearchTerm;
-    //console.log('episode api: ', PodcastEpisodeSearchTerm)
-    var PodcastSearchTermAPI =
-      "https://listen-api.listennotes.com/api/v2/search?q=" +
-      PodcastEpisodeSearchTerm +
-      "&type=episode";
-    const QueryResponse = await unirest
-      .get(PodcastSearchTermAPI)
-      .header("X-ListenAPI-Key", sourceFile.podcastAPIKey);
-    response = QueryResponse.toJSON();
-
-    if (response.statusCode === 429) {
-      res.send(response.status);
-    } else if (response.body.results.length === 0) {
-      console.log("search fail");
-      res.send(false);
-    } else {
-      console.log("Number of espiodes found: ", response.body.count);
-      var EmptyArrayOutside = {};
-
-      for (i = 0; i < response.body.count; i++) {
-        var thumbnail = response.body.results[i].thumbnail;
-        var title = response.body.results[i].title_original;
-        var id = response.body.results[i].id;
-        EmptyArrayOutside[i] = { thumbnail: thumbnail, title: title, id: id };
-      }
-      res.status(200).send(EmptyArrayOutside);
-    }
-  });
-
-  // ADD PODCAST
-  app.post("/AddPodcast", async (request, response) => {
-    console.log("Add podcast route");
-    token = request.body.token;
-    ProfileUserId = request.body.ProfileId;
-    PodcastId = request.body.PodcastId;
-
-    VerifiedTokenPayload = await verify(CLIENT_ID, token);
-    var FrontEndGoogleUserId = VerifiedTokenPayload[0];
-    if (!VerifiedTokenPayload) {
-      response.send("TOKEN FAIL");
-    } else {
-      try {
-        pool.query(
-          "SELECT google_user_id FROM user_profile WHERE user_id = ?",
-          ProfileUserId,
-          (error, result) => {
-            // value of app user id on row of google user id
-            StoredGoogleUserID = result[0].google_user_id;
-            if (FrontEndGoogleUserId == StoredGoogleUserID) {
-              InsertData = {
-                user_id: ProfileUserId,
-                content: PodcastId,
-                content_type: "podcast",
-              };
-              try {
-                pool.query(
-                  "INSERT INTO user_content SET ?",
-                  InsertData,
-                  (error, result) => {
-                    if (result !== null) {
-                      response.send(true);
-                    } else {
-                      console.log("Insertion error: ", error);
-                      response.send("Article not Added");
-                    }
-                  }
-                );
-              } catch (error) {
-                console.log("Something went wrong, Podcast not added: ", error);
-                response.send("Podcast not Added");
-              }
-            } else {
-              console.log("FrontEnd token Id does not match BackEnd Google ID");
-              response.send("Podcast not Added");
-            }
-          }
-        ); // END OF: SELECT GOOGLE ID
-      } catch (error) {
-        console.log("Error from check that token matches profile");
-        response.send("Podcast not Added");
-      }
-    }
-  });
-
-  // ADD PODCAST EPISODE
-  app.post("/AddPodcastEpisode", async (request, response) => {
-    console.log("Add podcast episode route");
-    token = request.body.token;
-    ProfileUserId = request.body.ProfileId;
-    PodcastEpisodeID = request.body.PodcastEpisodeID;
-    console.log("podcast ep to add", PodcastEpisodeID);
-
-    VerifiedTokenPayload = await verify(CLIENT_ID, token);
-    var FrontEndGoogleUserId = VerifiedTokenPayload[0];
-    if (!VerifiedTokenPayload) {
-      response.send("TOKEN FAIL");
-    } else {
-      try {
-        pool.query(
-          "SELECT google_user_id FROM user_profile WHERE user_id = ?",
-          ProfileUserId,
-          (error, result) => {
-            // value of app user id on row of google user id
-            StoredGoogleUserID = result[0].google_user_id;
-            if (FrontEndGoogleUserId == StoredGoogleUserID) {
-              InsertData = {
-                user_id: ProfileUserId,
-                content: PodcastEpisodeID,
-                content_type: "podcast_episode",
-              };
-              try {
-                pool.query(
-                  "INSERT INTO user_content SET ?",
-                  InsertData,
-                  (error, result) => {
-                    if (result !== null) {
-                      response.send(true);
-                    } else {
-                      console.log("Insertion error: ", error);
-                      response.send("Article not Added");
-                    }
-                  }
-                );
-              } catch (error) {
-                console.log(
-                  "Something went wrong, Podcast episode not added: ",
-                  error
-                );
-                response.send("Podcast episode not Added");
-              }
-            } else {
-              console.log("FrontEnd token Id does not match BackEnd Google ID");
-              response.send("Podcast episode not Added");
-            }
-          }
-        ); // END OF: SELECT GOOGLE ID
-      } catch (error) {
-        console.log("Error from check that token matches profile");
-        response.send("Podcast episode not Added");
-      }
-    }
-  });
-
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   //// *** POPULATE PROFILE DATA *** ////
   ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1026,7 +550,42 @@ const router = (app) => {
     ); // RETRIEVE USER CONTENT DATA: END
   });
 
+  // READING LIST //
+  //////////////////////////////////////////////////////
+
+  // GET READING LIST ROUTE: DESCRIPTION
+  // TO DO: CHANGE TO READING LIST
+  /*
+  app.get("/Articles", (request, response) => {
+    user_id = request.query.user_id;
+    // RETRIEVE USER CONTENT DATA
+    pool.query(
+      "SELECT content_id, content, content_desc FROM user_content WHERE content_type = 'article' AND user_id = ? ",
+      user_id,
+      (error, result) => {
+        if (error) console.log("Content retrieval error:", error);
+        try {
+          RetrievedArticleData = result;
+          if (result == null) {
+            console.log("Table does not yet exist");
+            response.send(false);
+          } else if (result.length === 0) {
+            console.log("No article data");
+          } else {
+            response.send(RetrievedArticleData);
+          }
+        } catch (error) {
+          console.log(
+            "User content error (likely no articles data for this user)"
+          );
+        }
+      }
+    ); // RETRIEVE USER CONTENT DATA: END
+  });
+*/
   // RECENT ACTIVITY //
+  //////////////////////////////////////////////////////
+
   app.get("/RecentActivity", (request, response) => {
     // RETRIEVE USER CONTENT DATA
     //console.log('recent activity route')
@@ -1052,6 +611,553 @@ const router = (app) => {
       ); // RETRIEVE USER CONTENT DATA: END
     } catch (error) {
       console.log("Error likely due to database not existing: ", error);
+    }
+  });
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  //// *** EDIT PROFILE *** ////
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  /// THE FOLLOWING ROUTES REQUIRE TWO CONDITIONS:
+  // 1) THE USER IS SIGNED IN WITH A VALID TOKEN
+  // 2) THE USER IS ON HER OWN PAGE
+
+  // IF THESE CONDITIONS ARE MET, THE USER CAN EDIT HER PAGE.
+
+  // GET OWNER ROUTE: DESCRIPTION
+  // FUNCTION: Check whether the profile viewer is the profile owner- e.g. are you viewing your own profile, or your friend's?
+  // 1) Verify token, taken from browser is valid
+  // 2) If valid, find google user id associated with valid token = FrontEndGoogleUserId
+  // 3) Find StoredGoogleUserId corresponding to profile (user) Id- taken from browser url
+  // 4) Compare FrontEndGoogleUserId (from token) with StoredGoogleUserID (corresponding to profile ID)
+  // 5) If both match, the logged in user (from token) has the same google ID as that which is associated with the profile user id => The logged in user is viewing her own profile, and not someone else's
+  app.get("/Owner", async (request, response) => {
+    ProfileUserId = request.query.ProfileId;
+    token = request.query.token;
+
+    VerifiedTokenPayload = await verify(CLIENT_ID, token);
+    var FrontEndGoogleUserId = VerifiedTokenPayload[0]; //Google user ID
+    if (!VerifiedTokenPayload) {
+      //if value == false
+      response.send("TOKEN FAIL");
+    } else {
+      // Now we ensure that this token corresponds to the ProfileUserId (the user Id seen in the browser url)
+      try {
+        pool.query(
+          "SELECT google_user_id FROM user_profile WHERE user_id = ?",
+          ProfileUserId,
+          (error, result) => {
+            // value of app user id on row of google user id
+            StoredGoogleUserID = result[0].google_user_id;
+            if (FrontEndGoogleUserId == StoredGoogleUserID) {
+              console.log("Authorised user editing correct profile");
+              response.send("User is profile owner");
+            } else {
+              response.send("User is logged in, but user is not profile owner");
+            }
+          }
+        );
+      } catch (error) {
+        console.log("Error from check that token matches profile");
+      }
+    }
+  });
+
+  // GET LOGGED IN USER PHOTO REQUEST: DESCRIPTION
+  // FUNCTION: Get logged user's profile photo, regardless of whether you are viewing your own profile, or your friend's
+
+  app.get("/LoggedUserProfilePhoto", async (request, response) => {
+    token = request.query.token;
+
+    VerifiedTokenPayload = await verify(CLIENT_ID, token);
+    var LoggedUserGoogleUserId = VerifiedTokenPayload[0]; //Google user ID
+    if (!VerifiedTokenPayload) {
+      //if value == false
+      response.send("TOKEN FAIL");
+    } else {
+      try {
+        pool.query(
+          "SELECT profile_picture FROM user_profile WHERE google_user_id = ?",
+          LoggedUserGoogleUserId,
+          (error, result) => {
+            // value of app user id on row of google user id
+            if (error) console.log("Content retrieval error:", error);
+            try {
+              logged_user_photo = result;
+              if (result == null) {
+                console.log("Table does not yet exist");
+                response.send(false);
+              } else if (result.length === 0) {
+                console.log("No logged user profile data");
+                response.send(false);
+              } else {
+                response.send(logged_user_photo);
+              }
+            } catch (error) {
+              console.log(
+                "User content error (No profile picture data for this logged in user)"
+              );
+            }
+          }
+        );
+      } catch (error) {
+        console.log("Logged user profile picture query failure");
+      }
+    }
+  }); // RETRIEVE USER PROFILE PICTURE DATA: END
+
+  // POST ADDVIDEO ROUTE: DESCRIPTION
+  // FUNCTION: ENABLE USER TO ADD CONTENT (BUT ONLY TO HER PAGE)
+  // 1) Verify token, taken from browser is valid
+  // 2) If valid, find google user id associated with valid token = FrontEndGoogleUserId
+  // 3) Find StoredGoogleUserId corresponding to profile (user) Id- taken from browser url
+  // 4) Compare FrontEndGoogleUserId (from token) with StoredGoogleUserID (corresponding to profile ID)
+  // 5) If both match, the logged in user (from token) has the same google ID as that which is associated with the profile user id
+  // 6) Insert content (VideoLink) into user_content table
+
+  //DEFINE INSERT VIDEO FUNCTION
+  async function InsertNewVideo(InsertVideoData) {
+    try {
+      // INSET VIDEO -> MAKE THIS INTO A FUCNTION; can make this async
+      console.log("Test sequence step: C");
+
+      var InsertVideoResult = pool.query(
+        "INSERT INTO user_content SET ?",
+        InsertVideoData
+      ); //, (InsertVideoError, InsertVideoResult) => {
+      //console.log('insert new video in position error: ', InsertVideoError)
+      //console.log('insert new video in position result: ', InsertVideoResult)
+      if (InsertVideoResult !== null) {
+        // console.log('FUNCTION = TRUE')
+        console.log("Test sequence step: C ii");
+
+        //response.send(true)
+        return true;
+      } else {
+        console.log("Insertion error: ", InsertVideoError);
+        //response.send('Video not Added')
+        return "Video not added";
+      }
+      // });
+    } catch (error) {
+      console.log("Something went wrong, video not added: ", error);
+      //response.send('Video not Added')
+      return "Video not added";
+    }
+  }
+
+  app.post("/AddYouTubeVideo", async (request, response) => {
+    console.log("**********************************");
+    token = request.body.token;
+    ProfileUserId = request.body.ProfileId;
+    VideoID = request.body.VideoID;
+    VideoPosition = request.body.Position;
+    console.log("** NEW video id ", VideoID);
+    console.log("** NEW video position ", VideoPosition);
+
+    VerifiedTokenPayload = await verify(CLIENT_ID, token);
+    var FrontEndGoogleUserId = VerifiedTokenPayload[0]; //Google user ID
+    console.log("verified token payload = ", VerifiedTokenPayload);
+    if (!VerifiedTokenPayload) {
+      //if value == false
+      response.send("TOKEN FAIL");
+    } else {
+      //Token has been verified
+      console.log("CONTINUE AFTER TOKEN CHECK");
+      // Now we ensure that this token corresponds to the ProfileUserId (the user Id seen in the browser url)
+      try {
+        // SELECT GOOGLE ID
+        pool.query(
+          "SELECT google_user_id FROM user_profile WHERE user_id = ?",
+          ProfileUserId,
+          (error, result) => {
+            // value of app user id on row of google user id
+            StoredGoogleUserID = result[0].google_user_id;
+            if (FrontEndGoogleUserId == StoredGoogleUserID) {
+              //console.log('Authorised user editing correct profile: VIDEO')
+              InsertVideoData = {
+                user_id: ProfileUserId,
+                content: VideoID,
+                content_type: "video",
+                content_desc: VideoPosition,
+              };
+
+              // ADD VIDEO LINK TO DATA BASE
+              // ENSURE POSITION IS EMPTY FIRST
+              console.log("CHECK VIDEO POSITION STATUS");
+              let CheckIfAlreadyFullQuery =
+                "SELECT content_desc FROM user_content WHERE user_id = ? AND content_type = 'video' AND content_desc =?";
+              pool.query(
+                CheckIfAlreadyFullQuery,
+                [ProfileUserId, VideoPosition],
+                (error, PreviouslyPopulatedResult) => {
+                  // console.log('check if already populated error: ', error)
+                  //console.log('check if already populated result: ', PreviouslyPopulatedResult)
+                  if (PreviouslyPopulatedResult == null) {
+                    console.log("NO PREVIOUS VIDEO");
+                    var InsertVideoResult = InsertNewVideo(InsertVideoData);
+                    response.send(InsertVideoResult); // this was previous commented out
+                  } else if (PreviouslyPopulatedResult.length > 0) {
+                    //  console.log('VIDEO ALREADY IN PLACE: DELETING')
+                    let DeleteIfAlreadyFullQuery =
+                      "DELETE FROM user_content WHERE user_id = ? AND content_type = 'video' AND content_desc =?";
+                    pool.query(
+                      DeleteIfAlreadyFullQuery,
+                      [ProfileUserId, VideoPosition],
+                      (error, result) => {
+                        //  console.log('delete existing video in position error: ', error)
+                        //  console.log('delete existing video in position result: ', result)
+
+                        var ResponseToSend = InsertNewVideo(InsertVideoData);
+                        Promise.resolve(ResponseToSend).then(function (value) {
+                          console.log("in function value: ", value);
+                          response.send(value);
+                        });
+                      }
+                    );
+                  } else {
+                    //  console.log('NO PREVIOUS VIDEO')
+                    var InsertVideoResult = InsertNewVideo(InsertVideoData);
+                    //response.send(InsertVideoResult)
+                  }
+                }
+              );
+            } else {
+              console.log("FrontEnd token Id does not match BackEnd Google ID");
+              response.send("Video not Added");
+            }
+          }
+        ); // END OF: SELECT GOOGLE ID
+      } catch (error) {
+        console.log("Error from check that token matches profile");
+        response.send("Video not Added");
+      }
+    }
+  });
+
+  ///////////////////////////////////////////////
+  // ADD ARTICLE
+  ///////////////////////////////////////////////
+  app.post("/AddArticle", async (request, response) => {
+    console.log("Add article route");
+    token = request.body.token;
+    ProfileUserId = request.body.ProfileId;
+    ArticleLink = request.body.ArticleLink;
+    ArticleDescription = request.body.ArticleDescription;
+
+    VerifiedTokenPayload = await verify(CLIENT_ID, token);
+    var FrontEndGoogleUserId = VerifiedTokenPayload[0]; //Google user ID
+    if (!VerifiedTokenPayload) {
+      //if value == false
+      response.send("TOKEN FAIL");
+    } else {
+      //Token has been verified
+      // Now we ensure that this token corresponds to the ProfileUserId (the user Id seen in the browser url)
+      try {
+        // SELECT GOOGLE ID
+        pool.query(
+          "SELECT google_user_id FROM user_profile WHERE user_id = ?",
+          ProfileUserId,
+          (error, result) => {
+            // value of app user id on row of google user id
+            StoredGoogleUserID = result[0].google_user_id;
+            if (FrontEndGoogleUserId == StoredGoogleUserID) {
+              console.log("Authorised user editing correct profile");
+              InsertData = {
+                user_id: ProfileUserId,
+                content: ArticleLink,
+                content_type: "article",
+                content_desc: ArticleDescription,
+              };
+              // ADD ARTICLE LINK TO DATA BASE
+              try {
+                // INSET ARTICLE
+                pool.query(
+                  "INSERT INTO user_content SET ?",
+                  InsertData,
+                  (error, result) => {
+                    if (result !== null) {
+                      response.send(true);
+                    } else {
+                      console.log("Insertion error: ", error);
+                      response.send("Article not Added");
+                    }
+                  }
+                );
+              } catch (error) {
+                console.log("Something went wrong, article not added: ", error);
+                response.send("Article not Added");
+              }
+            } else {
+              console.log("FrontEnd token Id does not match BackEnd Google ID");
+              response.send("Article not Added");
+            }
+          }
+        ); // END OF: SELECT GOOGLE ID
+      } catch (error) {
+        console.log("Error from check that token matches profile");
+        response.send("Article not Added");
+      }
+    }
+  });
+
+  ///////////////////////////////////////////////
+  // ADD READING LIST
+  ///////////////////////////////////////////////
+  app.post("/AddReadingList", async (request, response) => {
+    console.log("Add ReadingList route");
+    token = request.body.token;
+    ProfileUserId = request.body.ProfileId;
+    ReadingListLink = request.body.ReadingListLink;
+    ReadingListDescription = request.body.ReadingListDescription;
+
+    VerifiedTokenPayload = await verify(CLIENT_ID, token);
+    var FrontEndGoogleUserId = VerifiedTokenPayload[0]; //Google user ID
+    if (!VerifiedTokenPayload) {
+      //if value == false
+      response.send("TOKEN FAIL");
+    } else {
+      //Token has been verified
+      // Now we ensure that this token corresponds to the ProfileUserId (the user Id seen in the browser url)
+      try {
+        // SELECT GOOGLE ID
+        pool.query(
+          "SELECT google_user_id FROM user_profile WHERE user_id = ?",
+          ProfileUserId,
+          (error, result) => {
+            // value of app user id on row of google user id
+            StoredGoogleUserID = result[0].google_user_id;
+            if (FrontEndGoogleUserId == StoredGoogleUserID) {
+              console.log("Authorised user editing correct profile");
+              InsertData = {
+                user_id: ProfileUserId,
+                content: ReadingListLink,
+                content_type: "ReadingListLink",
+                content_desc: ReadingListDescription,
+              };
+              // ADD ReadingList LINK TO DATA BASE
+              try {
+                // INSET READLING LIST LINK
+                pool.query(
+                  "INSERT INTO user_content SET ?",
+                  InsertData,
+                  (error, result) => {
+                    if (result !== null) {
+                      response.send(true);
+                    } else {
+                      console.log("Insertion error: ", error);
+                      response.send("ReadingList Link not Added");
+                    }
+                  }
+                );
+              } catch (error) {
+                console.log(
+                  "Something went wrong, ReadingList not added: ",
+                  error
+                );
+                response.send("ReadingList not Added");
+              }
+            } else {
+              console.log("FrontEnd token Id does not match BackEnd Google ID");
+              response.send("ReadingList not Added");
+            }
+          }
+        ); // END OF: SELECT GOOGLE ID
+      } catch (error) {
+        console.log("Error from check that token matches profile");
+        response.send("ReadingList not Added");
+      }
+    }
+  });
+
+  ///////////////////////////  PODCASTS ///////////////////////////
+
+  // SEARCH PODCASTS //
+  // PODCAST SEARCH
+  app.post("/SearchPodcasts", async (req, res) => {
+    console.log("podcasts route");
+    var PodcastSearchTerm = req.body.PodcastSearchTerm;
+    var PodcastSearchTermAPI =
+      "https://listen-api.listennotes.com/api/v2/search?q=" +
+      PodcastSearchTerm +
+      "&type=podcast";
+    const response = await unirest
+      .get(PodcastSearchTermAPI)
+      .header("X-ListenAPI-Key", sourceFile.podcastAPIKey);
+    console.log("podcast search = ", response.caseless.dict);
+    if (response.status === 429) {
+      res.send(response.status);
+    } else if (response.body.results.length === 0) {
+      console.log("search fail");
+      res.send(false);
+    } else {
+      var EmptyShowArrayOutside = {};
+
+      for (i = 0; i < 3; i++) {
+        // show top 3 results
+        console.log(response.body.results);
+
+        // console.log(response.body.results[0])
+        var thumbnail = response.body.results[i].thumbnail;
+        var title = response.body.results[i].title_original;
+        var url = response.body.results[i].listennotes_url;
+        var id = response.body.results[i].id;
+        var description = response.body.results[i].description_original;
+        EmptyShowArrayOutside[i] = {
+          thumbnail: thumbnail,
+          title: title,
+          id: id,
+          url: url,
+          description: description,
+        };
+      }
+      res.status(200).send(EmptyShowArrayOutside);
+    }
+  });
+
+  // PODCAST EPISODE SEARCH
+  app.post("/SearchPodcastEpisodes", async (req, res) => {
+    var PodcastEpisodeSearchTerm = req.body.PodcastEpisodeSearchTerm;
+    //console.log('episode api: ', PodcastEpisodeSearchTerm)
+    var PodcastSearchTermAPI =
+      "https://listen-api.listennotes.com/api/v2/search?q=" +
+      PodcastEpisodeSearchTerm +
+      "&type=episode";
+    const QueryResponse = await unirest
+      .get(PodcastSearchTermAPI)
+      .header("X-ListenAPI-Key", sourceFile.podcastAPIKey);
+    response = QueryResponse.toJSON();
+
+    if (response.statusCode === 429) {
+      res.send(response.status);
+    } else if (response.body.results.length === 0) {
+      console.log("search fail");
+      res.send(false);
+    } else {
+      console.log("Number of espiodes found: ", response.body.count);
+      var EmptyArrayOutside = {};
+
+      for (i = 0; i < response.body.count; i++) {
+        var thumbnail = response.body.results[i].thumbnail;
+        var title = response.body.results[i].title_original;
+        var id = response.body.results[i].id;
+        EmptyArrayOutside[i] = { thumbnail: thumbnail, title: title, id: id };
+      }
+      res.status(200).send(EmptyArrayOutside);
+    }
+  });
+
+  // ADD PODCAST
+  app.post("/AddPodcast", async (request, response) => {
+    console.log("Add podcast route");
+    token = request.body.token;
+    ProfileUserId = request.body.ProfileId;
+    PodcastId = request.body.PodcastId;
+
+    VerifiedTokenPayload = await verify(CLIENT_ID, token);
+    var FrontEndGoogleUserId = VerifiedTokenPayload[0];
+    if (!VerifiedTokenPayload) {
+      response.send("TOKEN FAIL");
+    } else {
+      try {
+        pool.query(
+          "SELECT google_user_id FROM user_profile WHERE user_id = ?",
+          ProfileUserId,
+          (error, result) => {
+            // value of app user id on row of google user id
+            StoredGoogleUserID = result[0].google_user_id;
+            if (FrontEndGoogleUserId == StoredGoogleUserID) {
+              InsertData = {
+                user_id: ProfileUserId,
+                content: PodcastId,
+                content_type: "podcast",
+              };
+              try {
+                pool.query(
+                  "INSERT INTO user_content SET ?",
+                  InsertData,
+                  (error, result) => {
+                    if (result !== null) {
+                      response.send(true);
+                    } else {
+                      console.log("Insertion error: ", error);
+                      response.send("Article not Added");
+                    }
+                  }
+                );
+              } catch (error) {
+                console.log("Something went wrong, Podcast not added: ", error);
+                response.send("Podcast not Added");
+              }
+            } else {
+              console.log("FrontEnd token Id does not match BackEnd Google ID");
+              response.send("Podcast not Added");
+            }
+          }
+        ); // END OF: SELECT GOOGLE ID
+      } catch (error) {
+        console.log("Error from check that token matches profile");
+        response.send("Podcast not Added");
+      }
+    }
+  });
+
+  // ADD PODCAST EPISODE
+  app.post("/AddPodcastEpisode", async (request, response) => {
+    console.log("Add podcast episode route");
+    token = request.body.token;
+    ProfileUserId = request.body.ProfileId;
+    PodcastEpisodeID = request.body.PodcastEpisodeID;
+    console.log("podcast ep to add", PodcastEpisodeID);
+
+    VerifiedTokenPayload = await verify(CLIENT_ID, token);
+    var FrontEndGoogleUserId = VerifiedTokenPayload[0];
+    if (!VerifiedTokenPayload) {
+      response.send("TOKEN FAIL");
+    } else {
+      try {
+        pool.query(
+          "SELECT google_user_id FROM user_profile WHERE user_id = ?",
+          ProfileUserId,
+          (error, result) => {
+            // value of app user id on row of google user id
+            StoredGoogleUserID = result[0].google_user_id;
+            if (FrontEndGoogleUserId == StoredGoogleUserID) {
+              InsertData = {
+                user_id: ProfileUserId,
+                content: PodcastEpisodeID,
+                content_type: "podcast_episode",
+              };
+              try {
+                pool.query(
+                  "INSERT INTO user_content SET ?",
+                  InsertData,
+                  (error, result) => {
+                    if (result !== null) {
+                      response.send(true);
+                    } else {
+                      console.log("Insertion error: ", error);
+                      response.send("Article not Added");
+                    }
+                  }
+                );
+              } catch (error) {
+                console.log(
+                  "Something went wrong, Podcast episode not added: ",
+                  error
+                );
+                response.send("Podcast episode not Added");
+              }
+            } else {
+              console.log("FrontEnd token Id does not match BackEnd Google ID");
+              response.send("Podcast episode not Added");
+            }
+          }
+        ); // END OF: SELECT GOOGLE ID
+      } catch (error) {
+        console.log("Error from check that token matches profile");
+        response.send("Podcast episode not Added");
+      }
     }
   });
 

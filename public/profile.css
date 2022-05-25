@@ -2,464 +2,456 @@ h1,
 h2,
 h3,
 p {
-    color: grey;
-    font-family: helvetica;
+  color: grey;
+  font-family: helvetica;
+}
+
+.ExplainerSectionTextTitle {
+  font-size: 20px;
+}
+.ExplainerSectionText {
+  font-size: 10px;
 }
 
 .banner {
-    min-height: 120px;
-    background-color: #2E4053;
-
-
+  min-height: 120px;
+  background-color: #2e4053;
 }
 
 #banner-name-text {
-    color: RGB(229, 229, 229);
-    font-family: helvetica;
-    font-size: 60px;
-    text-decoration: none;
-    margin-left: 20px;
-    display: fixed;
-
+  color: RGB(229, 229, 229);
+  font-family: helvetica;
+  font-size: 60px;
+  text-decoration: none;
+  margin-left: 20px;
+  display: fixed;
 }
 
-
 #OwnerProfilePicture {
-    border-radius: 80px;
-    height: 75px;
-    width: 75px;
-    display: fixed;
-
+  border-radius: 80px;
+  height: 75px;
+  width: 75px;
+  display: fixed;
 }
 
 #LoggedInProfilePicture {
-    border-radius: 60px;
-    height: 40px;
-    width: 40px;
-    margin-bottom: 15px;
-    display: fixed;
-
+  border-radius: 60px;
+  height: 40px;
+  width: 40px;
+  margin-bottom: 15px;
+  display: fixed;
 }
 
-
 #MyProfileButton {
-    margin-top: 2px;
+  margin-top: 2px;
 }
 
 #SignInButton {
-    margin-top: 2px;
-    margin-bottom: 5px;
-
+  margin-top: 2px;
+  margin-bottom: 5px;
 }
 
 .PodcastEpisodeSearchSectionTitle,
 .PodcastSearchSectionTitle {
-    color: white;
+  color: white;
 }
-
-
 
 .EditModeSwitchText {
-    font-size: 10px;
+  font-size: 10px;
 }
 
-.toggle-on{
-    line-height: 25px !important;
-
+.toggle-on {
+  line-height: 25px !important;
 }
 
-.toggle-off{
-    line-height: 25px !important;
-
+.toggle-off {
+  line-height: 25px !important;
 }
 
-.OwnerSwitchRow{
-    margin-top: 15px;
+.OwnerSwitchRow {
+  margin-top: 15px;
 }
-
 
 .OwnerElement {
-    display: none;
+  display: none;
 }
 
 .SignInButton {
-    display: none;
+  display: none;
 }
 
 .DeleteContentButton {
-    height: 30px;
-    width: 30px;
+  height: 30px;
+  width: 30px;
 }
 
-.VideoRow{
-    margin-bottom: 20px;
+#Tagline {
+  margin-top: 20px;
+}
 
+.VideoRow {
+  margin-bottom: 20px;
 }
 
 #VideoPosition1 {
-    margin-top: 30px;
+  margin-top: 30px;
 }
-#NoVideosFound{
-    font-size: 15px;
+#NoVideosFound {
+  font-size: 15px;
 }
 
-.VideoPosition{
-    margin-top:20px;
+.VideoPosition {
+  margin-top: 20px;
 }
 #ShowLess {
-    color:#219ebc;
-    font-family: helvetica;
-    padding: 20px;
-    display: none;
+  color: #219ebc;
+  font-family: helvetica;
+  padding: 20px;
+  display: none;
 }
 
 .ShowMore {
-    display: none;
-    padding: 20px;
-    color: #219ebc !;
+  display: none;
+  padding: 20px;
+  color: #219ebc !;
 }
 
 #ShowLess {
-    margin-top: 50px;
-    padding: 20px;
-    font-size: 15px !important;
-
+  margin-top: 50px;
+  padding: 20px;
+  font-size: 15px !important;
 }
 
 #ShowMore {
-    margin-top: 50px;
-    padding: 20px;
-    font-family: helvetica;
-    font-size: 15px !important;
+  margin-top: 50px;
+  padding: 20px;
+  font-family: helvetica;
+  font-size: 15px !important;
 }
 
 .YouTubeForm {
-    margin: 5px;
+  margin: 5px;
 }
 
 .PodcastInstructions {
-    color: #8e9aaf;
-    font-size: 20px;
+  color: #8e9aaf;
+  font-size: 20px;
 }
 
 .PodcastSubsection {
-    margin-top: 20px;
+  margin-top: 20px;
 }
 
 .card {
-    border: none;
-    background: #eee
+  border: none;
+  background: #eee;
 }
 
 .search {
-    width: 100%;
-    margin-bottom: auto;
-    margin-top: 20px;
-    height: 50px;
-    background-color: #fff;
-    padding: 10px;
-    border-radius: 5px
+  width: 100%;
+  margin-bottom: auto;
+  margin-top: 20px;
+  height: 50px;
+  background-color: #fff;
+  padding: 10px;
+  border-radius: 5px;
 }
 
 .search-input {
-    color: white;
-    border: 0;
-    outline: 0;
-    background: none;
-    width: 0;
-    margin-top: 5px;
-    caret-color: transparent;
-    line-height: 20px;
-    transition: width 0.4s linear
+  color: white;
+  border: 0;
+  outline: 0;
+  background: none;
+  width: 0;
+  margin-top: 5px;
+  caret-color: transparent;
+  line-height: 20px;
+  transition: width 0.4s linear;
 }
 
 .search .search-input {
-    padding: 0 10px;
-    width: 100%;
-    caret-color: #536bf6;
-    font-size: 19px;
-    font-weight: 300;
-    color: black;
-    transition: width 0.4s linear
+  padding: 0 10px;
+  width: 100%;
+  caret-color: #536bf6;
+  font-size: 19px;
+  font-weight: 300;
+  color: black;
+  transition: width 0.4s linear;
 }
 
 .search-icon {
-    height: 34px;
-    width: 34px;
-    float: right;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    background-color: #536bf6;
-    font-size: 10px;
-    bottom: 30px;
-    position: relative;
-    border-radius: 5px
+  height: 34px;
+  width: 34px;
+  float: right;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  background-color: #536bf6;
+  font-size: 10px;
+  bottom: 30px;
+  position: relative;
+  border-radius: 5px;
 }
 
 .search-icon:hover {
-    color: #fff !important
+  color: #fff !important;
 }
 
 a:link {
-    text-decoration: none
+  text-decoration: none;
 }
 
 /* YOUTUBE SUBMISSION FORM */
 .YoutubeInput {
-    padding: 10px;
-    font-size:10px;
-    border: 1px solid white;
-    width: 100%;
-    background: #f1f1f1;
-    margin-top: 15px;
-    margin-left: 10px;
-    margin-bottom: 5px;
+  padding: 10px;
+  font-size: 10px;
+  border: 1px solid white;
+  width: 100%;
+  background: #f1f1f1;
+  margin-top: 15px;
+  margin-left: 10px;
+  margin-bottom: 5px;
 }
 
 #TopYoutubeInput {
-    width: 20%;
+  width: 20%;
 }
 
-#VideoButtonPosition1{
-    width: 15%;
-    padding: 10px;
-    background: #2196F3;
-    color: white;
-    font-size: 17px;
-    border-left: none;
-    /* Prevent double borders */
-    cursor: pointer;
+#VideoButtonPosition1 {
+  width: 15%;
+  padding: 10px;
+  background: #2196f3;
+  color: white;
+  font-size: 17px;
+  border-left: none;
+  /* Prevent double borders */
+  cursor: pointer;
 }
 .AddYouTubeVideo {
-    float: left;
-    width: 40%;
-    padding: 10px;
-    background: #2196F3;
-    color: white;
-    font-size: 12px;
-    border-left: none;
-    /* Prevent double borders */
-    cursor: pointer;
-
+  float: left;
+  width: 40%;
+  padding: 10px;
+  background: #2196f3;
+  color: white;
+  font-size: 12px;
+  border-left: none;
+  /* Prevent double borders */
+  cursor: pointer;
 }
-
 
 .TopAddYouTubeVideo {
-    float: left;
-    width: 20%;
-    padding: 10px;
-    background: #2196F3;
-    color: white;
-    font-size: 17px;
-    border: 1px solid grey;
-    border-left: none;
-    /* Prevent double borders */
-    cursor: pointer;
+  float: left;
+  width: 20%;
+  padding: 10px;
+  background: #2196f3;
+  color: white;
+  font-size: 17px;
+  border: 1px solid grey;
+  border-left: none;
+  /* Prevent double borders */
+  cursor: pointer;
 }
 
-.PodcastSearchTitle{
-    margin-bottom: 30px;
+.PodcastSearchTitle {
+  margin-bottom: 30px;
 }
-.PodcastInstructions{
-    font-size: 12px;
+.PodcastInstructions {
+  font-size: 12px;
 }
 
-.PodcastSearchSpinners{
-    display: none;
+.PodcastSearchSpinners {
+  display: none;
 }
 
 #PodcastSearchText,
 #PodcastEpisodeSearchText {
-    padding: 10px;
-    font-size: 12px;
-    border: 1px solid grey;
-    float: left;
-    width: 30%;
-    background: #f1f1f1;
-    margin-top: 15px;
-    margin-left: 50px;
-    margin-bottom: 30px;
+  padding: 10px;
+  font-size: 12px;
+  border: 1px solid grey;
+  float: left;
+  width: 30%;
+  background: #f1f1f1;
+  margin-top: 15px;
+  margin-left: 50px;
+  margin-bottom: 30px;
 }
 
-#podcast{
-    margin-bottom: 50px;
+#podcast {
+  margin-bottom: 50px;
 }
 
 /* Style the submit button */
 #PodcastSearchButton,
 #PodcastEpisodeSearchButton {
-    float: left;
-    width: 10%;
-    padding: 10px;
-    background: #2196F3;
-    color: white;
-    font-size: 12px;
-    border: 1px solid grey;
-    border-left: none;
-    /* Prevent double borders */
-    cursor: pointer;
-    margin-top: 15px;
-    margin-bottom: 30px;
+  float: left;
+  width: 10%;
+  padding: 10px;
+  background: #2196f3;
+  color: white;
+  font-size: 12px;
+  border: 1px solid grey;
+  border-left: none;
+  /* Prevent double borders */
+  cursor: pointer;
+  margin-top: 15px;
+  margin-bottom: 30px;
 }
 
 #PodcastEpisodeSearchButton:hover {
-    background: #0b7dda;
+  background: #0b7dda;
 }
 
-.PodcastEpisodeResultsSection{
-    margin-top: 10px;
+.PodcastEpisodeResultsSection {
+  margin-top: 10px;
 }
 
 /* Clear floats */
 #PodcastEpisodeSearchText::after {
-    content: "";
-    clear: both;
-    display: table;
+  content: "";
+  clear: both;
+  display: table;
 }
 
 .LinkText {
-    color: #8e9aaf;
-    text-decoration: none;
-    font-size: 15px;
+  color: #8e9aaf;
+  text-decoration: none;
+  font-size: 15px;
 }
 
 .RecentActivityText {
-    color: #8e9aaf;
-    text-decoration: none;
-    font-size: 12px;
-
+  color: #8e9aaf;
+  text-decoration: none;
+  font-size: 12px;
 }
 
 #podThumbmail {
-    position: relative;
+  position: relative;
 }
 
 .PodcastEpisodeSearchResultsSection,
 .PodcastSearchResultsSection {
-    background-color: gainsboro;
+  background-color: gainsboro;
 }
 
 .PodcastEpisodeSearchThumbnail {
-    margin: 15px;
+  margin: 15px;
 }
 
 .EpisodeSearchTitle {
-    font-family: helvetica;
-    color: black;
+  font-family: helvetica;
+  color: black;
 }
 
 .AddpodcastButton {
-    margin-bottom: 15px;
-    margin-top: 5px;
-
+  margin-bottom: 15px;
+  margin-top: 5px;
 }
 
 .AddpodcastEpisodeButton {
-    margin: 10px;
+  margin: 10px;
 }
 
 .PodcastEpisodeSearchResultsSection,
 .PodcastSearchResultsSection {
-    display: none;
+  display: none;
 }
 
 #ManualPodcastEpisodeURL {
-    width: 500px;
-    font-size: 14pt;
+  width: 500px;
+  font-size: 14pt;
 }
 
 .SavedPodcastThumbnail {
-    width: 120px;
-    height: 120px;
-    margin: 5px;
-    border-radius: 25px;
-
+  width: 120px;
+  height: 120px;
+  margin: 5px;
+  border-radius: 25px;
 }
 
-
 .SavedPodcastEpisodeThumbnail {
-    width: 80px;
-    height: 80px;
-    margin: 5px;
+  width: 80px;
+  height: 80px;
+  margin: 5px;
 }
 
 .PodcastPlayButton {
-    width: 80px;
-    height: 80px;
-    margin: 5px;
+  width: 80px;
+  height: 80px;
+  margin: 5px;
 }
 
 .ListenNotes {
-    width: 100px;
-    height: 10px;
-    margin: 15px;
-    margin-bottom: 40px;
+  width: 100px;
+  height: 10px;
+  margin: 15px;
+  margin-bottom: 40px;
 }
 
 .PodcastEpisodeTitle {
-    color: RGB(229, 229, 229);
-    font-family: helvetica;
-    font-size: 20pt;
-
+  color: RGB(229, 229, 229);
+  font-family: helvetica;
+  font-size: 20pt;
 }
 
 #PodcastPlayerFrame {
-    margin-top: 20px;
+  margin-top: 20px;
 }
 
 .RecentActivityTitleText {
-    color: white;
+  color: white;
 }
 
 #RecentActivityList {
-    overflow-y: scroll;
-    height: 800px;
-    display: block;
+  overflow-y: scroll;
+  height: 800px;
+  display: block;
 }
 
 .ActivityProfileImage {
-    border-radius: 50%
+  border-radius: 50%;
 }
 
 /* ARTICLE SUBMISSION FORM */
-.ArticleInput {
-    padding: 10px;
-    font-size:10px;
-    border: 1px solid grey;
-    width: 50%;
-    background: #f1f1f1;
-    margin-top: 15px;
-    margin-left: 50px;
-    margin-bottom: 5px;
+.ArticleReadingListInput {
+  padding: 10px;
+  font-size: 10px;
+  border: 1px solid grey;
+  width: 50%;
+  background: #f1f1f1;
+  margin-top: 15px;
+  margin-left: 50px;
+  margin-bottom: 5px;
 }
 
 #ArticleSection {
-    padding-bottom: 100px;
+  padding-bottom: 100px;
 }
 
-ul
-{
-list-style-type: none;
+ul {
+  list-style-type: none;
 }
 
 #ArticleDiscovery {
-    margin-top: 10px;
-    margin-bottom: 100px;
-    color: #2E4053;
-    font-size: 12px;
+  margin-top: 10px;
+  margin-bottom: 100px;
+  color: #2e4053;
+  font-size: 12px;
 }
 
-#ArticleDiscoveryText{
-    font-size: 15px;
+#ArticleDiscoveryText {
+  font-size: 15px;
 }
 
-#ReadingListTitle{
-    font-size: 20px;
-    margin-left: 15px;
+#ReadingListTitle {
+  font-size: 20px;
+  margin-left: 15px;
 }
 
-#ArticleSection-row1{
-    margin-top: 80px;
+#ReadingListLinkInput {
+  margin-left: 100px;
+}
+
+#ArticleSection-row1 {
+  margin-top: 80px;
 }

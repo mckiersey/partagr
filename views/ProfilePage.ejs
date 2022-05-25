@@ -76,9 +76,9 @@
     <!--END BANNER-->
 
     <!--OVERALL EXPLAINER TAGLINE-->
-    <div class="row d-flex justify-content-around ExplainerSectionText OwnerElement">
+    <div class="row d-flex justify-content-around ExplainerSectionText OwnerElement" id="Tagline">
       <div class="col col-sm-12 OwnerElement">
-        <h1>All the online content you love, in one place</h1>
+        <h1 class="ExplainerSectionTextTitle" >All the online content you love, in one place</h1>
       </div>
     </div>
     <hr class="OwnerElement">
@@ -92,7 +92,7 @@
         <!--VIDEOS-->
         <div class="row d-flex justify-content-center ExplainerSectionText OwnerElement">
           <div class="col OwnerElement">
-            <h2>YouTube Links</h2>
+            <h2 class="ExplainerSectionTextTitle">YouTube Links</h2>
             <p>Paste in the URL link of your favourite YouTube vidoes</p>
           </div>
         </div>
@@ -561,7 +561,7 @@
         <!---ARTICLES EXPLAINER-->
         <div class="row d-flex justify-content-center ExplainerSectionText OwnerElement">
           <div class="col OwnerElement">
-            <h2>Article & web Links</h2>
+            <h2 class="ExplainerSectionTextTitle">Article & web Links</h2>
             <p>Paste the link of your favourite articles, add your own description.</p>
           </div>
         </div>
@@ -571,12 +571,12 @@
           <div class="col-12 border border-primary">
             <div class="ArticleForm OwnerElement">
               <label>Article Link</label>
-              <input type="text" name="ArticleLink" placeholder="Article link" class="ArticleInput" id="ArticleLinkInput">
+              <input type="text" name="ArticleLink" placeholder="Article link" class="ArticleReadingListInput" id="ArticleLinkInput">
               <br>
               <label>Description</label>
-              <input type="text" name="ArticleDescription" placeholder="Article description" class="ArticleInput" id="ArticleDescriptionInput">
+              <input type="text" name="ArticleDescription" placeholder="Article description" class="ArticleReadingListInput" id="ArticleDescriptionInput">
               <div>
-                <button class="btn btn-light" id="PostArticleButton">Submit</button>
+                <button class="btn btn-secondary" id="PostArticleButton">Submit</button>
               </div>
             </div>
           </div>
@@ -649,14 +649,38 @@
       </div>
     </div>
 
-    <!-- ************* READING LIST SECTION ************* -->
-    <!--
+    <!-- ************* ReadingList ************* -->
+    
     <div class="row border border-primary">
       <div class="col border border-success">
-        <h3 class="float-left" id="ReadingListTitle">Reading List</h3>
+        <h3 id="ReadingListTitle">ReadingList</h3>
       </div>
     </div>
-    -->
+     <!---ReadingList EXPLAINER-->
+        <div class="row d-flex justify-content-center ExplainerSectionText OwnerElement">
+          <div class="col OwnerElement">
+            <h2 class="ExplainerSectionTextTitle">Links that you want to save for later</h2>
+            <p>Paste the link of articles etc that you want to read later; add your own description.</p>
+          </div>
+        </div>
+        <hr class="OwnerElement">
+
+        <div class="row top-buffer border border-primary" align="left" id="ReadingList">
+          <div class="col-12 border border-primary">
+            <div class="ReadingListForm OwnerElement">
+              <label>Link</label>
+              <input type="text" name="ReadingListLink" placeholder="ReadingList link" class="ArticleReadingListInput" id="ReadingListLinkInput">
+              <br>
+              <label>Description</label>
+              <input type="text" name="ReadingListDescription" placeholder="ReadingList link description" class="ArticleReadingListInput" id="ReadingListDescriptionInput">
+              <div>
+                <button class="btn btn-secondary" id="PostReadingListButton">Submit</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+    
 
 
     <!--LISTEN NOTES LOGO-->

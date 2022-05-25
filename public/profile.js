@@ -417,48 +417,6 @@ $(document).ready(function () {
     }
   });
 
-  // POST ADD ARTICLE REQUEST: DESCRIPTION
-  // FUNCTION: Allow proflie owner to add content to her own profile (and not someone else's)
-  // 1) Retrieve data submitted by user in a form
-  // 2) Send CookieToken, user profile id and submitted link to BackEnd route Add ...
-  // 3) If token is valid and profile user Id matches stored google id, corresponding to token then;
-  // 4) Set the page 'location' = to the page 'location' => refresh the page. This automatic refresh upon success will then load the newly added video via the Video request, above
-  // 5) Else, send Alert
-  $(document).on("click", "#PostArticleButton", function () {
-    ArticleLink = document.querySelector("input[name=ArticleLink]").value;
-    ArticleDescription = document.querySelector(
-      "input[name=ArticleDescription]"
-    ).value;
-    var CookieToken = getCookieValue("USER_SESSION_TOKEN");
-
-    // console.log('To post: User id cookie retrieved: ', user_id, 'with article: ', link)
-    try {
-      // CLOSE THIS CLAUSE
-      $.post(server + "/AddArticle", {
-        token: CookieToken,
-        ProfileId: user_id,
-        ArticleLink: ArticleLink,
-        ArticleDescription: ArticleDescription,
-      }).done(function (data) {
-        if (data == true) {
-          $("#ArticleLinkInput").val("");
-          $("#ArticleDescriptionInput").val("");
-          alert("Link Added");
-        } else if (data == "TOKEN FAIL") {
-          alert("Log in expried- please sign in again");
-          window.location.href = server + "/ProfilePage?user_id=" + user_id;
-        } else {
-          console.log(data);
-          alert("Link not added, please try again");
-          window.location.href = server + "/ProfilePage?user_id=" + user_id;
-        }
-      });
-    } catch (err) {
-      console.log("failed to post to backend");
-      console.log("Error: " + err);
-    }
-  });
-
   ///////////////////////////  PODCASTS ///////////////////////////
 
   // PODCAST SEARCH
@@ -670,6 +628,89 @@ $(document).ready(function () {
         } else {
           console.log(data);
           alert("Podcast Episode not added, please try again");
+          window.location.href = server + "/ProfilePage?user_id=" + user_id;
+        }
+      });
+    } catch (err) {
+      console.log("failed to post to backend");
+      console.log("Error: " + err);
+    }
+  });
+
+  // POST ADD ARTICLE REQUEST: DESCRIPTION
+  // FUNCTION: Allow proflie owner to add content to her own profile (and not someone else's)
+  // 1) Retrieve data submitted by user in a form
+  // 2) Send CookieToken, user profile id and submitted link to BackEnd route Add ...
+  // 3) If token is valid and profile user Id matches stored google id, corresponding to token then;
+  // 4) Set the page 'location' = to the page 'location' => refresh the page. This automatic refresh upon success will then load the newly added video via the Video request, above
+  // 5) Else, send Alert
+  $(document).on("click", "#PostArticleButton", function () {
+    ArticleLink = document.querySelector("input[name=ArticleLink]").value;
+    ArticleDescription = document.querySelector(
+      "input[name=ArticleDescription]"
+    ).value;
+    var CookieToken = getCookieValue("USER_SESSION_TOKEN");
+
+    // console.log('To post: User id cookie retrieved: ', user_id, 'with article: ', link)
+    try {
+      // CLOSE THIS CLAUSE
+      $.post(server + "/AddArticle", {
+        token: CookieToken,
+        ProfileId: user_id,
+        ArticleLink: ArticleLink,
+        ArticleDescription: ArticleDescription,
+      }).done(function (data) {
+        if (data == true) {
+          $("#ArticleLinkInput").val("");
+          $("#ArticleDescriptionInput").val("");
+          alert("Link Added");
+        } else if (data == "TOKEN FAIL") {
+          alert("Log in expried- please sign in again");
+          window.location.href = server + "/ProfilePage?user_id=" + user_id;
+        } else {
+          console.log(data);
+          alert("Link not added, please try again");
+          window.location.href = server + "/ProfilePage?user_id=" + user_id;
+        }
+      });
+    } catch (err) {
+      console.log("failed to post to backend");
+      console.log("Error: " + err);
+    }
+  });
+
+  /////////////
+  // READING LIST
+  /////////////
+  // POST ADD LINK REQUEST: DESCRIPTION
+  // FUNCTION: Allow proflie owner to add content to her own profile (and not someone else's)
+
+  $(document).on("click", "#PostReadingListButton", function () {
+    ReadingListLink = document.querySelector(
+      "input[name=ReadingListLink]"
+    ).value;
+    ReadingListDescription = document.querySelector(
+      "input[name=ReadingListDescription]"
+    ).value;
+    var CookieToken = getCookieValue("USER_SESSION_TOKEN");
+
+    try {
+      $.post(server + "/AddReadingList", {
+        token: CookieToken,
+        ProfileId: user_id,
+        ReadingListLink: ReadingListLink,
+        ReadingListDescription: ReadingListDescription,
+      }).done(function (data) {
+        if (data == true) {
+          $("#ReadingListLinkInput").val("");
+          $("#ReadingListDescriptionInput").val("");
+          alert("Link Added");
+        } else if (data == "TOKEN FAIL") {
+          alert("Log in expried- please sign in again");
+          window.location.href = server + "/ProfilePage?user_id=" + user_id;
+        } else {
+          console.log(data);
+          alert("Link not added, please try again");
           window.location.href = server + "/ProfilePage?user_id=" + user_id;
         }
       });
