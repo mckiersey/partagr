@@ -172,6 +172,7 @@ $(document).ready(function () {
         if (VideoList == false) {
             $(".VideosLoader").hide()
             document.getElementById('VideoPosition1').innerHTML += "<h3 id='NoVideosFound'>No videos found</h3>"
+            $('#ShowMore').hide()
         } else {
             var VideoCounter;
             for (VideoCounter = 0; VideoCounter < VideoList.length; VideoCounter++) {
