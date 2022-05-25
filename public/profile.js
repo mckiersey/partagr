@@ -441,6 +441,8 @@ $(document).ready(function () {
         ArticleDescription: ArticleDescription,
       }).done(function (data) {
         if (data == true) {
+          $("#ArticleLinkInput").val("");
+          $("#ArticleDescriptionInput").val("");
           alert("Link Added");
         } else if (data == "TOKEN FAIL") {
           alert("Log in expried- please sign in again");
