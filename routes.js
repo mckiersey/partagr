@@ -972,9 +972,8 @@ const router = (app) => {
         const response = await unirest
           .get(PodcastEpisodeSearchIdAPI)
           .header("X-ListenAPI-Key", sourceFile.podcastAPIKey);
-        if (response.status === 429) {
-          res.send(response.status);
-        }
+        console.log("podcast api response: ", response.status);
+
         PodcastEpisodeTitle = response.toJSON().body.title;
         PodcastEpisodeImage = response.toJSON().body.image;
         PodcastEpisodeID = response.toJSON().body.id;

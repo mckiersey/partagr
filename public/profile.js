@@ -481,13 +481,14 @@ $(document).ready(function () {
         ProfileId: user_id,
         PodcastSearchTerm: PodcastSearchTermQueryFormat,
       }).done(function (data) {
-        console.log("Server response :", data);
+        console.log("Podcast Server response :", data);
         if (data == 429) {
           alert("Podcast partner quota limit reached for this month");
         } else if (data == false) {
           console.log("search fail");
           alert("No podcast found- try another search term");
         } else {
+          console.log("podcast api response: ", data);
           for (var podcast_result_number in data) {
             title = data[podcast_result_number].title;
             thumbnail = data[podcast_result_number].thumbnail;
