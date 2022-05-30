@@ -452,7 +452,7 @@ ul {
   margin-left: 100px;
 }
 
-#ArticleSection-row1 {
+#ArticleSection {
   margin-top: 80px;
 }
 
@@ -465,5 +465,5 @@ ul {
 li {
   text-align: left;
   padding-bottom: 5px;
-  margin-left: 20%;
+  margin-left: 10%;
 }
