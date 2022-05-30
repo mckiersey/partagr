@@ -91,7 +91,7 @@ $(document).ready(function () {
     }).done(function (data) {
       console.log("Server response :", data);
       if (data == "User is profile owner") {
-        console.log("profile owner");
+        console.log("Logged in profile owner");
         $(".OwnerPermissionSection").show(); //show edit switch
         $(".SignInButton").hide();
       } else if (data == "User is logged in, but user is not profile owner") {
@@ -109,8 +109,27 @@ $(document).ready(function () {
     console.log("Error: " + err);
   }
 
-  // GET LOGGED IN USER PHOTO REQUEST: DESCRIPTION
+  // GET PROFILE PAGE PROFILE PHOTO
+  try {
+    $.get(server + "/ProfilePagePhoto", {
+      user_id: user_id,
+    }).done(function (data) {
+      console.log(
+        "Server response (Owner profile picture) :",
+        data[0].profile_picture
+      );
+      OwnerProfilePicture = data[0].profile_picture;
+      console.log("check profile picture data - ", OwnerProfilePicture);
 
+      document.getElementById(
+        "OwnerProfilePicture"
+      ).innerHTML += `<img id="OwnerProfilePictureImage" class="float-right" src=${OwnerProfilePicture}>`;
+    });
+  } catch (err) {
+    console.log("Error: " + err);
+  }
+
+  // GET LOGGED IN USER PHOTO REQUEST
   try {
     var CookieToken = getCookieValue("USER_SESSION_TOKEN");
     $.get(server + "/LoggedUserProfilePhoto", {
@@ -120,7 +139,6 @@ $(document).ready(function () {
         "Server response (profile picture) :",
         data[0].profile_picture
       );
-      console.log("data - ", data);
       var GenericProfilePhotos = [
         "DefaultProfilePictureGirl.jpeg",
         "DefaultProfilePictureBeardGuy.jpeg",

@@ -229,14 +229,38 @@ const router = (app) => {
               "Error: User does not exist. Please enter an existing user id in the url."
             );
           } else {
+            console.log("profile page result, ", result[0].profile_picture);
             user_data = result[0];
-            response.render("ProfilePage.ejs", {
-              data: {
-                name: user_data.first_name,
-                user_id: user_data.user_id,
-                profile_picture: user_data.profile_picture,
-              },
-            }); // END OF RESPONSE.RENDER PROTECTED PROFILE
+            profile_page_file = "/ProfilePage.html";
+            response.sendFile(profile_page_file, {
+              root: __dirname,
+            });
+          } // END OF IF/ELSE CLAUSE
+        }
+      ); // RETRIEVE APP USER DATA: END
+    } catch (error) {
+      console.log("Error retrieving user data, error: ", error);
+    }
+  }); // END OF GET: PROTECTED PROFILE
+
+  // GET PROFILE PAGE PROFILE PHOTO
+  app.get("/ProfilePagePhoto", (request, response) => {
+    user_id = request.query.user_id; // User Id set as a cookie in /ProfileRoute and retrieved in FE FROM the response (but also could have been retrieved from the cookie)
+    // RETRIEVE APP USER DATA
+    try {
+      pool.query(
+        "SELECT * FROM user_profile WHERE user_id = ?",
+        user_id,
+        (error, result) => {
+          if (result.length === 0) {
+            response.send(
+              "Error: User does not exist. Please enter an existing user id in the url."
+            );
+          } else {
+            console.log("profile page result, ", result[0].profile_picture);
+            user_data = result[0];
+            profile_page_file = "/ProfilePage.html";
+            response.send(profile_page_file);
           } // END OF IF/ELSE CLAUSE
         }
       ); // RETRIEVE APP USER DATA: END
