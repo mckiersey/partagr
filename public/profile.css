@@ -455,10 +455,15 @@ ul {
 #ArticleSection-row1 {
   margin-top: 80px;
 }
+
 ul {
-  display: flex;
-  flex-wrap: wrap;
+  list-style-position: inside;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
 }
+
 li {
-  width: 33%;
+  text-align: left;
+  padding-bottom: 5px;
+  margin-left: 20%;
 }
