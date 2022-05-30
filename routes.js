@@ -497,20 +497,28 @@ const router = (app) => {
           .get(PodcastEpisodeSearchIdAPI)
           .header("X-ListenAPI-Key", sourceFile.podcastAPIKey);
         console.log("podcast api response: ", response.status);
-
-        PodcastEpisodeTitle = response.toJSON().body.title;
-        PodcastEpisodeImage = response.toJSON().body.image;
-        PodcastEpisodeID = response.toJSON().body.id;
-        PodcastEpisodeDescription = response.toJSON().body.description;
-        RetrievedPodastEpisodeData[content_id] = {
-          title: PodcastEpisodeTitle,
-          image: PodcastEpisodeImage,
-          episodeID: PodcastEpisodeID,
-          description: PodcastEpisodeDescription,
-        };
+        if (response.status === 429) {
+          res.send(response.status);
+        }
+        try {
+          PodcastEpisodeTitle = response.toJSON().body.title;
+          PodcastEpisodeImage = response.toJSON().body.image;
+          PodcastEpisodeID = response.toJSON().body.id;
+          PodcastEpisodeDescription = response.toJSON().body.description;
+          RetrievedPodastEpisodeData[content_id] = {
+            title: PodcastEpisodeTitle,
+            image: PodcastEpisodeImage,
+            episodeID: PodcastEpisodeID,
+            description: PodcastEpisodeDescription,
+          };
+        } catch (err) {
+          console.log(
+            "Error retrieving podcasts- likely no internet connection ",
+            err
+          );
+        }
       }
     }
-    //console.log(RetrievedPodastEpisodeData)
     response.send(RetrievedPodastEpisodeData);
   });
 
@@ -591,7 +599,7 @@ const router = (app) => {
     //console.log('recent activity route')
     try {
       pool.query(
-        "SELECT full_name, profile_picture, UC.user_id, content_id, content_type, content_desc FROM user_content UC LEFT JOIN user_profile UP ON UC.user_id = UP.user_id ORDER BY content_id DESC LIMIT 20 ",
+        "SELECT full_name, profile_picture, UC.user_id, content_id, content_type, content_desc FROM user_content UC LEFT JOIN user_profile UP ON UC.user_id = UP.user_id WHERE content_type <> 'ReadingListLink' ORDER BY content_id DESC LIMIT 20;",
         (error, result) => {
           if (error) console.log("Content retrieval error:", error);
           try {

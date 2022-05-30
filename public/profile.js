@@ -307,7 +307,9 @@ $(document).ready(function () {
     }
   });
 
+  //////////////////////////////////////////////////////////
   // GET ARTICLES
+  ///////////////////////////////////////////////////////////
   var GetArticleUrl = server + "/Articles?user_id=" + user_id;
   $.get(GetArticleUrl, function (ArticleList, status) {
     var i;
@@ -320,11 +322,12 @@ $(document).ready(function () {
       var protocol = pathArray[0];
       var host = pathArray[2];
       var baseUrl = protocol + "//" + host;
-      if (i < 5) {
-        document.getElementById("populateArticles-row1-col1").innerHTML +=
-          `<li> <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=LinkText href=${articleLink} target="_blank">  ${caption}</a></li>` +
-          `<input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement"/>`;
-      } else if (i >= 5 && i < 10) {
+      //if (i < 5) {
+      document.getElementById("populateArticles-row1-col1").innerHTML +=
+        `<li> <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=LinkText href=${articleLink} target="_blank">  ${caption}</a></li>` +
+        `<input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement"/>`;
+      /*
+        } else if (i >= 5 && i < 10) {
         document.getElementById("populateArticles-row1-col2").innerHTML +=
           `<li> <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=LinkText href=${articleLink} target="_blank">  ${caption}</a></li > ` +
           `<input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement"/>`;
@@ -345,6 +348,8 @@ $(document).ready(function () {
           `<li class=LinkText > <img height="18" width="18" src="http://www.google.com/s2/favicons?domain=${baseUrl}"/><a class=LinkText href=${articleLink} target="_blank">  ${caption}</a></li>` +
           `<input type = "image" src = "DeleteIcon.png" name = ${contentID} class="DeleteContentButton OwnerElement"/> `;
       }
+    
+    */
     }
   });
 

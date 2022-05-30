@@ -455,3 +455,10 @@ ul {
 #ArticleSection-row1 {
   margin-top: 80px;
 }
+ul {
+  display: flex;
+  flex-wrap: wrap;
+}
+li {
+  width: 33%;
+}
