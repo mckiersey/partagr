@@ -236,6 +236,7 @@ const router = (app) => {
               root: __dirname,
             });
           } // END OF IF/ELSE CLAUSE
+          console.log("/ProfilePage error: ", error);
         }
       ); // RETRIEVE APP USER DATA: END
     } catch (error) {

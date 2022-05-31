@@ -23,7 +23,6 @@ app.use(
 //start the server
 const server = app.listen(port, (error) => {
   if (error) return console.log(`** SERVER ERROR: ${error}`);
-
   console.log(`Server is running on port: ${server.address().port}`);
 });
 
