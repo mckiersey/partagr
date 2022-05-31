@@ -286,14 +286,21 @@ $(document).ready(function () {
       desc = PodcastEpisodeList[content_id].description;
       console.log("Podcast description: ", desc);
       firstParagraph = desc.substr(0, desc.indexOf("</p>"));
+      if (firstParagraph.length == 0) {
+        PodcastTableDescription = desc;
+      } else {
+        PodcastTableDescription = firstParagraph;
+      }
       console.log("Podcast 1st paragraph: ", firstParagraph);
+      console.log("Podcast table description: ", PodcastTableDescription);
+
       if (PodcastEpisodeList.hasOwnProperty(content_id)) {
         document.getElementById("podcast-episode-table").innerHTML +=
           `<tr>` +
           `<td rowspan ="2"> <input type="image" name=${PodcastEpisodeList[content_id].episodeID} class="SavedPodcastEpisodeThumbnail ClickToPlay" src=${PodcastEpisodeList[content_id].image}></td>` +
           `<td class="PodcastEpisodeTitle ClickToPlay"> ${PodcastEpisodeList[content_id].title}
           <br>
-          ${firstParagraph}
+          ${PodcastTableDescription}
           <br>
           <input type="image" src="DeleteIcon.png" name=${content_id} class="DeleteContentButton OwnerElement"/>
           </td>` +
