@@ -89,17 +89,14 @@ $(document).ready(function () {
       token: CookieToken,
       ProfileId: user_id,
     }).done(function (data) {
-      console.log("Server response :", data);
+      //console.log("Server response :", data);
       if (data == "User is profile owner") {
         console.log("Logged in profile owner");
         $(".OwnerPermissionSection").show(); //show edit switch
         $(".SignInButton").hide();
       } else if (data == "User is logged in, but user is not profile owner") {
-        console.log("TEST-User is logged in, but user is not profile owner");
         $(".OwnerPermissionSection").hide(); //hide edit switch
         $(".SignInButton").hide();
-
-        // $('.ReturnToMyProfileButton').show() -> just click profile picture
       } else {
         $(".OwnerPermissionSection").hide(); //hide edit switch
         $(".SignInButton").show();
@@ -112,18 +109,14 @@ $(document).ready(function () {
   // GET PROFILE PAGE PROFILE PHOTO
   try {
     $.get(server + "/ProfilePagePhoto", {
-      user_id: user_id,
+      ProfileId: user_id,
     }).done(function (data) {
-      console.log(
-        "Server response (Owner profile picture) :",
-        data[0].profile_picture
-      );
-      OwnerProfilePicture = data[0].profile_picture;
+      OwnerProfilePicture = data;
       console.log("check profile picture data - ", OwnerProfilePicture);
 
       document.getElementById(
         "OwnerProfilePicture"
-      ).innerHTML += `<img id="OwnerProfilePictureImage" class="float-right" src=${OwnerProfilePicture}>`;
+      ).innerHTML += `<img id="OwnerProfilePictureImage" class="float-right" src=${OwnerProfilePicture} referrerpolicy="no-referrer">`;
     });
   } catch (err) {
     console.log("Error: " + err);
@@ -136,7 +129,7 @@ $(document).ready(function () {
       token: CookieToken,
     }).done(function (data) {
       console.log(
-        "Server response (profile picture) :",
+        "Server response (logged profile picture) :",
         data[0].profile_picture
       );
       var GenericProfilePhotos = [

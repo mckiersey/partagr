@@ -245,12 +245,13 @@ const router = (app) => {
 
   // GET PROFILE PAGE PROFILE PHOTO
   app.get("/ProfilePagePhoto", (request, response) => {
-    user_id = request.query.user_id; // User Id set as a cookie in /ProfileRoute and retrieved in FE FROM the response (but also could have been retrieved from the cookie)
+    profile_id = request.query.ProfileId; // User Id set as a cookie in /ProfileRoute and retrieved in FE FROM the response (but also could have been retrieved from the cookie)
+    console.log("***PROFILE PAGE PHOTO*** user id: ", profile_id);
     // RETRIEVE APP USER DATA
     try {
       pool.query(
         "SELECT * FROM user_profile WHERE user_id = ?",
-        user_id,
+        profile_id,
         (error, result) => {
           if (result.length === 0) {
             response.send(
@@ -258,9 +259,8 @@ const router = (app) => {
             );
           } else {
             console.log("profile page result, ", result[0].profile_picture);
-            user_data = result[0];
-            profile_page_file = "/ProfilePage.html";
-            response.send(profile_page_file);
+            profile_page_photo = result[0].profile_picture;
+            response.send(profile_page_photo);
           } // END OF IF/ELSE CLAUSE
         }
       ); // RETRIEVE APP USER DATA: END
@@ -751,29 +751,19 @@ const router = (app) => {
   async function InsertNewVideo(InsertVideoData) {
     try {
       // INSET VIDEO -> MAKE THIS INTO A FUCNTION; can make this async
-      console.log("Test sequence step: C");
 
       var InsertVideoResult = pool.query(
         "INSERT INTO user_content SET ?",
         InsertVideoData
-      ); //, (InsertVideoError, InsertVideoResult) => {
-      //console.log('insert new video in position error: ', InsertVideoError)
-      //console.log('insert new video in position result: ', InsertVideoResult)
+      );
       if (InsertVideoResult !== null) {
-        // console.log('FUNCTION = TRUE')
-        console.log("Test sequence step: C ii");
-
-        //response.send(true)
         return true;
       } else {
         console.log("Insertion error: ", InsertVideoError);
-        //response.send('Video not Added')
         return "Video not added";
       }
-      // });
     } catch (error) {
       console.log("Something went wrong, video not added: ", error);
-      //response.send('Video not Added')
       return "Video not added";
     }
   }
