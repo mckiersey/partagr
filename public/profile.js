@@ -287,7 +287,7 @@ $(document).ready(function () {
       console.log("Podcast description: ", desc);
       firstParagraph = desc.substr(0, desc.indexOf("</p>"));
       if (firstParagraph.length == 0) {
-        PodcastTableDescription = desc;
+        PodcastTableDescription = "<p>" + desc + "</p>";
       } else {
         PodcastTableDescription = firstParagraph;
       }
