@@ -1,5 +1,3 @@
-console.log("Homepage javascript running");
-
 // GET COOKIE FUNCTION
 function getCookieValue(cname) {
   var name = cname + "=";
@@ -11,24 +9,11 @@ function getCookieValue(cname) {
       c = c.substring(1);
     }
     if (c.indexOf(name) == 0) {
-      return c.substring(name.length,  c.length);
+      return c.substring(name.length, c.length);
     }
   }
   return "";
 }
-//Session Status
-/*
-var cookieToken = getCookieValue('USER_SESSION_TOKEN')
-console.log('Session status: cookie token value:', cookieToken)
-var SignOutButtonVisibility = document.getElementById("SignOutButton");
-if (cookieToken == "") {
-    SignOutButtonVisibility.style.display = "none";
-    document.getElementById('SessionStatusText').innerHTML = "<span style='color: grey;'>Not Signed in</span>";
-} else {
-    document.getElementById('SessionStatusText').innerHTML =
-        "<span style='color: RGB(170, 204, 0);'>Signed In</span>";
-}
-*/
 
 //SIGN IN/ SIGN UP: SET COOKIE VALUE IN BROWSER
 function onSignIn(googleUser) {

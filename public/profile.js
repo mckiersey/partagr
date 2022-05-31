@@ -112,8 +112,6 @@ $(document).ready(function () {
       ProfileId: user_id,
     }).done(function (data) {
       OwnerProfilePicture = data;
-      console.log("check profile picture data - ", OwnerProfilePicture);
-
       document.getElementById(
         "OwnerProfilePicture"
       ).innerHTML += `<img id="OwnerProfilePictureImage" class="float-right" src=${OwnerProfilePicture} referrerpolicy="no-referrer">`;
