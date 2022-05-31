@@ -284,18 +284,22 @@ $(document).ready(function () {
     }
     for (var content_id in PodcastEpisodeList) {
       desc = PodcastEpisodeList[content_id].description;
+      console.log("Podcast description: ", desc);
       firstParagraph = desc.substr(0, desc.indexOf("</p>"));
+      console.log("Podcast 1st paragraph: ", firstParagraph);
       if (PodcastEpisodeList.hasOwnProperty(content_id)) {
         document.getElementById("podcast-episode-table").innerHTML +=
           `<tr>` +
           `<td rowspan ="2"> <input type="image" name=${PodcastEpisodeList[content_id].episodeID} class="SavedPodcastEpisodeThumbnail ClickToPlay" src=${PodcastEpisodeList[content_id].image}></td>` +
-          `<td class="PodcastEpisodeTitle ClickToPlay"> ${PodcastEpisodeList[content_id].title}</td>` +
-          `<td> <input class="PodcastPlayButton ClickToPlay" type="image" name=${PodcastEpisodeList[content_id].episodeID} src="PlayButton.png"></td>` +
+          `<td class="PodcastEpisodeTitle ClickToPlay"> ${PodcastEpisodeList[content_id].title}
+          <br>
+          ${firstParagraph}
+          <br>
+          <input type="image" src="DeleteIcon.png" name=${content_id} class="DeleteContentButton OwnerElement"/>
+          </td>` +
+          `<td> <input class="PodcastPlayButton ClickToPlay" type="image" name=${PodcastEpisodeList[content_id].episodeID} src="pptPlay.png"></td>` +
           `</tr>` +
-          `<tr>` +
-          `<td> ${firstParagraph}</td>` +
-          `<td> <input type="image" src="DeleteIcon.png" name=${content_id} class="DeleteContentButton OwnerElement"/></td>` +
-          `</tr>`;
+          `<tr>`;
       }
     }
   });

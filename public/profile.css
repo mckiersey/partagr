@@ -377,12 +377,14 @@ a:link {
   width: 80px;
   height: 80px;
   margin: 5px;
+  border-radius: 15px;
 }
 
 .PodcastPlayButton {
-  width: 80px;
-  height: 80px;
+  width: 25px;
+  height: 25x;
   margin: 5px;
+  margin-top: 40px;
 }
 
 .ListenNotes {
@@ -395,7 +397,7 @@ a:link {
 .PodcastEpisodeTitle {
   color: RGB(229, 229, 229);
   font-family: helvetica;
-  font-size: 20pt;
+  font-size: 10pt;
 }
 
 #PodcastPlayerFrame {
