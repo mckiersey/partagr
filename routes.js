@@ -230,7 +230,6 @@ const router = (app) => {
             );
           } else {
             console.log("profile page result, ", result[0].profile_picture);
-            user_data = result[0];
             profile_page_file = "/ProfilePage.html";
             response.sendFile(profile_page_file, {
               root: __dirname,
