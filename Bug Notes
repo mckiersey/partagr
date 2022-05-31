@@ -6,3 +6,12 @@ Description: Couldn't connect to mysql server
 Error: "Can't connect to local MySQL server through socket '/tmp/mysql.sock' (2)")
 Solution: https://stackoverflow.com/a/30359831/6065710
 Short cut: mysql.server start
+
+Navigate to file in Digital Ocean droplet server
+cd ../home/sean/partagr/
+
+Manage server on Digital Ocean droplet
+pm2 list
+pm2 stop server
+pm2 start server --watch (watch restarts automatically on changes)
+https://pm2.keymetrics.io/docs/usage/watch-and-restart/

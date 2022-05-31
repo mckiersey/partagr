@@ -133,6 +133,10 @@ p {
   margin: 5px;
 }
 
+#LeftColumn {
+  margin-left: 5%;
+}
+
 .PodcastInstructions {
   color: #8e9aaf;
   font-size: 20px;
